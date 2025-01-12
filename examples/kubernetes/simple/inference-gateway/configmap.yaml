@@ -7,13 +7,18 @@ metadata:
   labels:
     app: inference-gateway
 data:
-  ENV: production
-  SERVER_PORT: "8080"
+  # APPLICATION_NAME: inference-gateway
+  ENABLE_TELEMETRY: "false"
+  ENVIRONMENT: production
   SERVER_HOST: "0.0.0.0"
-  SERVER_READ_TIMEOUT: 30s
-  SERVER_WRITE_TIMEOUT: 30s
-  SERVER_IDLE_TIMEOUT: 120s
+  # SERVER_PORT: "8080"
+  # SERVER_READ_TIMEOUT: 30s
+  # SERVER_WRITE_TIMEOUT: 30s
+  # SERVER_IDLE_TIMEOUT: 120s
   # SERVER_TLS_CERT_PATH=
   # SERVER_TLS_KEY_PATH=
-  OLLAMA_API_URL: http://ollama.ollama:8080
-  # CLOUDFLARE_API_URL: https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}
+  # OLLAMA_API_URL: "http://ollama.ollama:8080"
+  # GROQ_API_URL: "https://api.groq.com"
+  # OPENAI_API_URL: "https://api.openai.com"
+  # GOOGLE_AISTUDIO_API_URL: "https://generativelanguage.googleapis.com"
+  # CLOUDFLARE_API_URL: "https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}"
