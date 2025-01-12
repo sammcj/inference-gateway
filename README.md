@@ -70,7 +70,7 @@ The following environment variables could be set for the LLMs APIs:
 | ------------------------- | ------------------------------------------ | ---------------------------------------------------------- |
 | `OLLAMA_API_URL`          | The URL for Ollama API.                    | ""                                                         |
 | `GROQ_API_URL`            | The URL for Groq Cloud API.                | https://api.groq.com                                       |
-| `GROQ_API_KEY`            | The Access for Groq Cloud API.             | ""                                                         |
+| `GROQ_API_KEY`            | The Access token for Groq Cloud API.       | ""                                                         |
 | `OPENAI_API_URL`          | The URL for the OpenAI API.                | https://api.openai.com                                     |
 | `OPENAI_API_KEY`          | The Access token for OpenAI API.           | ""                                                         |
 | `GOOGLE_AISTUDIO_API_URL` | The URL for the Google AI Studio API.      | https://generativelanguage.googleapis.com                  |
