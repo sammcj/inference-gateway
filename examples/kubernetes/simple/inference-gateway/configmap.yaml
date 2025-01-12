@@ -16,3 +16,4 @@ data:
   # SERVER_TLS_CERT_PATH=
   # SERVER_TLS_KEY_PATH=
   OLLAMA_API_URL: http://ollama.ollama:8080
+  # CLOUDFLARE_API_URL: https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}

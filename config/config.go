@@ -31,6 +31,8 @@ type Config struct {
 	OpenaiAPIKey      string `env:"OPENAI_API_KEY"`
 	GoogleAIStudioURL string `env:"GOOGLE_AISTUDIO_API_URL, default=https://generativelanguage.googleapis.com"`
 	GoogleAIStudioKey string `env:"GOOGLE_AISTUDIO_API_KEY"`
+	CloudflareAPIURL  string `env:"CLOUDFLARE_API_URL, default=https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}"`
+	CloudflareAPIKey  string `env:"CLOUDFLARE_API_KEY"`
 }
 
 // Load loads the configuration from environment variables.

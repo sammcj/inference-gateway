@@ -45,6 +45,7 @@ The Inference Gateway is a proxy server designed to facilitate access to various
 - [Ollama](https://ollama.com/)
 - [Groq Cloud](https://console.groq.com/)
 - [Google](https://aistudio.google.com/)
+- [Cloudflare](https://www.cloudflare.com/)
 
 ## Configuration
 
@@ -63,15 +64,17 @@ The following environment variables could be set for the Inference Gateway:
 
 The following environment variables could be set for the LLMs APIs:
 
-| Variable                  | Description                                | Default                                   |
-| ------------------------- | ------------------------------------------ | ----------------------------------------- |
-| `OLLAMA_API_URL`          | The URL for Ollama API.                    | ""                                        |
-| `GROQ_API_URL`            | The URL for Groq Cloud API.                | https://api.groq.com                      |
-| `GROQ_API_KEY`            | The Access for Groq Cloud API.             | ""                                        |
-| `OPENAI_API_URL`          | The URL for the OpenAI API.                | https://api.openai.com                    |
-| `OPENAI_API_KEY`          | The Access token for OpenAI API.           | ""                                        |
-| `GOOGLE_AISTUDIO_API_URL` | The URL for the Google AI Studio API.      | https://generativelanguage.googleapis.com |
-| `GOOGLE_AISTUDIO_API_KEY` | The Access token for Google AI Studio API. | ""                                        |
+| Variable                  | Description                                | Default                                                    |
+| ------------------------- | ------------------------------------------ | ---------------------------------------------------------- |
+| `OLLAMA_API_URL`          | The URL for Ollama API.                    | ""                                                         |
+| `GROQ_API_URL`            | The URL for Groq Cloud API.                | https://api.groq.com                                       |
+| `GROQ_API_KEY`            | The Access for Groq Cloud API.             | ""                                                         |
+| `OPENAI_API_URL`          | The URL for the OpenAI API.                | https://api.openai.com                                     |
+| `OPENAI_API_KEY`          | The Access token for OpenAI API.           | ""                                                         |
+| `GOOGLE_AISTUDIO_API_URL` | The URL for the Google AI Studio API.      | https://generativelanguage.googleapis.com                  |
+| `GOOGLE_AISTUDIO_API_KEY` | The Access token for Google AI Studio API. | ""                                                         |
+| `CLOUDFLARE_API_URL`      | The URL for the Cloudflare API.            | https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID} |
+| `CLOUDFLARE_API_KEY`      | The Access token for Cloudflare API.       | ""                                                         |
 
 If the API key is not set, the API will not be available.
 
