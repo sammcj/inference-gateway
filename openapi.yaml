@@ -1,0 +1,100 @@
+---
+openapi: 3.1.0
+info:
+  title: Inference Gateway API
+  description: API for interacting with various language models through the Inference Gateway.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /llms/{llm}/v1/models:
+    get:
+      summary: List models for a specific LLM
+      parameters:
+        - name: llm
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A list of models
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /llms/{llm}/api/generate:
+    post:
+      summary: Generate content with a specific LLM
+      parameters:
+        - name: llm
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                model:
+                  type: string
+                prompt:
+                  type: string
+      responses:
+        "200":
+          description: Generated content
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: string
+  /llms/{llm}/v1/chat/completions:
+    post:
+      summary: Generate chat completion with a specific LLM
+      parameters:
+        - name: llm
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                model:
+                  type: string
+                messages:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      role:
+                        type: string
+                      content:
+                        type: string
+      responses:
+        "200":
+          description: Chat completion
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: string
+  /health:
+    get:
+      summary: Health check
+      responses:
+        "200":
+          description: Health check successful

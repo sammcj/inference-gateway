@@ -1,0 +1,21 @@
+---
+services:
+  inference-gateway:
+    build:
+      context: ../../
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    env_file:
+      - .env
+
+  ollama:
+    image: ollama/ollama:latest
+    entrypoint: ["/bin/sh", "-c"]
+    command: >
+      "ollama serve & sleep 5 && ollama pull phi3:3.8b && tail -f /dev/null"
+    volumes:
+      - docker-compose-ollama-data:/.ollama
+
+volumes:
+  docker-compose-ollama-data:

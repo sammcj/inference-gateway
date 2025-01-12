@@ -1,0 +1,43 @@
+---
+version: "3"
+
+tasks:
+  generate:
+    desc: "Generate the gateway"
+    cmds:
+      - go generate ./...
+
+  tidy:
+    desc: "Tidy the gateway"
+    cmds:
+      - go mod tidy
+
+  build:
+    desc: "Build the gateway"
+    cmds:
+      - go build -o bin/inference-gateway cmd/gateway/main.go
+
+  run:
+    desc: "Run the gateway"
+    cmds:
+      - ENVIRONMENT=production go run cmd/gateway/main.go
+
+  lint:
+    desc: "Run Go static analysis and linting"
+    cmds:
+      - golangci-lint run
+
+  test:
+    desc: "Run tests"
+    cmds:
+      - go test -v ./...
+
+  package:
+    desc: "Package the gateway"
+    cmds:
+      - docker build -t inference-gateway .
+
+  release-dry-run:
+    desc: "Run a dry-run of the release"
+    cmds:
+      - goreleaser release --config .goreleaser.yaml --clean --snapshot --verbose

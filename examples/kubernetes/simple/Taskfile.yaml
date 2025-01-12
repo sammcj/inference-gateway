@@ -1,0 +1,64 @@
+version: "3"
+
+dotenv: [".env"]
+
+tasks:
+  build:
+    desc: Build the Inference Gateway
+    cmds:
+      - docker build -t 127.0.0.1:5005/myrepo/inference-gateway ../../..
+      - docker push 127.0.0.1:5005/myrepo/inference-gateway
+
+  deploy-inference-gateway:
+    desc: Deploy the Inference Gateway
+    cmds:
+      - kubectl apply -f inference-gateway/namespace.yaml
+      - kubectl apply -f inference-gateway/
+
+  deploy-ollama:
+    desc: Deploy the Ollama service
+    cmds:
+      - kubectl apply -f ollama/namespace.yaml
+      - kubectl apply -f ollama/
+
+  deploy:
+    desc: Deploy the Inference Gateway and Ollama service
+    cmds:
+      - task: deploy-inference-gateway
+      - task: deploy-ollama
+
+  undeploy-inference-gateway:
+    desc: Undeploy the Inference Gateway
+    cmds:
+      - kubectl delete -f inference-gateway/namespace.yaml
+
+  undeploy-ollama:
+    desc: Undeploy the Ollama service
+    cmds:
+      - kubectl delete -f ollama/namespace.yaml
+
+  undeploy:
+    desc: Undeploy the Inference Gateway and Ollama service
+    cmds:
+      - task: undeploy-inference-gateway
+      - task: undeploy-ollama
+
+  proxy:
+    desc: Proxy the Inference Gateway to a local port
+    cmds:
+      - kubectl -n inference-gateway port-forward svc/inference-gateway 8080:8080
+
+  cluster-create:
+    desc: Create a local Kubernetes cluster
+    cmds:
+      - ctlptl apply -f Cluster.yaml
+
+  cluster-delete:
+    desc: Delete a local Kubernetes cluster
+    cmds:
+      - ctlptl delete -f Cluster.yaml
+
+  clean:
+    desc: Clean the project
+    cmds:
+      - task cluster-delete

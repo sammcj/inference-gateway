@@ -1,0 +1,18 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: inference-gateway
+  namespace: inference-gateway
+  labels:
+    app: inference-gateway
+data:
+  ENV: production
+  SERVER_PORT: "8080"
+  SERVER_HOST: "0.0.0.0"
+  SERVER_READ_TIMEOUT: 30s
+  SERVER_WRITE_TIMEOUT: 30s
+  SERVER_IDLE_TIMEOUT: 120s
+  # SERVER_TLS_CERT_PATH=
+  # SERVER_TLS_KEY_PATH=
+  OLLAMA_API_URL: http://ollama.ollama:8080
