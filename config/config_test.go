@@ -52,6 +52,8 @@ func TestLoad(t *testing.T) {
 				OpenaiAPIKey:       "openai123",
 				GoogleAIStudioURL:  "https://generativelanguage.googleapis.com",
 				GoogleAIStudioKey:  "google123",
+				CloudflareAPIURL:   "https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}",
+				CloudflareAPIKey:   "",
 			},
 		},
 		{
@@ -60,8 +62,8 @@ func TestLoad(t *testing.T) {
 			expectedCfg: config.Config{
 				ApplicationName:    "inference-gateway",
 				EnableTelemetry:    false,
-				ServerReadTimeout:  5 * time.Second,
-				ServerWriteTimeout: 10 * time.Second,
+				ServerReadTimeout:  30 * time.Second,
+				ServerWriteTimeout: 30 * time.Second,
 				ServerIdleTimeout:  120 * time.Second,
 				Environment:        "production",
 				ServerHost:         "127.0.0.1",
@@ -70,6 +72,8 @@ func TestLoad(t *testing.T) {
 				GroqAPIURL:         "https://api.groq.com",
 				OpenaiAPIURL:       "https://api.openai.com",
 				GoogleAIStudioURL:  "https://generativelanguage.googleapis.com",
+				CloudflareAPIURL:   "https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}",
+				CloudflareAPIKey:   "",
 			},
 		},
 		{
@@ -112,7 +116,7 @@ func TestLoad(t *testing.T) {
 				ApplicationName:    "inference-gateway",
 				EnableTelemetry:    true,
 				ServerReadTimeout:  25 * time.Second,
-				ServerWriteTimeout: 10 * time.Second,
+				ServerWriteTimeout: 30 * time.Second,
 				ServerIdleTimeout:  120 * time.Second,
 				Environment:        "development",
 				ServerHost:         "127.0.0.1",
@@ -121,6 +125,8 @@ func TestLoad(t *testing.T) {
 				GroqAPIURL:         "https://api.groq.com",
 				OpenaiAPIURL:       "https://api.openai.com",
 				GoogleAIStudioURL:  "https://generativelanguage.googleapis.com",
+				CloudflareAPIURL:   "https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}",
+				CloudflareAPIKey:   "",
 			},
 		},
 	}
