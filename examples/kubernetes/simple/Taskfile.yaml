@@ -43,6 +43,12 @@ tasks:
       - task: undeploy-inference-gateway
       - task: undeploy-ollama
 
+  restart-inference-gateway:
+    desc: Restart the Inference Gateway
+    cmds:
+      - kubectl -n inference-gateway rollout restart deployment/inference-gateway
+      - kubectl -n inference-gateway rollout status deployment/inference-gateway
+
   proxy:
     desc: Proxy the Inference Gateway to a local port
     cmds:
