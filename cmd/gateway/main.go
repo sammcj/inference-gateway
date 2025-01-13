@@ -9,6 +9,7 @@ import (
 	"syscall"
 	"time"
 
+	api "github.com/edenreich/inference-gateway/api"
 	config "github.com/edenreich/inference-gateway/config"
 	gateway "github.com/edenreich/inference-gateway/gateway"
 	l "github.com/edenreich/inference-gateway/logger"
@@ -57,9 +58,11 @@ func main() {
 	http.HandleFunc("/llms/google/", gateway.Create(cfg.GoogleAIStudioURL, cfg.GoogleAIStudioKey, "/llms/google/", tp, cfg.EnableTelemetry, logger))
 	http.HandleFunc("/llms/cloudflare/", gateway.Create(cfg.CloudflareAPIURL, cfg.CloudflareAPIKey, "/llms/cloudflare/", tp, cfg.EnableTelemetry, logger))
 
-	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-	})
+	api := &api.RouterImpl{
+		Logger: logger,
+	}
+	http.HandleFunc("/llms", api.FetchAllModelsHandler)
+	http.HandleFunc("/health", api.Healthcheck)
 
 	server := &http.Server{
 		Addr:         cfg.ServerHost + ":" + cfg.ServerPort,
