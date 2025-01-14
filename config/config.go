@@ -10,8 +10,8 @@ import (
 // Config holds the configuration for the Inference Gateway.
 //
 //go:generate go run ../cmd/generate/main.go -type=Env -output=../examples/docker-compose/.env.example
-//go:generate go run ../cmd/generate/main.go -type=ConfigMap -output=../examples/kubernetes/simple/inference-gateway/configmap.yaml
-//go:generate go run ../cmd/generate/main.go -type=Secret -output=../examples/kubernetes/simple/inference-gateway/secret.yaml
+//go:generate go run ../cmd/generate/main.go -type=ConfigMap -output=../examples/kubernetes/hybrid/inference-gateway/configmap.yaml
+//go:generate go run ../cmd/generate/main.go -type=Secret -output=../examples/kubernetes/hybrid/inference-gateway/secret.yaml
 //go:generate go run ../cmd/generate/main.go -type=MD -output=../Configurations.md
 type Config struct {
 	// General settings
