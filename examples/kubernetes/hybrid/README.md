@@ -8,49 +8,43 @@ In this example, we will deploy both Ollama and the Inference Gateway onto a loc
 task cluster-create
 ```
 
-2. Build the Inference Gateway and push it to the local registry:
-
-```bash
-task build
-```
-
-3. Deploy Ollama onto Kubernetes:
+2. Deploy Ollama onto Kubernetes:
 
 ```bash
 task deploy-ollama
 ```
 
-4. Wait for the Ollama deployment to be completely rolled out and ready(could take a while due to 2GB download, roughly 3min on a standard internet bandwidth):
+3. Wait for the Ollama deployment to be completely rolled out and ready(could take a while due to 2GB download, roughly 3min on a standard internet bandwidth):
 
 ```bash
 kubectl -n ollama rollout status deployment/ollama
 ```
 
-5. Deploy the Inference Gateway onto Kubernetes:
+4. Deploy the Inference Gateway onto Kubernetes:
 
 ```bash
 task deploy-inference-gateway
 ```
 
-6. Wait for the Inference Gateway deployment to be completely rolled out and ready:
+5. Wait for the Inference Gateway deployment to be completely rolled out and ready:
 
 ```bash
 kubectl -n inference-gateway rollout status deployment/inference-gateway
 ```
 
-7. Proxy the Inference Gateway, to access it locally:
+6. Proxy the Inference Gateway, to access it locally:
 
 ```bash
 task proxy
 ```
 
-8. Check the available Ollama local LLMs:
+7. Check the available Ollama local LLMs:
 
 ```bash
 curl -X GET http://localhost:8080/llms/ollama/v1/models
 ```
 
-9. Send a request to the Inference Gateway:
+8. Send a request to the Inference Gateway:
 
 ```bash
 curl -X POST http://localhost:8080/llms/ollama/api/generate -d '{"model": "phi3:3.8b", "prompt": "Why is the sky blue? keep it short and concise."}'
