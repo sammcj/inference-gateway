@@ -109,12 +109,12 @@ changelog:
       order: 9999
   filters:
     include:
-      - "^feat:"
-      - "^fix:"
-      - "^docs:"
-      - "^ci:"
-      - "^refactor:"
-      - "^test:"
-      - "^chore:"
-      - "^impr:"
-      - "^style:"
+      - "^feat(\\([[:word:]]+\\))?!?:"
+      - "^fix(\\([[:word:]]+\\))?!?:"
+      - "^docs(\\([[:word:]]+\\))?!?:"
+      - "^ci(\\([[:word:]]+\\))?!?:"
+      - "^refactor(\\([[:word:]]+\\))?!?:"
+      - "^test(\\([[:word:]]+\\))?!?:"
+      - "^chore(\\([[:word:]]+\\))?!?:"
+      - "^impr(\\([[:word:]]+\\))?!?:"
+      - "^style(\\([[:word:]]+\\))?!?:"
