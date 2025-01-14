@@ -24,7 +24,7 @@ type Config struct {
 	OIDCClientSecret string `env:"OIDC_CLIENT_SECRET" type:"secret" description:"The OIDC client secret"`
 
 	// Server settings
-	ServerHost         string        `env:"SERVER_HOST, default=127.0.0.1" description:"The host address for the server"`
+	ServerHost         string        `env:"SERVER_HOST, default=0.0.0.0" description:"The host address for the server"`
 	ServerPort         string        `env:"SERVER_PORT, default=8080" description:"The port on which the server will listen"`
 	ServerReadTimeout  time.Duration `env:"SERVER_READ_TIMEOUT, default=30s" description:"The server read timeout"`
 	ServerWriteTimeout time.Duration `env:"SERVER_WRITE_TIMEOUT, default=30s" description:"The server write timeout"`
