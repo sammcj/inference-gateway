@@ -1,0 +1,42 @@
+version: "3"
+
+dotenv: [".env"]
+
+tasks:
+  deploy:
+    desc: Deploy the Inference Gateway
+    cmds:
+      - kubectl apply -f inference-gateway/namespace.yaml
+      - kubectl apply -f inference-gateway/
+      - kubectl -n inference-gateway rollout status deployment/inference-gateway
+
+  undeploy:
+    desc: Undeploy the Inference Gateway
+    cmds:
+      - kubectl delete -f inference-gateway/namespace.yaml
+
+  restart:
+    desc: Restart the Inference Gateway
+    cmds:
+      - kubectl -n inference-gateway rollout restart deployment/inference-gateway
+      - kubectl -n inference-gateway rollout status deployment/inference-gateway
+
+  proxy:
+    desc: Proxy the Inference Gateway to a local port
+    cmds:
+      - kubectl -n inference-gateway port-forward svc/inference-gateway 8080:8080
+
+  cluster-create:
+    desc: Create a local Kubernetes cluster
+    cmds:
+      - ctlptl apply -f Cluster.yaml
+
+  cluster-delete:
+    desc: Delete a local Kubernetes cluster
+    cmds:
+      - ctlptl delete -f Cluster.yaml
+
+  clean:
+    desc: Clean the project
+    cmds:
+      - task cluster-delete
