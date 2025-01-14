@@ -16,7 +16,7 @@
 
 | Key | Default Value | Description |
 | --- | ------------- | ----------- |
-| SERVER_HOST | 127.0.0.1 | The host address for the server |
+| SERVER_HOST | 0.0.0.0 | The host address for the server |
 | SERVER_PORT | 8080 | The port on which the server will listen |
 | SERVER_READ_TIMEOUT | 30s | The server read timeout |
 | SERVER_WRITE_TIMEOUT | 30s | The server write timeout |

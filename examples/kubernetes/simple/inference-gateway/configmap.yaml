@@ -14,7 +14,7 @@ data:
   ENABLE_AUTH: "false"
   OIDC_ISSUER_URL: "http://keycloak:8080/realms/inference-gateway-realm"
   # Server settings
-  SERVER_HOST: "127.0.0.1"
+  SERVER_HOST: "0.0.0.0"
   SERVER_PORT: "8080"
   SERVER_READ_TIMEOUT: "30s"
   SERVER_WRITE_TIMEOUT: "30s"
