@@ -17,6 +17,7 @@ type RouterImpl struct {
 }
 
 func (router *RouterImpl) Healthcheck(w http.ResponseWriter, r *http.Request) {
+	router.Logger.Debug("Healthcheck")
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(map[string]string{"status": "ok"}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
