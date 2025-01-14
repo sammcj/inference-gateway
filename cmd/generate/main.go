@@ -97,6 +97,7 @@ func generateEnvExample(filePath string, comments map[string]string) {
 		envName := envParts[0]
 		defaultValue := ""
 		for _, part := range envParts {
+			part = strings.Trim(part, " ")
 			if strings.HasPrefix(part, "default=") {
 				defaultValue = strings.TrimPrefix(part, "default=")
 				break
