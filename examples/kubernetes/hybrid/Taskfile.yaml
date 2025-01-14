@@ -3,12 +3,6 @@ version: "3"
 dotenv: [".env"]
 
 tasks:
-  build:
-    desc: Build the Inference Gateway
-    cmds:
-      - docker build -t 127.0.0.1:5005/myrepo/inference-gateway ../../..
-      - docker push 127.0.0.1:5005/myrepo/inference-gateway
-
   deploy-inference-gateway:
     desc: Deploy the Inference Gateway
     cmds:
