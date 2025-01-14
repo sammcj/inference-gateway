@@ -1,1 +1,6 @@
 .devcontainer/** linguist-vendored=true
+
+Configurations.md linguist-generated=true
+examples/docker-compose/.env.example linguist-generated=true
+examples/kubernetes/simple/inference-gateway/configmap.yaml linguist-generated=true
+examples/kubernetes/simple/inference-gateway/secret.yaml linguist-generated=true
