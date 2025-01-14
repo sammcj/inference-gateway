@@ -90,22 +90,22 @@ changelog:
   format: "{{.SHA}}: {{.Message}} (@{{.AuthorUsername}})"
   sort: asc
   groups:
-    - title: Features
+    - title: "✨ Features"
       regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
       order: 0
-    - title: "Bug fixes"
+    - title: "🐛 Bug fixes"
       regexp: '^.*?fix(\([[:word:]]+\))??!?:.+$'
       order: 1
-    - title: "Documentation"
+    - title: "📚 Documentation"
       regexp: '^.*?docs(\([[:word:]]+\))??!?:.+$'
       order: 2
-    - title: "Continues Integration"
+    - title: "🔧 Continues Integration"
       regexp: '^.*?ci(\([[:word:]]+\))??!?:.+$'
       order: 3
-    - title: "Improvements"
+    - title: "🔨 Improvements"
       regexp: '^.*?refactor(\([[:word:]]+\))??!?:.+$'
       order: 4
-    - title: "Miscellaneous"
+    - title: "🔄 Miscellaneous"
       order: 9999
   filters:
     include:
@@ -117,3 +117,4 @@ changelog:
       - "^test:"
       - "^chore:"
       - "^impr:"
+      - "^style:"
