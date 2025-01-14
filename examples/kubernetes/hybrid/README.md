@@ -1,6 +1,6 @@
 # Hybrid Kubernetes Example
 
-In this example we will deploy Ollama and the Inference Gateway onto a local Kubernetes cluster. The Inference Gateway will be used to send requests to Ollama as well as the cloud providers LLMs.
+In this example, we will deploy both Ollama and the Inference Gateway onto a local Kubernetes cluster. The Inference Gateway will facilitate sending requests to Ollama as well as to various cloud provider's Large Language Models (LLMs).
 
 1. Create the local cluster:
 
