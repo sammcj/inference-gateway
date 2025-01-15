@@ -1,6 +1,6 @@
-# Basic Kubernetes Example
+# Setting up authentication for the Inference Gateway
 
-In this basic example, we will deploy the Inference Gateway.
+In this example we will set up authentication for the Inference Gateway using Keycloak as the authentication provider. We will use the client credentials flow to obtain an access token and use it to authenticate with the Inference Gateway.
 
 Feel free to explore the [ConfigMap](inference-gateway/configmap.yaml) and [Secret](inference-gateway/secret.yaml) configurations of the Inference Gateway to set up your desired providers.
 
