@@ -48,7 +48,7 @@ func Create(target string, apiKey string, prefix string, tp otel.TracerProvider,
 			}
 			if prefix == "/llms/google/" {
 				query := req.URL.Query()
-				query.Set("key", apiKey) // TODO - remove this from the logs, weird way of Google to authenticate
+				query.Set("key", apiKey)
 				req.URL.RawQuery = query.Encode()
 			}
 
@@ -59,7 +59,7 @@ func Create(target string, apiKey string, prefix string, tp otel.TracerProvider,
 			req.URL.Path = strings.TrimRight(parsedTarget.Path, "/") + "/" + strings.TrimLeft(r.URL.Path, "/")
 			req.Host = parsedTarget.Host
 
-			logger.Info("Proxying request", "method", req.Method, "target_url", req.URL.String())
+			logger.Info("Proxying request", "method", req.Method, "target_url", req.URL.Scheme+"://"+req.Host+req.URL.Path)
 		}
 		proxy.ServeHTTP(w, r)
 	}
