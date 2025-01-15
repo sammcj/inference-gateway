@@ -91,30 +91,22 @@ changelog:
   sort: asc
   groups:
     - title: "✨ Features"
-      regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
+      regexp: '^.*?feat(\(.+\))??!?:.+$'
       order: 0
     - title: "🐛 Bug fixes"
-      regexp: '^.*?fix(\([[:word:]]+\))??!?:.+$'
+      regexp: '^.*?fix(\(.+\))??!?:.+$'
       order: 1
     - title: "📚 Documentation"
-      regexp: '^.*?docs(\([[:word:]]+\))??!?:.+$'
+      regexp: '^.*?docs(\(.+\))??!?:.+$'
       order: 2
     - title: "🔧 Continues Integration"
-      regexp: '^.*?ci(\([[:word:]]+\))??!?:.+$'
+      regexp: '^.*?ci(\(.+\))??!?:.+$'
       order: 3
     - title: "🔨 Improvements"
-      regexp: '^.*?refactor(\([[:word:]]+\))??!?:.+$'
+      regexp: '^.*?refactor(\(.+\))??!?:.+$'
       order: 4
+    - title: "🔒 Security updates"
+      regexp: '^.*?sec(\(.+\))??!?:.+$'
+      order: 5
     - title: "🔄 Miscellaneous"
       order: 9999
-  filters:
-    include:
-      - "^feat(\\([[:word:]]+\\))?!?:"
-      - "^fix(\\([[:word:]]+\\))?!?:"
-      - "^docs(\\([[:word:]]+\\))?!?:"
-      - "^ci(\\([[:word:]]+\\))?!?:"
-      - "^refactor(\\([[:word:]]+\\))?!?:"
-      - "^test(\\([[:word:]]+\\))?!?:"
-      - "^chore(\\([[:word:]]+\\))?!?:"
-      - "^impr(\\([[:word:]]+\\))?!?:"
-      - "^style(\\([[:word:]]+\\))?!?:"
