@@ -146,6 +146,11 @@ func generateConfigMap(filePath string, comments map[string]string) {
 					break
 				}
 
+				if envName == "OIDC_ISSUER_URL" {
+					defaultValue = "http://keycloak.keycloak:8080/realms/inference-gateway-realm"
+					break
+				}
+
 				defaultValue = strings.TrimPrefix(part, "default=")
 				break
 			}

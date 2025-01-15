@@ -12,7 +12,7 @@ data:
   ENABLE_TELEMETRY: "false"
   ENVIRONMENT: "production"
   ENABLE_AUTH: "false"
-  OIDC_ISSUER_URL: "http://keycloak:8080/realms/inference-gateway-realm"
+  OIDC_ISSUER_URL: "http://keycloak.keycloak:8080/realms/inference-gateway-realm"
   # Server settings
   SERVER_HOST: "0.0.0.0"
   SERVER_PORT: "8080"

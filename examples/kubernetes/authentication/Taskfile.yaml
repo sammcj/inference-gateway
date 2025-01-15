@@ -1,0 +1,66 @@
+version: "3"
+
+dotenv: [".env"]
+
+tasks:
+  deploy-inference-gateway:
+    desc: Deploy the Inference Gateway
+    cmds:
+      - kubectl apply -f inference-gateway/namespace.yaml
+      - kubectl apply -f inference-gateway/serviceaccount.yaml
+      - kubectl apply -f inference-gateway/
+      - kubectl -n inference-gateway rollout status deployment/inference-gateway
+
+  deploy-keycloak:
+    desc: Deploy Keycloak
+    cmds:
+      - kubectl apply -f keycloak/namespace.yaml
+      - kubectl apply -f keycloak/
+      - kubectl -n keycloak rollout status deployment/keycloak
+
+  undeploy-inference-gateway:
+    desc: Undeploy the Inference Gateway
+    cmds:
+      - kubectl delete -f inference-gateway/namespace.yaml
+
+  undeploy-keycloak:
+    desc: Undeploy Keycloak
+    cmds:
+      - kubectl delete -f keycloak/namespace.yaml
+
+  restart-inference-gateway:
+    desc: Restart the Inference Gateway
+    cmds:
+      - kubectl -n inference-gateway rollout restart deployment/inference-gateway
+      - kubectl -n inference-gateway rollout status deployment/inference-gateway
+
+  restart-keycloak:
+    desc: Restart Keycloak
+    cmds:
+      - kubectl -n keycloak rollout restart deployment/keycloak
+      - kubectl -n keycloak rollout status deployment/keycloak
+
+  proxy-inference-gateway:
+    desc: Proxy the Inference Gateway to a local port
+    cmds:
+      - kubectl -n inference-gateway port-forward svc/inference-gateway 8080:8080
+
+  proxy-keycloak:
+    desc: Proxy Keycloak to a local port
+    cmds:
+      - kubectl -n keycloak port-forward svc/keycloak 8080:8080
+
+  cluster-create:
+    desc: Create a local Kubernetes cluster
+    cmds:
+      - ctlptl apply -f Cluster.yaml
+
+  cluster-delete:
+    desc: Delete a local Kubernetes cluster
+    cmds:
+      - ctlptl delete -f Cluster.yaml --cascade=true
+
+  clean:
+    desc: Clean the project
+    cmds:
+      - task: cluster-delete

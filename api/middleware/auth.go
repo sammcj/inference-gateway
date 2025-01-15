@@ -7,6 +7,7 @@ import (
 
 	oidc "github.com/coreos/go-oidc"
 	config "github.com/edenreich/inference-gateway/config"
+	logger "github.com/edenreich/inference-gateway/logger"
 	oauth2 "golang.org/x/oauth2"
 )
 
@@ -15,6 +16,7 @@ type OIDCAuthenticator interface {
 }
 
 type OIDCAuthenticatorImpl struct {
+	logger   logger.Logger
 	verifier *oidc.IDTokenVerifier
 	config   oauth2.Config
 }
@@ -22,7 +24,7 @@ type OIDCAuthenticatorImpl struct {
 type OIDCAuthenticatorNoop struct{}
 
 // NewOIDCAuthenticator creates a new OIDCAuthenticator instance
-func NewOIDCAuthenticator(cfg config.Config) (OIDCAuthenticator, error) {
+func NewOIDCAuthenticator(logger logger.Logger, cfg config.Config) (OIDCAuthenticator, error) {
 	if !cfg.EnableAuth {
 		return &OIDCAuthenticatorNoop{}, nil
 	}
@@ -37,6 +39,7 @@ func NewOIDCAuthenticator(cfg config.Config) (OIDCAuthenticator, error) {
 	}
 
 	return &OIDCAuthenticatorImpl{
+		logger:   logger,
 		verifier: provider.Verifier(oidcConfig),
 		config: oauth2.Config{
 			ClientID:     cfg.OIDCClientID,
@@ -59,6 +62,7 @@ func (a *OIDCAuthenticatorImpl) Middleware(next http.Handler) http.Handler {
 		token := strings.TrimPrefix(authHeader, "Bearer ")
 		idToken, err := a.verifier.Verify(context.Background(), token)
 		if err != nil {
+			a.logger.Error("Failed to verify ID token: %v", err)
 			http.Error(w, "Invalid token", http.StatusUnauthorized)
 			return
 		}
