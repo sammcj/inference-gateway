@@ -49,6 +49,14 @@ ACCESS_TOKEN=$(curl -s -X POST -H "Host: keycloak.keycloak:8080" "http://localho
   -d "grant_type=client_credentials" | jq -r '.access_token')
 ```
 
+To quickly verify the token payload we can run:
+
+```bash
+echo $ACCESS_TOKEN | cut -d '.' -f 2 | base64 -d | jq .
+```
+
+We should see the audience is set correctly, if not, go back to the previous ClickOps step.
+
 6. Enable the authentication in the Inference Gateway, by setting the `ENABLE_AUTH` environment variable to `true` in the [inference-gateway/configmap.yaml](inference-gateway/configmap.yaml) file:
 
 ```yaml
@@ -100,7 +108,7 @@ curl -X GET http://localhost:8080/llms
 
 You should see the response `Authorization header missing`.
 
-10. Let's set the token in the header and try again:
+11. Let's set the token in the header and try again:
 
 ```bash
 curl -X GET -H "Authorization: Bearer $ACCESS_TOKEN" http://localhost:8080/llms
@@ -108,7 +116,7 @@ curl -X GET -H "Authorization: Bearer $ACCESS_TOKEN" http://localhost:8080/llms
 
 You should be granted and see the expected response.
 
-11. Interact with the Inference Gateway using the specific provider API(note the prefix is `/llms/{provider}/*`):
+12. Interact with the Inference Gateway using the specific provider API(note the prefix is `/llms/{provider}/*`):
 
 ```bash
 curl -X POST -H "Authorization: Bearer $ACCESS_TOKEN" http://localhost:8080/llms/groq/openai/v1/chat/completions -d '{"model": "llama-3.2-3b-preview", "messages": [{"role": "user", "content": "Explain the importance of fast language models. Keep it short and concise."}]}' | jq .
