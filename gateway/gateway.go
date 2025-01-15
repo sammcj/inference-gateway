@@ -48,7 +48,7 @@ func Create(target string, apiKey string, prefix string, tp otel.TracerProvider,
 			}
 			if prefix == "/llms/google/" {
 				query := req.URL.Query()
-				query.Set("key", apiKey)
+				query.Set("key", apiKey) // TODO - remove this from the logs, weird way of Google to authenticate
 				req.URL.RawQuery = query.Encode()
 			}
 
