@@ -20,7 +20,7 @@ task deploy-keycloak
 
 3. Unfortunately there is a bug and I couldn't activate the client in the keycloak realm via JSON configuration. So you have to do it manually. You can do it by following these steps:
 
-- task proxy-keycloak
+- Run `task proxy-keycloak`
 - Go to the keycloak admin console: http://localhost:8080/
 - Login with the admin credentials: `admin` and `admin`
 - Go to the `inference-gateway-realm` realm
