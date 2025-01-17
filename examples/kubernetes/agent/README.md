@@ -26,6 +26,9 @@ docker build -t localhost:5000/dummyrepo/logs-analyzer:latest .
 docker push localhost:5000/dummyrepo/logs-analyzer:latest
 ```
 
+Inspec the code in `logs-analyzer/main.go` to see how the agent works.
+On a high level, the agent reads the logs of the cluster and tries to find an error, it collects the error including some context and then it sends the error to the Inference Gateway, which then redirect the request to the chosen provider, to get a solution. This request in Groq Cloud costs less than a cent, so it's very cheap and efficient.
+
 4. Deploy the logs Analyzer AI agent:
 
 ```bash
