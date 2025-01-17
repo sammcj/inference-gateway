@@ -45,7 +45,7 @@ curl -X GET http://localhost:8080/llms | jq '.[] | select(.provider == "ollama")
 7. Send a request to the Inference Gateway:
 
 ```bash
-curl -X POST http://localhost:8080/llms/ollama/generate -d '{"model": "phi3:3.8b", "prompt": "Why is the sky blue? keep it short and concise."}'
+curl -X POST http://localhost:8080/llms/ollama/generate -d '{"model": "phi3:3.8b", "prompt": "Explain the importance of fast language models. Keep it short and concise."}' | jq .
 ```
 
 8. Add a cloud provider's LLM to the Inference Gateway, by setting the API Key in the Kubernetes [secret](inference-gateway/secret.yaml):
@@ -66,6 +66,7 @@ kubectl apply -f inference-gateway/secret.yaml
 
 ```bash
 kubectl -n inference-gateway rollout restart deployment/inference-gateway
+kubectl -n inference-gateway rollout status deployment/inference-gateway
 ```
 
 11. Proxy the Inference Gateway, to access it locally:
