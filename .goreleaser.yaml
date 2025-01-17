@@ -99,14 +99,14 @@ changelog:
     - title: "📚 Documentation"
       regexp: '^.*?docs(\(.+\))??!?:.+$'
       order: 2
-    - title: "🔧 Continues Integration"
-      regexp: '^.*?ci(\(.+\))??!?:.+$'
-      order: 3
-    - title: "🔨 Improvements"
-      regexp: '^.*?refactor(\(.+\))??!?:.+$'
-      order: 4
     - title: "🔒 Security updates"
       regexp: '^.*?sec(\(.+\))??!?:.+$'
+      order: 3
+    - title: "🔧 Continues Integration"
+      regexp: '^.*?(ci)(\(.+\))?!?:.+$'
+      order: 4
+    - title: "🔨 Improvements"
+      regexp: '^.*?(refactor|perf|test|build)(\(.+\))?!?:.+$'
       order: 5
     - title: "🔄 Miscellaneous"
       order: 9999
