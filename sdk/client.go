@@ -22,8 +22,15 @@ type GenerateRequest struct {
 	Prompt string `json:"prompt"`
 }
 
-type GenerateResponse struct {
+type ResponseTokens struct {
+	Role    string `json:"role"`
+	Model   string `json:"model"`
 	Content string `json:"content"`
+}
+
+type GenerateResponse struct {
+	Provider string         `json:"provider"`
+	Response ResponseTokens `json:"response"`
 }
 
 func NewClient(baseURL string) *Client {
