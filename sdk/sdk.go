@@ -7,7 +7,12 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
-type Client struct {
+type Client interface {
+	ListModels() ([]ProviderModels, error)
+	GenerateContent(provider, model, prompt string) (GenerateResponse, error)
+}
+
+type ClientImpl struct {
 	baseURL    string
 	httpClient *resty.Client
 }
@@ -33,14 +38,14 @@ type GenerateResponse struct {
 	Response ResponseTokens `json:"response"`
 }
 
-func NewClient(baseURL string) *Client {
-	return &Client{
+func NewClient(baseURL string) Client {
+	return &ClientImpl{
 		baseURL:    baseURL,
 		httpClient: resty.New(),
 	}
 }
 
-func (c *Client) ListModels() ([]ProviderModels, error) {
+func (c *ClientImpl) ListModels() ([]ProviderModels, error) {
 	resp, err := c.httpClient.R().
 		SetResult([]ProviderModels{}).
 		Get(fmt.Sprintf("%s/llms", c.baseURL))
@@ -55,7 +60,7 @@ func (c *Client) ListModels() ([]ProviderModels, error) {
 	return *resp.Result().(*[]ProviderModels), nil
 }
 
-func (c *Client) GenerateContent(provider, model, prompt string) (GenerateResponse, error) {
+func (c *ClientImpl) GenerateContent(provider, model, prompt string) (GenerateResponse, error) {
 	request := GenerateRequest{
 		Model:  model,
 		Prompt: prompt,
