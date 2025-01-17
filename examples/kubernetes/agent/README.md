@@ -18,7 +18,7 @@ kubectl apply -f inference-gateway/
 kubectl -n inference-gateway rollout status deployment/inference-gateway
 ```
 
-1. Build the Logs Analyzer AI agent:
+3. Build the Logs Analyzer AI agent:
 
 ```bash
 cd logs-analyzer
@@ -77,7 +77,7 @@ you can also try to give the LLM more context or implement Consensus by letting 
 
 That same solution you can also email to the user, or send it to a slack channel, or even create a Jira ticket with the solution and assign it to the user, there is a lot of things you can do with AI agent.
 
-1. Finally let's cleanup the cluster:
+7. Finally let's cleanup the cluster:
 
 ```bash
 ctlptl delete -f Cluster.yaml --cascade=true
