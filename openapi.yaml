@@ -19,31 +19,7 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/ProviderModels"
-  /llms/{provider}/v1/models:
-    get:
-      summary: List models of a specific provider
-      parameters:
-        - name: provider
-          in: path
-          required: true
-          schema:
-            type: string
-            enum:
-              - ollama
-              - groq
-              - openai
-              - google
-              - cloudflare
-      responses:
-        "200":
-          description: A list of models
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: string
-  /llms/{provider}/api/generate:
+  /llms/{provider}/generate:
     post:
       summary: Generate content with a specific provider's LLM
       parameters:
@@ -51,13 +27,7 @@ paths:
           in: path
           required: true
           schema:
-            type: string
-            enum:
-              - ollama
-              - groq
-              - openai
-              - google
-              - cloudflare
+            $ref: "#/components/schemas/Providers"
       requestBody:
         required: true
         content:
@@ -110,13 +80,7 @@ components:
       type: object
       properties:
         provider:
-          type: string
-          enum:
-            - Ollama
-            - Groq
-            - OpenAI
-            - Google
-            - Cloudflare
+          $ref: "#/components/schemas/Providers"
         models:
           type: array
           items:
@@ -130,3 +94,11 @@ components:
                 type: string
               created:
                 type: integer
+    Providers:
+      type: string
+      enum:
+        - ollama
+        - groq
+        - openai
+        - google
+        - cloudflare

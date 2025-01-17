@@ -10,11 +10,11 @@ import (
 	"time"
 
 	api "github.com/edenreich/inference-gateway/api"
-	middleware "github.com/edenreich/inference-gateway/api/middleware"
+	middlewares "github.com/edenreich/inference-gateway/api/middlewares"
 	config "github.com/edenreich/inference-gateway/config"
-	gateway "github.com/edenreich/inference-gateway/gateway"
 	l "github.com/edenreich/inference-gateway/logger"
 	otel "github.com/edenreich/inference-gateway/otel"
+	gin "github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -53,26 +53,30 @@ func main() {
 		defer span.End()
 	}
 
-	oidcAuthenticator, err := middleware.NewOIDCAuthenticator(logger, cfg)
+	oidcAuthenticator, err := middlewares.NewOIDCAuthenticator(logger, cfg)
 	if err != nil {
 		logger.Error("Failed to initialize OIDC authenticator: %v", err)
 		return
 	}
 
-	http.Handle("/llms/ollama/", oidcAuthenticator.Middleware(gateway.Create(cfg.OllamaAPIURL, "", "/llms/ollama/", tp, cfg.EnableTelemetry, logger)))
-	http.Handle("/llms/groq/", oidcAuthenticator.Middleware(gateway.Create(cfg.GroqAPIURL, cfg.GroqAPIKey, "/llms/groq/", tp, cfg.EnableTelemetry, logger)))
-	http.Handle("/llms/openai/", oidcAuthenticator.Middleware(gateway.Create(cfg.OpenaiAPIURL, cfg.OpenaiAPIKey, "/llms/openai/", tp, cfg.EnableTelemetry, logger)))
-	http.Handle("/llms/google/", oidcAuthenticator.Middleware(gateway.Create(cfg.GoogleAIStudioURL, cfg.GoogleAIStudioKey, "/llms/google/", tp, cfg.EnableTelemetry, logger)))
-	http.Handle("/llms/cloudflare/", oidcAuthenticator.Middleware(gateway.Create(cfg.CloudflareAPIURL, cfg.CloudflareAPIKey, "/llms/cloudflare/", tp, cfg.EnableTelemetry, logger)))
+	api := api.NewRouter(cfg, logger, tp)
+	r := gin.New()
+	r.Use(func(c *gin.Context) {
+		logger.Info("Request received", "method", c.Request.Method, "host", c.Request.Host, "path", c.Request.URL.Path)
+		c.Next()
+	})
+	r.Use(oidcAuthenticator.Middleware())
 
-	api := &api.RouterImpl{
-		Logger: logger,
-	}
-	http.Handle("/llms", oidcAuthenticator.Middleware(http.HandlerFunc(api.FetchAllModelsHandler)))
-	http.Handle("/health", http.HandlerFunc(api.Healthcheck))
+	r.GET("/llms", api.FetchAllModelsHandler)
+	r.POST("/llms/:provider/generate", api.GenerateProvidersTokenHandler)
+	r.GET("/proxy/:provider/*path", api.ProxyHandler)
+	r.POST("/proxy/:provider/*path", api.ProxyHandler)
+	r.GET("/health", api.HealthcheckHandler)
+	r.NoRoute(api.NotFoundHandler)
 
 	server := &http.Server{
 		Addr:         cfg.ServerHost + ":" + cfg.ServerPort,
+		Handler:      r,
 		ReadTimeout:  cfg.ServerReadTimeout,
 		WriteTimeout: cfg.ServerWriteTimeout,
 		IdleTimeout:  cfg.ServerIdleTimeout,
