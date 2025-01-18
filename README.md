@@ -21,6 +21,7 @@ The Inference Gateway is a proxy server designed to facilitate access to various
 - [Supported API's](#supported-apis)
 - [Configuration](#configuration)
 - [Examples](#examples)
+- [SDKs](#sdks)
 - [License](#license)
 
 ## Key Features
@@ -58,6 +59,12 @@ The Inference Gateway can be configured using environment variables. The followi
 - Using [Docker Compose](examples/docker-compose/)
 - Using [Kubernetes](examples/kubernetes/)
 - Using standard [REST endpoints](examples/rest-endpoints/)
+
+## SDKs
+
+More SDKs could be generated using the OpenAPI specification. The following SDKs are currently available:
+
+- [Go SDK](https://github.com/edenreich/inference-gateway-go-sdk)
 
 ## License
 
