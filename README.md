@@ -27,7 +27,7 @@ The Inference Gateway is a proxy server designed to facilitate access to various
 ## Key Features
 
 - 📜 **Open Source**: Available under the MIT License.
-- 🚀 **Unified API Access**: Proxy requests to multiple language model APIs, including Groq, OpenAI, Ollama etc.
+- 🚀 **Unified API Access**: Proxy requests to multiple language model APIs, including OpenAI, Ollama, Groq, Cohere etc.
 - ⚙️ **Environment Configuration**: Easily configure API keys and URLs through environment variables.
 - 🐳 **Docker Support**: Use Docker and Docker Compose for easy setup and deployment.
 - ☸️ **Kubernetes Support**: Ready for deployment in Kubernetes environments.
@@ -49,6 +49,7 @@ The Inference Gateway is a proxy server designed to facilitate access to various
 - [Groq Cloud](https://console.groq.com/)
 - [Google](https://aistudio.google.com/)
 - [Cloudflare](https://www.cloudflare.com/)
+- [Cohere](https://docs.cohere.com/docs/the-cohere-platform)
 
 ## Configuration
 
