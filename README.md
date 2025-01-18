@@ -105,7 +105,3 @@ More SDKs could be generated using the OpenAPI specification. The following SDKs
 ## License
 
 This project is licensed under the MIT License.
-
-```
-
-```
