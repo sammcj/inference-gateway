@@ -24,6 +24,7 @@ The Inference Gateway is a proxy server designed to facilitate access to various
 - [Examples](#examples)
 - [SDKs](#sdks)
 - [License](#license)
+- [Contributing](#contributing)
 
 ## Key Features
 
@@ -105,3 +106,8 @@ More SDKs could be generated using the OpenAPI specification. The following SDKs
 ## License
 
 This project is licensed under the MIT License.
+
+## Contributing
+
+Found a bug, missing provider, or have a feature in mind?  
+You're more than welcome to submit pull requests or open issues for any fixes, improvements, or new ideas!
