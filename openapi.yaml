@@ -47,7 +47,18 @@ paths:
               schema:
                 type: object
                 properties:
-                  content:
+                  provider:
+                    type: string
+                  response:
+                    type: string
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
                     type: string
   /health:
     get:
