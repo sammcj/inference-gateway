@@ -17,28 +17,13 @@
 
 The Inference Gateway is a proxy server designed to facilitate access to various language model APIs. It allows users to interact with different language models through a unified interface, simplifying the configuration and the process of sending requests and receiving responses from multiple LLMs, enabling an easy use of Mixture of Experts.
 
-- [Overview](#overview)
 - [Key Features](#key-features)
+- [Overview](#overview)
 - [Supported API's](#supported-apis)
 - [Configuration](#configuration)
 - [Examples](#examples)
 - [SDKs](#sdks)
 - [License](#license)
-
-## Overview
-
-```mermaid
-graph TD
-    A[Client] -->|GET /llms| B[Inference Gateway]
-    A -->|POST /llms/provider/generate| B
-    B -->|Proxy to Ollama| C[Ollama API]
-    B -->|Proxy to Groq| D[Groq API]
-    B -->|Proxy to OpenAI| E[OpenAI API]
-    B -->|Proxy to Google| F[Google API]
-    B -->|Proxy to Cloudflare| G[Cloudflare API]
-    B -->|Proxy to Cohere| H[Cohere API]
-    B -->|GET /health| I[Health Check]
-```
 
 ## Key Features
 
@@ -57,6 +42,40 @@ graph TD
 - 📈 **Scalable**: Easily scalable and can be used in a distributed environment - with <a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/" target="_blank">HPA</a> in Kubernetes.
 - 🔒 **Compliance** and Data Privacy: This project does not collect data or analytics, ensuring compliance and data privacy.
 - 🏠 **Self-Hosted**: Can be self-hosted for complete control over the deployment environment.
+
+## Overview
+
+```mermaid
+graph TD
+    A[Client] -->|Auth?| B[Inference Gateway]
+    A -->|GET /health| I[Health Check]
+    B -->|GET /llms| P[Proxy Gateway]
+    B -->|POST /llms/provider/generate| P[Proxy Gateway]
+    P[Proxy Gateway] --> C[Ollama API]
+    P[Proxy Gateway] --> D[Groq API]
+    P[Proxy Gateway] --> E[OpenAI API]
+    P[Proxy Gateway] --> F[Google API]
+    P[Proxy Gateway] --> G[Cloudflare API]
+    P[Proxy Gateway] --> H[Cohere API]
+```
+
+Client is sending:
+
+```json
+{
+  "prompt": "Hello, world!",
+  "model": "gpt-3.5-turbo"
+}
+```
+
+Client receives:
+
+```json
+{
+  "provider": "openai",
+  "response": "Hello, world! How are you doing today?"
+}
+```
 
 ## Supported API's
 
