@@ -17,12 +17,28 @@
 
 The Inference Gateway is a proxy server designed to facilitate access to various language model APIs. It allows users to interact with different language models through a unified interface, simplifying the configuration and the process of sending requests and receiving responses from multiple LLMs, enabling an easy use of Mixture of Experts.
 
+- [Overview](#overview)
 - [Key Features](#key-features)
 - [Supported API's](#supported-apis)
 - [Configuration](#configuration)
 - [Examples](#examples)
 - [SDKs](#sdks)
 - [License](#license)
+
+## Overview
+
+```mermaid
+graph TD
+    A[Client] -->|GET /llms| B[Inference Gateway]
+    A -->|POST /llms/provider/generate| B
+    B -->|Proxy to Ollama| C[Ollama API]
+    B -->|Proxy to Groq| D[Groq API]
+    B -->|Proxy to OpenAI| E[OpenAI API]
+    B -->|Proxy to Google| F[Google API]
+    B -->|Proxy to Cloudflare| G[Cloudflare API]
+    B -->|Proxy to Cohere| H[Cohere API]
+    B -->|GET /health| I[Health Check]
+```
 
 ## Key Features
 
@@ -70,3 +86,7 @@ More SDKs could be generated using the OpenAPI specification. The following SDKs
 ## License
 
 This project is licensed under the MIT License.
+
+```
+
+```
