@@ -62,11 +62,9 @@ graph TD
 
 Client is sending:
 
-```json
-{
-  "prompt": "Hello, world!",
-  "model": "gpt-3.5-turbo"
-}
+```bash
+curl -X POST http://localhost:8080/llms/{provider}/generate
+  -d '{"prompt": "Hello, world!", "model": "gpt-3.5-turbo"}'
 ```
 
 Client receives:
