@@ -47,12 +47,19 @@ The Inference Gateway is a proxy server designed to facilitate access to various
 
 ## Overview
 
+You can horizontally scale the Inference Gateway to handle multiple requests from clients. The Inference Gateway will forward the requests to the respective provider and return the response to the client. The following diagram illustrates the flow:
+
 ```mermaid
 graph TD
-    A[Client] -->|Auth?| B[Inference Gateway]
-    A -->|GET /health| I[Health Check]
-    B -->|GET /llms| P[Proxy Gateway]
-    B -->|POST /llms/provider/generate| P[Proxy Gateway]
+    A[Client] --> |POST /llms/provider/generate| Auth[Inference Gateway]
+    A[Client] --> |POST /llms/provider/generate| Auth[Inference Gateway]
+    A[Client] --> |POST /llms/provider/generate| Auth[Inference Gateway]
+    Auth[Optional OIDC] --> |Auth?| IG1[Inference Gateway]
+    Auth[Optional OIDC] --> |Auth?| IG2[Inference Gateway]
+    Auth[Optional OIDC] --> |Auth?| IG3[Inference Gateway]
+    IG1 --> P[Proxy Gateway]
+    IG2 --> P[Proxy Gateway]
+    IG3 --> P[Proxy Gateway]
     P[Proxy Gateway] --> C[Ollama API]
     P[Proxy Gateway] --> D[Groq API]
     P[Proxy Gateway] --> E[OpenAI API]
