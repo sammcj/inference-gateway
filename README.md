@@ -88,7 +88,7 @@ Client receives:
 
 - [OpenAI](https://platform.openai.com/)
 - [Ollama](https://ollama.com/)
-- [Groq Cloud](https://console.groq.com/)
+- [Groq](https://console.groq.com/)
 - [Google](https://aistudio.google.com/)
 - [Cloudflare](https://www.cloudflare.com/)
 - [Cohere](https://docs.cohere.com/docs/the-cohere-platform)
