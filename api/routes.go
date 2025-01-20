@@ -11,13 +11,13 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/edenreich/inference-gateway/api/providers"
-	config "github.com/edenreich/inference-gateway/config"
-	l "github.com/edenreich/inference-gateway/logger"
-	"github.com/edenreich/inference-gateway/otel"
-	"github.com/gin-gonic/gin"
+	gin "github.com/gin-gonic/gin"
+	providers "github.com/inference-gateway/inference-gateway/api/providers"
+	config "github.com/inference-gateway/inference-gateway/config"
+	l "github.com/inference-gateway/inference-gateway/logger"
+	otel "github.com/inference-gateway/inference-gateway/otel"
 	semconv "go.opentelemetry.io/otel/semconv/v1.17.0"
-	"go.opentelemetry.io/otel/trace"
+	trace "go.opentelemetry.io/otel/trace"
 )
 
 type Router interface {

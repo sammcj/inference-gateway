@@ -1,7 +1,7 @@
 package otel
 
 import (
-	config "github.com/edenreich/inference-gateway/config"
+	config "github.com/inference-gateway/inference-gateway/config"
 	otel "go.opentelemetry.io/otel"
 	stdouttrace "go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
 	propagation "go.opentelemetry.io/otel/propagation"

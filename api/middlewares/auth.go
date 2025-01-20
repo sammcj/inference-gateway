@@ -6,9 +6,9 @@ import (
 	"strings"
 
 	oidcV3 "github.com/coreos/go-oidc/v3/oidc"
-	config "github.com/edenreich/inference-gateway/config"
-	logger "github.com/edenreich/inference-gateway/logger"
 	gin "github.com/gin-gonic/gin"
+	config "github.com/inference-gateway/inference-gateway/config"
+	logger "github.com/inference-gateway/inference-gateway/logger"
 	oauth2 "golang.org/x/oauth2"
 )
 

@@ -9,12 +9,12 @@ import (
 	"syscall"
 	"time"
 
-	api "github.com/edenreich/inference-gateway/api"
-	middlewares "github.com/edenreich/inference-gateway/api/middlewares"
-	config "github.com/edenreich/inference-gateway/config"
-	l "github.com/edenreich/inference-gateway/logger"
-	otel "github.com/edenreich/inference-gateway/otel"
 	gin "github.com/gin-gonic/gin"
+	api "github.com/inference-gateway/inference-gateway/api"
+	middlewares "github.com/inference-gateway/inference-gateway/api/middlewares"
+	config "github.com/inference-gateway/inference-gateway/config"
+	l "github.com/inference-gateway/inference-gateway/logger"
+	otel "github.com/inference-gateway/inference-gateway/otel"
 )
 
 func main() {

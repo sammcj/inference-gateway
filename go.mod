@@ -1,4 +1,4 @@
-module github.com/edenreich/inference-gateway
+module github.com/inference-gateway/inference-gateway
 
 go 1.23.4
 

@@ -12,8 +12,8 @@ package mocks
 import (
 	reflect "reflect"
 
-	config "github.com/edenreich/inference-gateway/config"
-	otel "github.com/edenreich/inference-gateway/otel"
+	config "github.com/inference-gateway/inference-gateway/config"
+	otel "github.com/inference-gateway/inference-gateway/otel"
 	gomock "go.uber.org/mock/gomock"
 )
 

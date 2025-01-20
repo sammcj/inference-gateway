@@ -2,16 +2,16 @@
 
 <p align="center">
   <!-- CI Status Badge -->
-  <a href="https://github.com/edenreich/inference-gateway/actions/workflows/ci.yml?query=branch%3Amain">
-    <img src="https://github.com/edenreich/inference-gateway/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI Status"/>
+  <a href="https://github.com/inference-gateway/inference-gateway/actions/workflows/ci.yml?query=branch%3Amain">
+    <img src="https://github.com/inference-gateway/inference-gateway/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI Status"/>
   </a>
   <!-- Version Badge -->
-  <a href="https://github.com/edenreich/inference-gateway/releases">
-    <img src="https://img.shields.io/github/v/release/edenreich/inference-gateway?color=blue&style=flat-square" alt="Version"/>
+  <a href="https://github.com/inference-gateway/inference-gateway/releases">
+    <img src="https://img.shields.io/github/v/release/inference-gateway/inference-gateway?color=blue&style=flat-square" alt="Version"/>
   </a>
   <!-- License Badge -->
-  <a href="https://github.com/edenreich/inference-gateway/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/edenreich/inference-gateway?color=blue&style=flat-square" alt="License"/>
+  <a href="https://github.com/inference-gateway/inference-gateway/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/inference-gateway/inference-gateway?color=blue&style=flat-square" alt="License"/>
   </a>
 </p>
 

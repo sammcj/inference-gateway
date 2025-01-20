@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	config "github.com/edenreich/inference-gateway/config"
+	config "github.com/inference-gateway/inference-gateway/config"
 	"github.com/sethvargo/go-envconfig"
 )
 

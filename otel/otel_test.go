@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	config "github.com/edenreich/inference-gateway/config"
-	mocks "github.com/edenreich/inference-gateway/otel/mocks"
+	config "github.com/inference-gateway/inference-gateway/config"
+	mocks "github.com/inference-gateway/inference-gateway/otel/mocks"
 	assert "github.com/stretchr/testify/assert"
 	trace "go.opentelemetry.io/otel/sdk/trace"
 	gomock "go.uber.org/mock/gomock"

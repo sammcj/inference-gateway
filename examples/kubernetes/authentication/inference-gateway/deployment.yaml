@@ -18,7 +18,7 @@ spec:
       serviceAccountName: inference-gateway
       containers:
         - name: inference-gateway
-          image: ghcr.io/edenreich/inference-gateway:v0.1.1
+          image: ghcr.io/inference-gateway/inference-gateway:v0.1.1
           ports:
             - containerPort: 8080
           resources:

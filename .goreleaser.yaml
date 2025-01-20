@@ -39,8 +39,8 @@ dockers:
     use: buildx
     dockerfile: Dockerfile.goreleaser
     image_templates:
-      - "ghcr.io/edenreich/inference-gateway:latest"
-      - "ghcr.io/edenreich/inference-gateway:{{ .Tag }}"
+      - "ghcr.io/inference-gateway/inference-gateway:latest"
+      - "ghcr.io/inference-gateway/inference-gateway:{{ .Tag }}"
     build_flag_templates:
       - "--platform=linux/arm64"
       - "--pull"
@@ -54,8 +54,8 @@ dockers:
     use: buildx
     dockerfile: Dockerfile.goreleaser
     image_templates:
-      - "ghcr.io/edenreich/inference-gateway:latest"
-      - "ghcr.io/edenreich/inference-gateway:{{ .Tag }}"
+      - "ghcr.io/inference-gateway/inference-gateway:latest"
+      - "ghcr.io/inference-gateway/inference-gateway:{{ .Tag }}"
     build_flag_templates:
       - "--platform=linux/amd64"
       - "--pull"
@@ -78,7 +78,7 @@ checksum:
 
 release:
   github:
-    owner: edenreich
+    owner: inference-gateway
     name: inference-gateway
   footer: >-
     ---
