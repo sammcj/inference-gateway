@@ -77,7 +77,7 @@ curl -X POST http://localhost:8080/llms/openai/generate
     "messages": [
       {
         "role": "system",
-        "content": "You're a pirate."
+        "content": "You are a pirate."
       },
       {
         "role": "user",
