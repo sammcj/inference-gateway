@@ -2,6 +2,7 @@ package api
 
 import (
 	"bytes"
+	"compress/gzip"
 	"encoding/json"
 	"errors"
 	"io"
@@ -12,10 +13,10 @@ import (
 	"sync"
 
 	gin "github.com/gin-gonic/gin"
-	providers "github.com/inference-gateway/inference-gateway/api/providers"
 	config "github.com/inference-gateway/inference-gateway/config"
 	l "github.com/inference-gateway/inference-gateway/logger"
 	otel "github.com/inference-gateway/inference-gateway/otel"
+	providers "github.com/inference-gateway/inference-gateway/providers"
 	semconv "go.opentelemetry.io/otel/semconv/v1.17.0"
 	trace "go.opentelemetry.io/otel/trace"
 )
@@ -132,14 +133,44 @@ func (router *RouterImpl) ProxyHandler(c *gin.Context) {
 				return err
 			}
 
-			var body interface{}
-			if err := json.Unmarshal(bodyBytes, &body); err != nil {
-				router.logger.Error("Failed to unmarshal response from proxy", err)
-				return err
+			// Always restore the body
+			defer func() {
+				resp.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+			}()
+
+			// Only attempt to parse JSON responses
+			if strings.Contains(resp.Header.Get("Content-Type"), "application/json") {
+				contentBody := bodyBytes
+
+				// Handle gzipped content only if we have actual content
+				if resp.Header.Get("Content-Encoding") == "gzip" && len(bodyBytes) > 0 {
+					reader, err := gzip.NewReader(bytes.NewReader(bodyBytes))
+					if err != nil {
+						router.logger.Error("Invalid gzip content", err)
+					} else {
+						defer reader.Close()
+						if decompressed, err := io.ReadAll(reader); err == nil {
+							contentBody = decompressed
+						} else {
+							router.logger.Error("Failed to read gzipped content", err)
+						}
+					}
+				}
+
+				// Try to parse as JSON regardless of gzip success/failure
+				var body interface{}
+				if err := json.Unmarshal(contentBody, &body); err != nil {
+					router.logger.Error("Failed to unmarshal JSON response",
+						err,
+						"status", resp.StatusCode,
+						"content-type", resp.Header.Get("Content-Type"),
+						"content-encoding", resp.Header.Get("Content-Encoding"),
+						"content-length", len(contentBody))
+				} else {
+					router.logger.Debug("Proxy response", "body", body)
+				}
 			}
 
-			router.logger.Debug("Proxy response received", "status", resp.StatusCode, "body", body)
-			resp.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 			return nil
 		}
 	}
@@ -248,24 +279,8 @@ func fetchModels(url string, provider string, wg *sync.WaitGroup, ch chan<- Mode
 	ch <- ModelResponse{Provider: provider, Models: response.Data}
 }
 
-type GenerateRequest struct {
-	Model  string `json:"model"`
-	Prompt string `json:"prompt"`
-}
-
-type ResponseTokens struct {
-	Role    string `json:"role"`
-	Model   string `json:"model"`
-	Content string `json:"content"`
-}
-
-type GenerateResponse struct {
-	Provider string         `json:"provider"`
-	Response ResponseTokens `json:"response"`
-}
-
 func (router *RouterImpl) GenerateProvidersTokenHandler(c *gin.Context) {
-	var req GenerateRequest
+	var req providers.GenerateRequest
 	if err := json.NewDecoder(c.Request.Body).Decode(&req); err != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "Failed to decode request"})
 		return
@@ -299,9 +314,9 @@ func (router *RouterImpl) GenerateProvidersTokenHandler(c *gin.Context) {
 	}
 
 	provider.URL = provider.ProxyURL + url
-	var response GenerateResponse
+	var response providers.GenerateResponse
 
-	response, err := generateToken(provider, req.Model, req.Prompt)
+	response, err := generateTokens(provider, req.Model, req.Messages)
 	if err != nil {
 		router.logger.Error("failed to generate tokens", err, "provider", provider)
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "Failed to generate tokens"})
@@ -311,7 +326,7 @@ func (router *RouterImpl) GenerateProvidersTokenHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-func generateToken(provider *Provider, model string, prompt string) (GenerateResponse, error) {
+func generateTokens(provider *Provider, model string, messages []providers.GenerateMessage) (providers.GenerateResponse, error) {
 	var payload interface{}
 	var response interface{}
 	var role, content string
@@ -320,33 +335,25 @@ func generateToken(provider *Provider, model string, prompt string) (GenerateRes
 	case "Ollama":
 		payload = providers.GenerateRequestOllama{
 			Model:  model,
-			Prompt: prompt,
+			Prompt: getUserMessage(messages),
 			Stream: false,
+			System: getSystemMessage(messages),
 		}
 		response = &providers.GenerateResponseOllama{}
 	case "Groq":
 		payload = providers.GenerateRequestGroq{
-			Model: model,
-			Messages: []providers.GenerateRequestGroqMessage{
-				{
-					Role:    "user",
-					Content: prompt,
-				},
-			},
+			Model:    model,
+			Messages: messages,
 		}
 		response = &providers.GenerateResponseGroq{}
 	case "OpenAI":
 		payload = providers.GenerateRequestOpenAI{
-			Model: model,
-			Messages: []providers.GenerateRequestOpenAIMessage{
-				{
-					Role:    "user",
-					Content: prompt,
-				},
-			},
+			Model:    model,
+			Messages: messages,
 		}
 		response = &providers.GenerateResponseOpenAI{}
 	case "Google":
+		prompt := getSystemMessage(messages) + getUserMessage(messages)
 		payload = providers.GenerateRequestGoogle{
 			Contents: providers.GenerateRequestGoogleContents{
 				Parts: []providers.GenerateRequestGoogleParts{
@@ -358,39 +365,35 @@ func generateToken(provider *Provider, model string, prompt string) (GenerateRes
 		}
 		response = &providers.GenerateResponseGoogle{}
 	case "Cloudflare":
+		prompt := getSystemMessage(messages) + getUserMessage(messages)
 		payload = providers.GenerateRequestCloudflare{
 			Prompt: prompt,
 		}
 		response = &providers.GenerateResponseCloudflare{}
 	case "Cohere":
-		payload = &providers.GenerateRequestCohere{
-			Model: model,
-			Messages: []providers.GenerateRequestCohereMessage{
-				{
-					Role:    "user",
-					Content: prompt,
-				},
-			},
+		payload = providers.GenerateRequestCohere{
+			Model:    model,
+			Messages: messages,
 		}
 		response = &providers.GenerateResponseCohere{}
 	default:
-		return GenerateResponse{}, errors.New("provider not implemented")
+		return providers.GenerateResponse{}, errors.New("provider not implemented")
 	}
 
 	payloadBytes, err := json.Marshal(payload)
 	if err != nil {
-		return GenerateResponse{}, err
+		return providers.GenerateResponse{}, err
 	}
 
 	resp, err := http.Post(provider.URL, "application/json", strings.NewReader(string(payloadBytes)))
 	if err != nil {
-		return GenerateResponse{}, err
+		return providers.GenerateResponse{}, err
 	}
 	defer resp.Body.Close()
 
 	err = json.NewDecoder(resp.Body).Decode(response)
 	if err != nil {
-		return GenerateResponse{}, err
+		return providers.GenerateResponse{}, err
 	}
 
 	switch provider.Name {
@@ -400,7 +403,7 @@ func generateToken(provider *Provider, model string, prompt string) (GenerateRes
 			role = "assistant" // It's not provided by Ollama so we set it to assistant
 			content = ollamaResponse.Response
 		} else {
-			return GenerateResponse{}, errors.New("invalid response from Ollama")
+			return providers.GenerateResponse{}, errors.New("invalid response from Ollama")
 		}
 	case "Groq":
 		groqResponse := response.(*providers.GenerateResponseGroq)
@@ -408,7 +411,7 @@ func generateToken(provider *Provider, model string, prompt string) (GenerateRes
 			role = groqResponse.Choices[0].Message.Role
 			content = groqResponse.Choices[0].Message.Content
 		} else {
-			return GenerateResponse{}, errors.New("invalid response from Groq")
+			return providers.GenerateResponse{}, errors.New("invalid response from Groq")
 		}
 	case "OpenAI":
 		openAIResponse := response.(*providers.GenerateResponseOpenAI)
@@ -416,7 +419,7 @@ func generateToken(provider *Provider, model string, prompt string) (GenerateRes
 			role = openAIResponse.Choices[0].Message.Role
 			content = openAIResponse.Choices[0].Message.Content
 		} else {
-			return GenerateResponse{}, errors.New("invalid response from OpenAI")
+			return providers.GenerateResponse{}, errors.New("invalid response from OpenAI")
 		}
 	case "Google":
 		googleResponse := response.(*providers.GenerateResponseGoogle)
@@ -424,7 +427,7 @@ func generateToken(provider *Provider, model string, prompt string) (GenerateRes
 			role = googleResponse.Candidates[0].Content.Role
 			content = googleResponse.Candidates[0].Content.Parts[0].Text
 		} else {
-			return GenerateResponse{}, errors.New("invalid response from Google")
+			return providers.GenerateResponse{}, errors.New("invalid response from Google")
 		}
 	case "Cloudflare":
 		cloudflareResponse := response.(*providers.GenerateResponseCloudflare)
@@ -432,7 +435,7 @@ func generateToken(provider *Provider, model string, prompt string) (GenerateRes
 			role = "assistant"
 			content = cloudflareResponse.Result.Response
 		} else {
-			return GenerateResponse{}, errors.New("invalid response from Cloudflare")
+			return providers.GenerateResponse{}, errors.New("invalid response from Cloudflare")
 		}
 	case "Cohere":
 		cohereResponse := response.(*providers.GenerateResponseCohere)
@@ -440,13 +443,32 @@ func generateToken(provider *Provider, model string, prompt string) (GenerateRes
 			role = cohereResponse.Message.Role
 			content = cohereResponse.Message.Content[0].Text
 		} else {
-			return GenerateResponse{}, errors.New("invalid response from Cohere")
+			return providers.GenerateResponse{}, errors.New("invalid response from Cohere")
 		}
 	}
 
-	return GenerateResponse{Provider: provider.Name, Response: ResponseTokens{
+	return providers.GenerateResponse{Provider: provider.Name, Response: providers.ResponseTokens{
 		Role:    role,
 		Model:   model,
 		Content: content,
 	}}, nil
+}
+
+func getSystemMessage(messages []providers.GenerateMessage) string {
+	for _, message := range messages {
+		if message.Role == "system" {
+			return message.Content
+		}
+	}
+	return ""
+}
+
+func getUserMessage(messages []providers.GenerateMessage) string {
+	var prompt string
+	for _, message := range messages {
+		if message.Role == "user" {
+			prompt += message.Content
+		}
+	}
+	return prompt
 }
