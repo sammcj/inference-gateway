@@ -138,6 +138,8 @@ This project is licensed under the MIT License.
 Found a bug, missing provider, or have a feature in mind?  
 You're more than welcome to submit pull requests or open issues for any fixes, improvements, or new ideas!
 
+Please read the [CONTRIBUTING.md](./CONTRIBUTING.md) for more details.
+
 ## Motivation
 
 My motivation is to build AI Agents without being tied to a single vendor. By avoiding vendor lock-in and supporting self-hosted LLMs from a single interface, organizations gain both portability and data privacy. You can choose to consume LLMs from a cloud provider or run them entirely offline with Ollama.
