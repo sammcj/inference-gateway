@@ -68,6 +68,7 @@ func (router *RouterImpl) ValidateProvider(provider string) (*Provider, bool) {
 		"google":     {Name: "Google", URL: cfg.GoogleAIStudioURL, ProxyURL: "http://localhost:8080/proxy/google", Token: cfg.GoogleAIStudioKey},
 		"cloudflare": {Name: "Cloudflare", URL: cfg.CloudflareAPIURL, ProxyURL: "http://localhost:8080/proxy/cloudflare", Token: cfg.CloudflareAPIKey},
 		"cohere":     {Name: "Cohere", URL: cfg.CohereAPIURL, ProxyURL: "http://localhost:8080/proxy/cohere", Token: cfg.CohereAPIKey},
+		"anthropic":  {Name: "Anthropic", URL: cfg.AnthropicAPIURL, ProxyURL: "http://localhost:8080/proxy/anthropic", Token: cfg.AnthropicAPIKey},
 	}
 
 	p, ok := providers[provider]
@@ -109,7 +110,7 @@ func (router *RouterImpl) ProxyHandler(c *gin.Context) {
 		router.logger.Error("provider token is missing", nil, "provider", provider)
 		c.JSON(http.StatusUnprocessableEntity, ErrorResponse{Error: "Provider token is missing"})
 		return
-	} else if provider.Name != "Google" {
+	} else if provider.Name != "Google" && provider.Name != "Anthropic" {
 		c.Request.Header.Set("Authorization", "Bearer "+provider.Token)
 	}
 
@@ -117,6 +118,11 @@ func (router *RouterImpl) ProxyHandler(c *gin.Context) {
 		query := c.Request.URL.Query()
 		query.Set("key", provider.Token)
 		c.Request.URL.RawQuery = query.Encode()
+	}
+
+	if provider.Name == "Anthropic" {
+		c.Request.Header.Set("x-api-key", provider.Token)
+		c.Request.Header.Set("anthropic-version", "2023-06-01")
 	}
 
 	c.Request.Header.Set("Content-Type", "application/json")
@@ -204,6 +210,7 @@ func (router *RouterImpl) FetchAllModelsHandler(c *gin.Context) {
 		"google":     "http://localhost:8080/proxy/google/v1beta/models",
 		"cloudflare": "http://localhost:8080/proxy/cloudflare/ai/finetunes/public",
 		"cohere":     "http://localhost:8080/proxy/cohere/v1/models",
+		"anthropic":  "http://localhost:8080/proxy/anthropic/v1/models",
 	}
 
 	ch := make(chan ModelResponse, len(modelProviders))
@@ -300,6 +307,7 @@ func (router *RouterImpl) GenerateProvidersTokenHandler(c *gin.Context) {
 		"Google":     "/v1beta/models/{model}:generateContent",
 		"Cloudflare": "/ai/run/@cf/meta/{model}",
 		"Cohere":     "/v2/chat",
+		"Anthropic":  "/v1/messages",
 	}
 
 	url, ok := providersEndpoints[provider.Name]
@@ -376,6 +384,12 @@ func generateTokens(provider *Provider, model string, messages []providers.Gener
 			Messages: messages,
 		}
 		response = &providers.GenerateResponseCohere{}
+	case "Anthropic":
+		payload = providers.GenerateRequestAnthropic{
+			Model:    model,
+			Messages: messages,
+		}
+		response = &providers.GenerateResponseAnthropic{}
 	default:
 		return providers.GenerateResponse{}, errors.New("provider not implemented")
 	}
@@ -444,6 +458,14 @@ func generateTokens(provider *Provider, model string, messages []providers.Gener
 			content = cohereResponse.Message.Content[0].Text
 		} else {
 			return providers.GenerateResponse{}, errors.New("invalid response from Cohere")
+		}
+	case "Anthropic":
+		anthropicResponse := response.(*providers.GenerateResponseAnthropic)
+		if len(anthropicResponse.Choices) > 0 && len(anthropicResponse.Choices[0].Message.Content) > 0 {
+			role = anthropicResponse.Choices[0].Message.Role
+			content = anthropicResponse.Choices[0].Message.Content
+		} else {
+			return providers.GenerateResponse{}, errors.New("invalid response from Anthropic")
 		}
 	}
 
