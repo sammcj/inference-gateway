@@ -141,3 +141,4 @@ components:
         - google
         - cloudflare
         - cohere
+        - anthropic
