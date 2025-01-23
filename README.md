@@ -125,6 +125,7 @@ The Inference Gateway can be configured using environment variables. The followi
 
 More SDKs could be generated using the OpenAPI specification. The following SDKs are currently available:
 
+- [Typescript](https://github.com/inference-gateway/typescript-sdk)
 - [Rust](https://github.com/inference-gateway/rust-sdk)
 - [Go](https://github.com/inference-gateway/go-sdk)
 - [Python](https://github.com/inference-gateway/python-sdk)
