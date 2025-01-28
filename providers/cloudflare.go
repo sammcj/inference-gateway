@@ -22,7 +22,7 @@ func (l *ListModelsResponseCloudflare) Transform() ListModelsResponse {
 		})
 	}
 	return ListModelsResponse{
-		Provider: CloudflareDisplayName,
+		Provider: CloudflareID,
 		Models:   models,
 	}
 }

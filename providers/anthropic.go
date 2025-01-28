@@ -27,7 +27,7 @@ func (l *ListModelsResponseAnthropic) Transform() ListModelsResponse {
 		})
 	}
 	return ListModelsResponse{
-		Provider: AnthropicDisplayName,
+		Provider: AnthropicID,
 		Models:   models,
 	}
 }

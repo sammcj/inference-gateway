@@ -28,7 +28,7 @@ func (l *ListModelsResponseOllama) Transform() ListModelsResponse {
 		})
 	}
 	return ListModelsResponse{
-		Provider: OllamaDisplayName,
+		Provider: OllamaID,
 		Models:   models,
 	}
 }

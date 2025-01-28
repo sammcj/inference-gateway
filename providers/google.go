@@ -27,7 +27,7 @@ func (l *ListModelsResponseGoogle) Transform() ListModelsResponse {
 		})
 	}
 	return ListModelsResponse{
-		Provider: GoogleDisplayName,
+		Provider: GoogleID,
 		Models:   models,
 	}
 }

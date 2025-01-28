@@ -22,7 +22,7 @@ func (l *ListModelsResponseCohere) Transform() ListModelsResponse {
 		})
 	}
 	return ListModelsResponse{
-		Provider: CohereDisplayName,
+		Provider: CohereID,
 		Models:   models,
 	}
 }

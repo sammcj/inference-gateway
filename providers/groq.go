@@ -23,7 +23,7 @@ func (l *ListModelsResponseGroq) Transform() ListModelsResponse {
 		})
 	}
 	return ListModelsResponse{
-		Provider: GroqDisplayName,
+		Provider: GroqID,
 		Models:   models,
 	}
 }
