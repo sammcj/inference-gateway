@@ -2,62 +2,78 @@ package config
 
 import (
 	"context"
+	"strings"
 	"time"
 
+	"github.com/inference-gateway/inference-gateway/providers"
 	"github.com/sethvargo/go-envconfig"
 )
 
-// Config holds the configuration for the Inference Gateway.
-//
-//go:generate go run ../cmd/generate/main.go -type=Env -output=../examples/docker-compose/.env.example
-//go:generate go run ../cmd/generate/main.go -type=ConfigMap -output=../examples/kubernetes/basic/inference-gateway/configmap.yaml
-//go:generate go run ../cmd/generate/main.go -type=Secret -output=../examples/kubernetes/basic/inference-gateway/secret.yaml
-//go:generate go run ../cmd/generate/main.go -type=ConfigMap -output=../examples/kubernetes/hybrid/inference-gateway/configmap.yaml
-//go:generate go run ../cmd/generate/main.go -type=Secret -output=../examples/kubernetes/hybrid/inference-gateway/secret.yaml
-//go:generate go run ../cmd/generate/main.go -type=ConfigMap -output=../examples/kubernetes/authentication/inference-gateway/configmap.yaml
-//go:generate go run ../cmd/generate/main.go -type=Secret -output=../examples/kubernetes/authentication/inference-gateway/secret.yaml
-//go:generate go run ../cmd/generate/main.go -type=ConfigMap -output=../examples/kubernetes/agent/inference-gateway/configmap.yaml
-//go:generate go run ../cmd/generate/main.go -type=Secret -output=../examples/kubernetes/agent/inference-gateway/secret.yaml
-//go:generate go run ../cmd/generate/main.go -type=MD -output=../Configurations.md
+// Config holds the configuration for the Inference Gateway
 type Config struct {
 	// General settings
-	ApplicationName  string `env:"APPLICATION_NAME, default=inference-gateway" description:"The name of the application"`
-	EnableTelemetry  bool   `env:"ENABLE_TELEMETRY, default=false" description:"Enable telemetry for the server"`
-	Environment      string `env:"ENVIRONMENT, default=production" description:"The environment in which the application is running"`
-	EnableAuth       bool   `env:"ENABLE_AUTH, default=false" description:"Enable authentication"`
-	OIDCIssuerURL    string `env:"OIDC_ISSUER_URL, default=http://keycloak:8080/realms/inference-gateway-realm" description:"The OIDC issuer URL"`
-	OIDCClientID     string `env:"OIDC_CLIENT_ID, default=inference-gateway-client" type:"secret" description:"The OIDC client ID"`
-	OIDCClientSecret string `env:"OIDC_CLIENT_SECRET" type:"secret" description:"The OIDC client secret"`
-
+	ApplicationName string `env:"APPLICATION_NAME, default=inference-gateway" description:"The name of the application"`
+	Environment     string `env:"ENVIRONMENT, default=production" description:"The environment"`
+	EnableTelemetry bool   `env:"ENABLE_TELEMETRY, default=false" description:"Enable telemetry"`
+	EnableAuth      bool   `env:"ENABLE_AUTH, default=false" description:"Enable authentication"`
+	// OIDC settings
+	OIDC *OIDC `env:", prefix=OIDC_" description:"OIDC configuration"`
 	// Server settings
-	ServerHost         string        `env:"SERVER_HOST, default=0.0.0.0" description:"The host address for the server"`
-	ServerPort         string        `env:"SERVER_PORT, default=8080" description:"The port on which the server will listen"`
-	ServerReadTimeout  time.Duration `env:"SERVER_READ_TIMEOUT, default=30s" description:"The server read timeout"`
-	ServerWriteTimeout time.Duration `env:"SERVER_WRITE_TIMEOUT, default=30s" description:"The server write timeout"`
-	ServerIdleTimeout  time.Duration `env:"SERVER_IDLE_TIMEOUT, default=120s" description:"The server idle timeout"`
-	ServerTLSCertPath  string        `env:"SERVER_TLS_CERT_PATH" description:"The path to the TLS certificate"`
-	ServerTLSKeyPath   string        `env:"SERVER_TLS_KEY_PATH" description:"The path to the TLS key"`
+	Server *ServerConfig `env:", prefix=SERVER_" description:"Server configuration"`
 
-	// API URLs and keys
-	OllamaAPIURL      string `env:"OLLAMA_API_URL, default=http://ollama:8080" description:"The URL for Ollama API"`
-	GroqAPIURL        string `env:"GROQ_API_URL, default=https://api.groq.com" description:"The URL for Groq Cloud API"`
-	GroqAPIKey        string `env:"GROQ_API_KEY" type:"secret" description:"The Access token for Groq Cloud API"`
-	OpenaiAPIURL      string `env:"OPENAI_API_URL, default=https://api.openai.com" description:"The URL for OpenAI API"`
-	OpenaiAPIKey      string `env:"OPENAI_API_KEY" type:"secret" description:"The Access token for OpenAI API"`
-	GoogleAIStudioURL string `env:"GOOGLE_AISTUDIO_API_URL, default=https://generativelanguage.googleapis.com" description:"The URL for Google AI Studio API"`
-	GoogleAIStudioKey string `env:"GOOGLE_AISTUDIO_API_KEY" type:"secret" description:"The Access token for Google AI Studio API"`
-	CloudflareAPIURL  string `env:"CLOUDFLARE_API_URL, default=https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}" description:"The URL for Cloudflare API"`
-	CloudflareAPIKey  string `env:"CLOUDFLARE_API_KEY" type:"secret" description:"The Access token for Cloudflare API"`
-	CohereAPIURL      string `env:"COHERE_API_URL, default=https://api.cohere.com" description:"The URL for Cohere API"`
-	CohereAPIKey      string `env:"COHERE_API_KEY" type:"secret" description:"The Access token for Cohere API"`
-	AnthropicAPIURL   string `env:"ANTHROPIC_API_URL, default=https://api.anthropic.com" description:"The URL for Anthropic API"`
-	AnthropicAPIKey   string `env:"ANTHROPIC_API_KEY" type:"secret" description:"The Access token for Anthropic API"`
+	// Providers map
+	Providers map[string]*providers.Config
 }
 
-// Load loads the configuration from environment variables.
-func (cfg *Config) Load() (Config, error) {
-	if err := envconfig.Process(context.Background(), cfg); err != nil {
+// OIDC configuration
+type OIDC struct {
+	IssuerUrl    string `env:"ISSUER_URL, default=http://keycloak:8080/realms/inference-gateway-realm" description:"OIDC issuer URL"`
+	ClientId     string `env:"CLIENT_ID, default=inference-gateway-client" type:"secret" description:"OIDC client ID"`
+	ClientSecret string `env:"CLIENT_SECRET" type:"secret" description:"OIDC client secret"`
+}
+
+// Server configuration
+type ServerConfig struct {
+	Host         string        `env:"HOST, default=0.0.0.0" description:"Server host"`
+	Port         string        `env:"PORT, default=8080" description:"Server port"`
+	ReadTimeout  time.Duration `env:"READ_TIMEOUT, default=30s" description:"Read timeout"`
+	WriteTimeout time.Duration `env:"WRITE_TIMEOUT, default=30s" description:"Write timeout"`
+	IdleTimeout  time.Duration `env:"IDLE_TIMEOUT, default=120s" description:"Idle timeout"`
+	TlsCertPath  string        `env:"TLS_CERT_PATH" description:"TLS certificate path"`
+	TlsKeyPath   string        `env:"TLS_KEY_PATH" description:"TLS key path"`
+}
+
+// Load configuration
+func (cfg *Config) Load(lookuper envconfig.Lookuper) (Config, error) {
+	if err := envconfig.ProcessWith(context.Background(), &envconfig.Config{
+		Target:   cfg,
+		Lookuper: lookuper,
+	}); err != nil {
 		return Config{}, err
 	}
+
+	// Initialize Providers map if nil
+	if cfg.Providers == nil {
+		cfg.Providers = make(map[string]*providers.Config)
+	}
+
+	// Set defaults for each provider
+	for id, defaults := range providers.Registry {
+		if _, exists := cfg.Providers[id]; !exists {
+			providerCfg := defaults
+			url, ok := lookuper.Lookup(strings.ToUpper(id) + "_API_URL")
+			if ok {
+				providerCfg.URL = url
+			}
+
+			token, ok := lookuper.Lookup(strings.ToUpper(id) + "_API_KEY")
+			if !ok {
+				println("Warn: provider " + id + " is not configured")
+			}
+			providerCfg.Token = token
+			cfg.Providers[id] = &providerCfg
+		}
+	}
+
 	return *cfg, nil
 }

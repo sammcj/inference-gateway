@@ -3,14 +3,13 @@ package main
 import (
 	"flag"
 	"fmt"
-	"go/ast"
-	"go/parser"
-	"go/token"
-	"os"
-	"reflect"
-	"strings"
 
-	config "github.com/inference-gateway/inference-gateway/config"
+	"os"
+
+	"github.com/inference-gateway/inference-gateway/internal/codegen"
+	"github.com/inference-gateway/inference-gateway/internal/dockergen"
+	"github.com/inference-gateway/inference-gateway/internal/kubegen"
+	"github.com/inference-gateway/inference-gateway/internal/mdgen"
 )
 
 var (
@@ -31,219 +30,63 @@ func main() {
 		os.Exit(1)
 	}
 
-	comments := parseStructComments("config.go", "Config")
-
 	switch _type {
 	case "Env":
-		generateEnvExample(output, comments)
+		fmt.Printf("Generating Dot Env to %s\n", output)
+		err := dockergen.GenerateEnvExample(output, "openapi.yaml")
+		if err != nil {
+			fmt.Printf("Error generating env example: %v\n", err)
+			os.Exit(1)
+		}
 	case "ConfigMap":
-		generateConfigMap(output, comments)
+		fmt.Printf("Generating Kubernetes ConfigMap to %s\n", output)
+		err := kubegen.GenerateConfigMap(output, "openapi.yaml")
+		if err != nil {
+			fmt.Printf("Error generating config map: %v\n", err)
+			os.Exit(1)
+		}
 	case "Secret":
-		generateSecret(output, comments)
+		fmt.Printf("Generating Kubernetes Secret to %s\n", output)
+		err := kubegen.GenerateSecret(output, "openapi.yaml")
+		if err != nil {
+			fmt.Printf("Error generating secret: %v\n", err)
+			os.Exit(1)
+		}
 	case "MD":
-		generateMD(output, comments)
+		fmt.Printf("Generating Markdown to %s\n", output)
+		err := mdgen.GenerateConfigurationsMD(output, "openapi.yaml")
+		if err != nil {
+			fmt.Printf("Error generating MD: %v\n", err)
+			os.Exit(1)
+		}
+	case "ProvidersCommonTypes":
+		fmt.Printf("Generating providers common types to %s\n", output)
+		err := codegen.GenerateCommonTypes("providers/common_types.go", "openapi.yaml")
+		if err != nil {
+			fmt.Printf("Error generating providers common types: %v\n", err)
+			os.Exit(1)
+		}
+	case "Providers":
+		fmt.Printf("Generating Go Providers to directory %s\n", output)
+		if err := codegen.GenerateProviders(output, "openapi.yaml"); err != nil {
+			fmt.Printf("Error generating providers: %v\n", err)
+			os.Exit(1)
+		}
+		fmt.Printf("Generating Go Providers registry to directory %s\n", output)
+		err := codegen.GenerateProvidersRegistry("providers/registry.go", "openapi.yaml")
+		if err != nil {
+			fmt.Printf("Error generating providers registry: %v\n", err)
+			os.Exit(1)
+		}
+	case "Config":
+		fmt.Printf("Generating Go Config to %s\n", output)
+		err := codegen.GenerateConfig(output, "openapi.yaml")
+		if err != nil {
+			fmt.Printf("Error generating config: %v\n", err)
+			os.Exit(1)
+		}
 	default:
 		fmt.Println("Invalid type specified")
 		os.Exit(1)
-	}
-}
-
-func parseStructComments(filename, structName string) map[string]string {
-	fset := token.NewFileSet()
-	node, err := parser.ParseFile(fset, filename, nil, parser.ParseComments)
-	if err != nil {
-		fmt.Printf("Error parsing file: %v\n", err)
-		os.Exit(1)
-	}
-
-	comments := make(map[string]string)
-	ast.Inspect(node, func(n ast.Node) bool {
-		ts, ok := n.(*ast.TypeSpec)
-		if !ok || ts.Name.Name != structName {
-			return true
-		}
-
-		st, ok := ts.Type.(*ast.StructType)
-		if !ok {
-			return true
-		}
-
-		for _, field := range st.Fields.List {
-			if field.Doc != nil {
-				for _, comment := range field.Doc.List {
-					comments[field.Names[0].Name] = strings.TrimSpace(strings.TrimPrefix(comment.Text, "//"))
-				}
-			}
-		}
-		return false
-	})
-
-	return comments
-}
-
-func generateEnvExample(filePath string, comments map[string]string) {
-	var cfg config.Config
-	v := reflect.ValueOf(cfg)
-	t := v.Type()
-
-	var sb strings.Builder
-	for i := 0; i < t.NumField(); i++ {
-		field := t.Field(i)
-		envTag := field.Tag.Get("env")
-		if envTag == "" {
-			continue
-		}
-		envParts := strings.Split(envTag, ",")
-		envName := envParts[0]
-		defaultValue := ""
-		for _, part := range envParts {
-			part = strings.Trim(part, " ")
-			if strings.HasPrefix(part, "default=") {
-				defaultValue = strings.TrimPrefix(part, "default=")
-				break
-			}
-		}
-		if comment, ok := comments[field.Name]; ok {
-			sb.WriteString(fmt.Sprintf("# %s\n", comment))
-		}
-		sb.WriteString(fmt.Sprintf("%s=%s\n", envName, defaultValue))
-	}
-
-	err := os.WriteFile(filePath, []byte(sb.String()), 0644)
-	if err != nil {
-		fmt.Printf("Error writing %s: %v\n", filePath, err)
-	}
-}
-
-func generateConfigMap(filePath string, comments map[string]string) {
-	var cfg config.Config
-	v := reflect.ValueOf(cfg)
-	t := v.Type()
-
-	var sb strings.Builder
-	sb.WriteString("---\napiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: inference-gateway\n  namespace: inference-gateway\n  labels:\n    app: inference-gateway\ndata:\n")
-
-	for i := 0; i < t.NumField(); i++ {
-		field := t.Field(i)
-		envTag := field.Tag.Get("env")
-		typeTag := field.Tag.Get("type")
-		if typeTag == "secret" {
-			continue
-		}
-
-		if envTag == "" {
-			continue
-		}
-		envParts := strings.Split(envTag, ",")
-		envName := envParts[0]
-
-		defaultValue := ""
-		for _, part := range envParts {
-			part = strings.Trim(part, " ")
-			if strings.HasPrefix(part, "default=") {
-				if envName == "OLLAMA_API_URL" {
-					defaultValue = "http://ollama.ollama:8080"
-					break
-				}
-
-				if envName == "OIDC_ISSUER_URL" {
-					defaultValue = "http://keycloak.keycloak:8080/realms/inference-gateway-realm"
-					break
-				}
-
-				defaultValue = strings.TrimPrefix(part, "default=")
-				break
-			}
-		}
-		if comment, ok := comments[field.Name]; ok {
-			sb.WriteString(fmt.Sprintf("  # %s\n", comment))
-		}
-		sb.WriteString(fmt.Sprintf("  %s: \"%s\"\n", envName, defaultValue))
-	}
-
-	err := os.WriteFile(filePath, []byte(sb.String()), 0644)
-	if err != nil {
-		fmt.Printf("Error writing %s: %v\n", filePath, err)
-	}
-}
-
-func generateSecret(filePath string, comments map[string]string) {
-	var cfg config.Config
-	v := reflect.ValueOf(cfg)
-	t := v.Type()
-
-	var sb strings.Builder
-	sb.WriteString("---\napiVersion: v1\nkind: Secret\nmetadata:\n  name: inference-gateway\n  namespace: inference-gateway\n  labels:\n    app: inference-gateway\ntype: Opaque\nstringData:\n")
-
-	for i := 0; i < t.NumField(); i++ {
-		field := t.Field(i)
-		envTag := field.Tag.Get("env")
-		typeTag := field.Tag.Get("type")
-		if typeTag != "secret" {
-			continue
-		}
-
-		if envTag == "" {
-			continue
-		}
-		envParts := strings.Split(envTag, ",")
-		envName := envParts[0]
-
-		if comment, ok := comments[field.Name]; ok {
-			sb.WriteString(fmt.Sprintf("  # %s\n", comment))
-		}
-		sb.WriteString(fmt.Sprintf("  %s: \"\"\n", envName))
-	}
-
-	err := os.WriteFile(filePath, []byte(sb.String()), 0644)
-	if err != nil {
-		fmt.Printf("Error writing %s: %v\n", filePath, err)
-	}
-}
-
-func generateMD(filePath string, comments map[string]string) {
-	var cfg config.Config
-	v := reflect.ValueOf(cfg)
-	t := v.Type()
-
-	var sb strings.Builder
-	sb.WriteString("# Inference Gateway Configuration\n")
-
-	currentGroup := ""
-	for i := 0; i < t.NumField(); i++ {
-		field := t.Field(i)
-		envTag := field.Tag.Get("env")
-		if envTag == "" {
-			continue
-		}
-		envParts := strings.Split(envTag, ",")
-		envName := envParts[0]
-		description := field.Tag.Get("description")
-		defaultValue := ""
-		for _, part := range envParts {
-			part = strings.Trim(part, " ")
-			if strings.HasPrefix(part, "default=") {
-				defaultValue = strings.TrimPrefix(part, "default=")
-				break
-			}
-		}
-
-		group := comments[field.Name]
-		if group != currentGroup {
-			if group != "" {
-				sb.WriteString("\n")
-				sb.WriteString(fmt.Sprintf("## %s\n\n", group))
-				sb.WriteString("| Key | Default Value | Description |\n")
-				sb.WriteString("| --- | ------------- | ----------- |\n")
-				currentGroup = group
-			}
-		}
-
-		sb.WriteString(fmt.Sprintf("| %s | %s | %s |\n", envName, defaultValue, description))
-	}
-
-	err := os.WriteFile(filePath, []byte(sb.String()), 0644)
-	if err != nil {
-		fmt.Printf("Error writing %s: %v\n", filePath, err)
 	}
 }

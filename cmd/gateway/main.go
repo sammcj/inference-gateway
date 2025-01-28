@@ -15,11 +15,13 @@ import (
 	config "github.com/inference-gateway/inference-gateway/config"
 	l "github.com/inference-gateway/inference-gateway/logger"
 	otel "github.com/inference-gateway/inference-gateway/otel"
+	providers "github.com/inference-gateway/inference-gateway/providers"
+	"github.com/sethvargo/go-envconfig"
 )
 
 func main() {
 	var config config.Config
-	cfg, err := config.Load()
+	cfg, err := config.Load(envconfig.OsLookuper())
 	if err != nil {
 		log.Printf("Config load error: %v", err)
 		return
@@ -57,43 +59,66 @@ func main() {
 		defer span.End()
 	}
 
-	oidcAuthenticator, err := middlewares.NewOIDCAuthenticator(logger, cfg)
+	loggerMiddleware, err := middlewares.NewLoggerMiddleware(&logger)
+	if err != nil {
+		logger.Error("Failed to initialize logger middleware: %v", err)
+		return
+	}
+
+	var telemetry middlewares.Telemetry
+	if cfg.EnableTelemetry {
+		telemetry, err = middlewares.NewTelemetryMiddleware(cfg, tp)
+		if err != nil {
+			logger.Error("Failed to initialize telemetry middleware: %v", err)
+			return
+		}
+	}
+
+	oidcAuthenticator, err := middlewares.NewOIDCAuthenticatorMiddleware(logger, cfg)
 	if err != nil {
 		logger.Error("Failed to initialize OIDC authenticator: %v", err)
 		return
 	}
 
-	api := api.NewRouter(cfg, logger, tp)
+	scheme := "http"
+	if cfg.Server.TlsCertPath != "" && cfg.Server.TlsKeyPath != "" {
+		scheme = "https"
+	}
+
+	clientTransport := providers.NewTransport(cfg.Server.ReadTimeout)
+	client := providers.NewClient(scheme, cfg.Server.Host, cfg.Server.Port, cfg.Server.ReadTimeout, clientTransport)
+
+	api := api.NewRouter(cfg, &logger, client)
 	r := gin.New()
-	r.Use(func(c *gin.Context) {
-		logger.Info("Request received", "method", c.Request.Method, "host", c.Request.Host, "path", c.Request.URL.Path)
-		c.Next()
-	})
+	r.Use(loggerMiddleware.Middleware())
+	if cfg.EnableTelemetry {
+		r.Use(telemetry.Middleware())
+	}
 	r.Use(oidcAuthenticator.Middleware())
 
-	r.GET("/llms", api.FetchAllModelsHandler)
+	r.GET("/llms", api.ListAllModelsHandler)
+	r.GET("/llms/:provider", api.ListModelsHandler)
 	r.POST("/llms/:provider/generate", api.GenerateProvidersTokenHandler)
-	r.GET("/proxy/:provider/*path", api.ProxyHandler)
-	r.POST("/proxy/:provider/*path", api.ProxyHandler)
+	r.Any("/proxy/:provider/*path", api.ProxyHandler)
 	r.GET("/health", api.HealthcheckHandler)
 	r.NoRoute(api.NotFoundHandler)
 
 	server := &http.Server{
-		Addr:         cfg.ServerHost + ":" + cfg.ServerPort,
+		Addr:         cfg.Server.Host + ":" + cfg.Server.Port,
 		Handler:      r,
-		ReadTimeout:  cfg.ServerReadTimeout,
-		WriteTimeout: cfg.ServerWriteTimeout,
-		IdleTimeout:  cfg.ServerIdleTimeout,
+		ReadTimeout:  cfg.Server.ReadTimeout,
+		WriteTimeout: cfg.Server.WriteTimeout,
+		IdleTimeout:  cfg.Server.IdleTimeout,
 	}
 
-	if cfg.ServerTLSCertPath != "" && cfg.ServerTLSKeyPath != "" {
+	if cfg.Server.TlsCertPath != "" && cfg.Server.TlsKeyPath != "" {
 		go func() {
 			if cfg.EnableTelemetry {
 				span.AddEvent("Starting Inference Gateway with TLS")
 			}
-			logger.Info("Starting Inference Gateway with TLS", "port", cfg.ServerPort)
+			logger.Info("Starting Inference Gateway with TLS", "port", cfg.Server.Port)
 
-			if err := server.ListenAndServeTLS(cfg.ServerTLSCertPath, cfg.ServerTLSKeyPath); err != nil && err != http.ErrServerClosed {
+			if err := server.ListenAndServeTLS(cfg.Server.TlsCertPath, cfg.Server.TlsKeyPath); err != nil && err != http.ErrServerClosed {
 				logger.Error("ListenAndServeTLS error", err)
 			}
 		}()
@@ -102,7 +127,7 @@ func main() {
 			if cfg.EnableTelemetry {
 				span.AddEvent("Starting Inference Gateway")
 			}
-			logger.Info("Starting Inference Gateway", "port", cfg.ServerPort)
+			logger.Info("Starting Inference Gateway", "port", cfg.Server.Port)
 
 			if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 				logger.Error("ListenAndServe error", err)
