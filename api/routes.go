@@ -145,11 +145,6 @@ func (router *RouterImpl) HealthcheckHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, ResponseJSON{Message: "OK"})
 }
 
-type ModelResponse struct {
-	Provider string        `json:"provider"`
-	Models   []interface{} `json:"models"`
-}
-
 func (router *RouterImpl) ListModelsHandler(c *gin.Context) {
 	provider, err := providers.NewProvider(router.cfg.Providers, c.Param("provider"), &router.logger, &router.client)
 	if err != nil {
@@ -189,19 +184,23 @@ func (router *RouterImpl) ListAllModelsHandler(c *gin.Context) {
 				router.logger.Error("failed to create provider", err)
 				ch <- providers.ListModelsResponse{
 					Provider: id,
-					Models:   []providers.Model{},
+					Models:   make([]providers.Model, 0),
 				}
 				return
 			}
 
 			response, err := provider.ListModels()
 			if err != nil {
-				router.logger.Error("failed to list models", err, "provider", provider)
+				router.logger.Error("failed to list models", err, "provider", id)
 				ch <- providers.ListModelsResponse{
 					Provider: id,
-					Models:   []providers.Model{},
+					Models:   make([]providers.Model, 0),
 				}
 				return
+			}
+
+			if response.Models == nil {
+				response.Models = make([]providers.Model, 0)
 			}
 			ch <- response
 		}(providerID)
