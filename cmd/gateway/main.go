@@ -85,8 +85,11 @@ func main() {
 		scheme = "https"
 	}
 
-	clientTransport := providers.NewTransport(cfg.Server.ReadTimeout)
-	client := providers.NewClient(scheme, cfg.Server.Host, cfg.Server.Port, cfg.Server.ReadTimeout, clientTransport)
+	clientConfig, err := providers.NewClientConfig()
+	if err != nil {
+		log.Fatalf("failed to initialize client configuration: %v", err)
+	}
+	client := providers.NewHTTPClient(clientConfig, scheme, cfg.Server.Host, cfg.Server.Port)
 
 	api := api.NewRouter(cfg, &logger, client)
 	r := gin.New()

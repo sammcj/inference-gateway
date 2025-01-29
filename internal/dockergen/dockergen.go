@@ -20,9 +20,7 @@ func GenerateEnvExample(output string, oas string) error {
 {{- range $name, $section := $section }}
 # {{ $section.Title }}
 {{- range $setting := $section.Settings }}
-{{- range $field := $setting }}
-{{ $field.Env }}={{ if $field.Default }}{{ $field.Default }}{{ end }}
-{{- end }}
+{{ $setting.Env }}={{ if $setting.Default }}{{ $setting.Default }}{{ end }}
 {{- end }}
 {{- end }}
 {{- end }}

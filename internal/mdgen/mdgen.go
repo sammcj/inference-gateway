@@ -17,23 +17,19 @@ func GenerateConfigurationsMD(filePath string, oas string) error {
 		return fmt.Errorf("failed to read OpenAPI spec: %w", err)
 	}
 
-	tmpl := `# Inference Gateway Configuration
-
-{{- range $section := .Sections }}
-{{- range $name, $section := $section }}
-## {{ $section.Title }}
-
-| Environment Variable | Default Value | Description |
-|---------------------|---------------|-------------|
-{{- range $setting := $section.Settings }}
-{{- range $field := $setting }}
-| {{ $field.Env }} | ` + "`{{ if $field.Default }}{{ $field.Default }}{{ else }}\"\"{{ end }}`" + ` | {{ $field.Description }} |
-{{- end }}
-{{- end }}
-
-{{- end }}
-{{- end }}
-`
+	const mdTemplate = `# Configuration Reference
+	
+	{{- range $section := .Sections }}
+	## {{ .Title }}
+	
+	| Environment Variable | Default Value | Description |
+	|---------------------|---------------|-------------|
+	{{- range .Settings }}
+	| {{ .Env }} | ` + "`{{ if .Default }}{{ .Default }}{{ else }}\"\"{{ end }}`" + ` | {{ .Description }} |
+	{{- end }}
+	
+	{{- end }}
+	`
 
 	// Create template with functions
 	funcMap := template.FuncMap{
@@ -41,7 +37,7 @@ func GenerateConfigurationsMD(filePath string, oas string) error {
 		"title": cases.Title(language.English).String,
 	}
 
-	t, err := template.New("configurations").Funcs(funcMap).Parse(tmpl)
+	t, err := template.New("configurations").Funcs(funcMap).Parse(mdTemplate)
 	if err != nil {
 		return fmt.Errorf("failed to parse template: %w", err)
 	}

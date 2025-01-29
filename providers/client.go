@@ -1,11 +1,14 @@
 package providers
 
 import (
+	"context"
 	"crypto/tls"
 	"io"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/sethvargo/go-envconfig"
 )
 
 //go:generate mockgen -source=client.go -destination=../tests/mocks/client.go -package=mocks
@@ -22,45 +25,45 @@ type ClientImpl struct {
 	client   *http.Client
 }
 
-func NewClient(scheme, hostname, port string, timeout time.Duration, transport *http.Transport) Client {
+type ClientConfig struct {
+	ClientTimeout             time.Duration `env:"CLIENT_TIMEOUT, default=30s" description:"Client timeout"`
+	ClientMaxIdleConns        int           `env:"CLIENT_MAX_IDLE_CONNS, default=20" description:"Maximum idle connections"`
+	ClientMaxIdleConnsPerHost int           `env:"CLIENT_MAX_IDLE_CONNS_PER_HOST, default=20" description:"Maximum idle connections per host"`
+	ClientIdleConnTimeout     time.Duration `env:"CLIENT_IDLE_CONN_TIMEOUT, default=30s" description:"Idle connection timeout"`
+	ClientTlsMinVersion       string        `env:"CLIENT_TLS_MIN_VERSION, default=TLS12" description:"Minimum TLS version"`
+}
+
+func NewClientConfig() (*ClientConfig, error) {
+	var cfg ClientConfig
+	if err := envconfig.Process(context.Background(), &cfg); err != nil {
+		return nil, err
+	}
+	return &cfg, nil
+}
+
+func NewHTTPClient(cfg *ClientConfig, scheme, hostname, port string) Client {
+	var tlsMinVersion uint16 = tls.VersionTLS12
+	if cfg.ClientTlsMinVersion == "TLS13" {
+		tlsMinVersion = tls.VersionTLS13
+	}
+
+	httpClient := &http.Client{
+		Timeout: cfg.ClientTimeout,
+		Transport: &http.Transport{
+			MaxIdleConns:        cfg.ClientMaxIdleConns,
+			MaxIdleConnsPerHost: cfg.ClientMaxIdleConnsPerHost,
+			IdleConnTimeout:     cfg.ClientIdleConnTimeout,
+			TLSClientConfig: &tls.Config{
+				MinVersion: tlsMinVersion,
+			},
+		},
+	}
+
 	return &ClientImpl{
 		scheme:   scheme,
 		hostname: hostname,
 		port:     port,
-		client: &http.Client{
-			Timeout: timeout,
-			Transport: &http.Transport{
-				// Increase connection pool for parallel requests
-				MaxIdleConns:        100,
-				MaxIdleConnsPerHost: 100,
-				// Add reasonable timeouts
-				IdleConnTimeout:   timeout,
-				DisableKeepAlives: false,
-				// TLS configuration for HTTPS
-				TLSClientConfig: &tls.Config{
-					MinVersion: tls.VersionTLS12,
-				},
-				// Enable HTTP/2 support
-				ForceAttemptHTTP2: true,
-			},
-		},
-	}
-}
-
-func NewTransport(timeout time.Duration) *http.Transport {
-	return &http.Transport{
-		// Increase connection pool for parallel requests
-		MaxIdleConns:        100,
-		MaxIdleConnsPerHost: 100,
-		// Add reasonable timeouts
-		IdleConnTimeout:   timeout,
-		DisableKeepAlives: false,
-		// TLS configuration for HTTPS
-		TLSClientConfig: &tls.Config{
-			MinVersion: tls.VersionTLS12,
-		},
-		// Enable HTTP/2 support
-		ForceAttemptHTTP2: true,
+		client:   httpClient,
 	}
 }
 

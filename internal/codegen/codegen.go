@@ -58,51 +58,40 @@ func GenerateConfig(destination string, oas string) error {
 			}
 			return strings.Join(parts, "")
 		},
-		"fieldType": func(env string, fieldType string) string {
-			if strings.HasPrefix(env, "ENABLE_") {
-				return "bool"
-			}
-			if strings.HasSuffix(env, "_TIMEOUT") {
-				return "time.Duration"
-			}
-			return "string"
-		},
 	}
 
 	tmpl := template.Must(template.New("config").Funcs(funcMap).Parse(`package config
-
+	
 import (
-    "context"
-    "strings"
-    "time"
+	"context"
+	"strings"
+	"time"
 
-    "github.com/inference-gateway/inference-gateway/providers"
-    "github.com/sethvargo/go-envconfig"
+	"github.com/inference-gateway/inference-gateway/providers"
+	"github.com/sethvargo/go-envconfig"
 )
 
 // Config holds the configuration for the Inference Gateway
 type Config struct {
-    {{- range $section := .Sections }}
-    {{- range $name, $section := $section }}
-    {{- if eq $name "general" }}
-    // {{ $section.Title }}
-    {{- range $setting := $section.Settings }}
-    {{- range $field := $setting }}
-    {{ pascalCase $field.Env }} {{ fieldType $field.Env "string" }} ` + "`env:\"{{ $field.Env }}{{if $field.Default}}, default={{$field.Default}}{{end}}\" description:\"{{$field.Description}}\"`" + `
-    {{- end }}
-    {{- end }}
-    {{- else if eq $name "oidc" }}
-    // OIDC settings
-    OIDC *OIDC ` + "`env:\", prefix=OIDC_\" description:\"OIDC configuration\"`" + `
-    {{- else if eq $name "server" }}
-    // Server settings
-    Server *ServerConfig ` + "`env:\", prefix=SERVER_\" description:\"Server configuration\"`" + `
-    {{- end }}
-    {{- end }}
-    {{- end }}
+	{{- range $section := .Sections }}
+	{{- range $name, $section := $section }}
+	{{- if eq $name "general" }}
+	// {{ $section.Title }}
+	{{- range $field := $section.Settings }}
+	{{ pascalCase $field.Env }} {{ $field.Type }} ` + "`env:\"{{ $field.Env }}{{if $field.Default}}, default={{$field.Default}}{{end}}\" description:\"{{$field.Description}}\"`" + `
+	{{- end }}
+	{{- else if eq $name "oidc" }}
+	// OIDC settings
+	OIDC *OIDC ` + "`env:\", prefix=OIDC_\" description:\"OIDC configuration\"`" + `
+	{{- else if eq $name "server" }}
+	// Server settings
+	Server *ServerConfig ` + "`env:\", prefix=SERVER_\" description:\"Server configuration\"`" + `
+	{{- end }}
+	{{- end }}
+	{{- end }}
 
-    // Providers map
-    Providers map[string]*providers.Config
+	// Providers map
+	Providers map[string]*providers.Config
 }
 
 {{- range $section := .Sections }}
@@ -111,21 +100,17 @@ type Config struct {
 
 // OIDC configuration
 type OIDC struct {
-    {{- range $setting := $section.Settings }}
-    {{- range $field := $setting }}
-    {{ pascalCase (trimPrefix $field.Env "OIDC_") }} string ` + "`env:\"{{ trimPrefix $field.Env \"OIDC_\" }}{{if $field.Default}}, default={{$field.Default}}{{end}}\"{{if $field.Secret}} type:\"secret\"{{end}} description:\"{{$field.Description}}\"`" + `
-    {{- end }}
-    {{- end }}
+	{{- range $field := $section.Settings }}
+	{{ pascalCase (trimPrefix $field.Env "OIDC_") }} string ` + "`env:\"{{ trimPrefix $field.Env \"OIDC_\" }}{{if $field.Default}}, default={{$field.Default}}{{end}}\"{{if $field.Secret}} type:\"secret\"{{end}} description:\"{{$field.Description}}\"`" + `
+	{{- end }}
 }
 {{- else if eq $name "server" }}
 
 // Server configuration
 type ServerConfig struct {
-    {{- range $setting := $section.Settings }}
-    {{- range $field := $setting }}
-    {{ pascalCase (trimPrefix $field.Env "SERVER_") }} {{ fieldType $field.Env "string" }} ` + "`env:\"{{ trimPrefix $field.Env \"SERVER_\" }}{{if $field.Default}}, default={{$field.Default}}{{end}}\" description:\"{{$field.Description}}\"`" + `
-    {{- end }}
-    {{- end }}
+	{{- range $field := $section.Settings }}
+	{{ pascalCase (trimPrefix $field.Env "SERVER_") }} {{ $field.Type }} ` + "`env:\"{{ trimPrefix $field.Env \"SERVER_\" }}{{if $field.Default}}, default={{$field.Default}}{{end}}\" description:\"{{$field.Description}}\"`" + `
+	{{- end }}
 }
 {{- end }}
 {{- end }}
@@ -133,37 +118,37 @@ type ServerConfig struct {
 
 // Load configuration
 func (cfg *Config) Load(lookuper envconfig.Lookuper) (Config, error) {
-    if err := envconfig.ProcessWith(context.Background(), &envconfig.Config{
-        Target:   cfg,
-        Lookuper: lookuper,
-    }); err != nil {
-        return Config{}, err
-    }
+	if err := envconfig.ProcessWith(context.Background(), &envconfig.Config{
+		Target:   cfg,
+		Lookuper: lookuper,
+	}); err != nil {
+		return Config{}, err
+	}
 
-    // Initialize Providers map if nil
-    if cfg.Providers == nil {
-        cfg.Providers = make(map[string]*providers.Config)
-    }
+	// Initialize Providers map if nil
+	if cfg.Providers == nil {
+		cfg.Providers = make(map[string]*providers.Config)
+	}
 
-    // Set defaults for each provider
-    for id, defaults := range providers.Registry {
-        if _, exists := cfg.Providers[id]; !exists {
-            providerCfg := defaults
-            url, ok := lookuper.Lookup(strings.ToUpper(id) + "_API_URL")
-            if ok {
-                providerCfg.URL = url
-            }
+	// Set defaults for each provider
+	for id, defaults := range providers.Registry {
+		if _, exists := cfg.Providers[id]; !exists {
+			providerCfg := defaults
+			url, ok := lookuper.Lookup(strings.ToUpper(id) + "_API_URL")
+			if ok {
+				providerCfg.URL = url
+			}
 
-            token, ok := lookuper.Lookup(strings.ToUpper(id) + "_API_KEY")
-            if !ok {
-                println("Warn: provider " + id + " is not configured")
-            }
-            providerCfg.Token = token
-            cfg.Providers[id] = &providerCfg
-        }
-    }
+			token, ok := lookuper.Lookup(strings.ToUpper(id) + "_API_KEY")
+			if !ok {
+				println("Warn: provider " + id + " is not configured")
+			}
+			providerCfg.Token = token
+			cfg.Providers[id] = &providerCfg
+		}
+	}
 
-    return *cfg, nil
+	return *cfg, nil
 }`))
 
 	data := struct {
@@ -352,6 +337,156 @@ type {{$name}} struct {
 		return err
 	}
 
+	cmd := exec.Command("go", "fmt", destination)
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("failed to format %s: %w", destination, err)
+	}
+
+	return nil
+}
+
+func GenerateProvidersClientConfig(destination, oas string) error {
+	schema, err := openapi.Read(oas)
+	if err != nil {
+		return fmt.Errorf("failed to read OpenAPI spec: %w", err)
+	}
+
+	var clientSection openapi.Section
+	for _, sectionMap := range schema.Components.Schemas.Config.XConfig.Sections {
+		for name, section := range sectionMap {
+			if name == "client" {
+				clientSection = section
+				break
+			}
+		}
+	}
+
+	if clientSection.Title == "" {
+		return fmt.Errorf("client configuration not found in OpenAPI spec")
+	}
+
+	funcMap := template.FuncMap{
+		"pascalCase": func(s string) string {
+			parts := strings.Split(s, "_")
+			for i, part := range parts {
+				parts[i] = cases.Title(language.English).String(strings.ToLower(part))
+			}
+			return strings.Join(parts, "")
+		},
+	}
+
+	const clientTemplate = `package providers
+
+import (
+    "context"
+    "crypto/tls"
+    "io"
+    "net/http"
+    "strings"
+    "time"
+
+    "github.com/sethvargo/go-envconfig"
+)
+
+//go:generate mockgen -source=client.go -destination=../tests/mocks/client.go -package=mocks
+type Client interface {
+    Do(req *http.Request) (*http.Response, error)
+    Get(url string) (*http.Response, error)
+    Post(url string, bodyType string, body string) (*http.Response, error)
+}
+
+type ClientImpl struct {
+    scheme   string
+    hostname string
+    port     string
+    client   *http.Client
+}
+
+type ClientConfig struct {
+    {{- range $setting := .ClientSettings }}
+    {{ pascalCase $setting.Env }} {{ $setting.Type }} ` + "`env:\"{{ $setting.Env }}, default={{ $setting.Default }}\" description:\"{{ $setting.Description }}\"`" + `
+    {{- end }}
+}
+
+func NewClientConfig() (*ClientConfig, error) {
+    var cfg ClientConfig
+    if err := envconfig.Process(context.Background(), &cfg); err != nil {
+        return nil, err
+    }
+    return &cfg, nil
+}
+
+func NewHTTPClient(cfg *ClientConfig, scheme, hostname, port string) Client {
+    var tlsMinVersion uint16 = tls.VersionTLS12
+    if cfg.ClientTlsMinVersion == "TLS13" {
+        tlsMinVersion = tls.VersionTLS13
+    }
+
+    httpClient := &http.Client{
+        Timeout: cfg.ClientTimeout,
+        Transport: &http.Transport{
+            MaxIdleConns:        cfg.ClientMaxIdleConns,
+            MaxIdleConnsPerHost: cfg.ClientMaxIdleConnsPerHost,
+            IdleConnTimeout:     cfg.ClientIdleConnTimeout,
+            TLSClientConfig: &tls.Config{
+                MinVersion: tlsMinVersion,
+            },
+        },
+    }
+
+    return &ClientImpl{
+        scheme:   scheme,
+        hostname: hostname,
+        port:     port,
+        client:   httpClient,
+    }
+}
+
+func (c *ClientImpl) Do(req *http.Request) (*http.Response, error) {
+    req.URL.Scheme = c.scheme
+    req.URL.Host = c.hostname + ":" + c.port
+
+    return c.client.Do(req)
+}
+
+func (c *ClientImpl) Get(url string) (*http.Response, error) {
+    fullURL := c.scheme + "://" + c.hostname + ":" + c.port + url
+    return c.client.Get(fullURL)
+}
+
+func (c *ClientImpl) Post(url string, bodyType string, body string) (*http.Response, error) {
+    fullURL := c.scheme + "://" + c.hostname + ":" + c.port + url
+    req, err := http.NewRequest("POST", fullURL, nil)
+    if err != nil {
+        return nil, err
+    }
+    req.Header.Set("Content-Type", bodyType)
+    req.Body = io.NopCloser(strings.NewReader(body))
+    return c.client.Do(req)
+}`
+
+	tmpl, err := template.New("client").Funcs(funcMap).Parse(clientTemplate)
+	if err != nil {
+		return fmt.Errorf("failed to parse template: %w", err)
+	}
+
+	data := struct {
+		ClientSettings []openapi.Setting
+	}{
+		ClientSettings: clientSection.Settings,
+	}
+
+	f, err := os.Create(destination)
+	if err != nil {
+		return fmt.Errorf("failed to create file: %w", err)
+	}
+	defer f.Close()
+
+	if err := tmpl.Execute(f, data); err != nil {
+		return fmt.Errorf("failed to execute template: %w", err)
+	}
+
+	// Format generated code
 	cmd := exec.Command("go", "fmt", destination)
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("failed to format %s: %w", destination, err)

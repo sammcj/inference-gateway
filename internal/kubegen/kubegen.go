@@ -20,38 +20,21 @@ func GenerateSecret(filePath string, oas string) error {
 apiVersion: v1
 kind: Secret
 metadata:
-name: inference-gateway
-namespace: inference-gateway
-labels:
-app: inference-gateway
+  name: inference-gateway
+  namespace: inference-gateway
+  labels:
+    app: inference-gateway
 stringData:
   {{- range $section := .Sections }}
   {{- range $name, $section := $section }}
-  {{- $hasSecrets := false }}
-  {{- range $setting := $section.Settings }}
-  {{- range $field := $setting }}
-  {{- if $field.Secret }}
-  {{- $hasSecrets = true }}
-  {{- end }}
-  {{- end }}
-  {{- end }}
-  {{- if $hasSecrets }}
+  {{- if or (eq $name "oidc") (eq $name "providers") }}
   # {{ $section.Title }}
   {{- range $setting := $section.Settings }}
-  {{- range $field := $setting }}
-  {{- if $field.Secret }}
-  {{- if not (eq $field.Env "{key}_API_KEY") }}
-  {{ $field.Env }}: "{{ if $field.Default }}{{ $field.Default }}{{ end }}"
+  {{- if $setting.Secret }}
+  {{ $setting.Env }}: "{{ if $setting.Default }}{{ $setting.Default }}{{ end }}"
   {{- end }}
   {{- end }}
   {{- end }}
-  {{- end }}
-  {{- end }}
-  {{- end }}
-  {{- end }}
-  {{- if .Providers }}
-  {{- range $name, $provider := .Providers }}
-  {{ upper $name }}_API_KEY: ""
   {{- end }}
   {{- end }}
 `
@@ -108,10 +91,8 @@ data:
   {{- range $name, $section := $section }}
   # {{ $section.Title }}
   {{- range $setting := $section.Settings }}
-  {{- range $field := $setting }}
-  {{- if not $field.Secret }}
-  {{ $field.Env }}: "{{ if $field.Default }}{{ $field.Default }}{{ end }}"
-  {{- end }}
+  {{- if not $setting.Secret }}
+  {{ $setting.Env }}: "{{ if $setting.Default }}{{ $setting.Default }}{{ end }}"
   {{- end }}
   {{- end }}
   {{- end }}

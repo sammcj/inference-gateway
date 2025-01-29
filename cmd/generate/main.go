@@ -59,6 +59,13 @@ func main() {
 			fmt.Printf("Error generating MD: %v\n", err)
 			os.Exit(1)
 		}
+	case "ProvidersClientConfig":
+		fmt.Printf("Generating providers client config to %s\n", output)
+		err := codegen.GenerateProvidersClientConfig(output, "openapi.yaml")
+		if err != nil {
+			fmt.Printf("Error generating providers client config: %v\n", err)
+			os.Exit(1)
+		}
 	case "ProvidersCommonTypes":
 		fmt.Printf("Generating providers common types to %s\n", output)
 		err := codegen.GenerateCommonTypes("providers/common_types.go", "openapi.yaml")

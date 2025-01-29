@@ -448,149 +448,182 @@ components:
           - general:
               title: "General settings"
               settings:
-                - application_name:
-                    env: "APPLICATION_NAME"
-                    default: "inference-gateway"
-                    description: "The name of the application"
-                - environment:
-                    env: "ENVIRONMENT"
-                    default: "production"
-                    description: "The environment"
-                - enable_telemetry:
-                    env: "ENABLE_TELEMETRY"
-                    default: "false"
-                    description: "Enable telemetry"
-                - enable_auth:
-                    env: "ENABLE_AUTH"
-                    default: "false"
-                    description: "Enable authentication"
+                - name: application_name
+                  env: "APPLICATION_NAME"
+                  type: string
+                  default: "inference-gateway"
+                  description: "The name of the application"
+                - name: environment
+                  env: "ENVIRONMENT"
+                  type: string
+                  default: "production"
+                  description: "The environment"
+                - name: enable_telemetry
+                  env: "ENABLE_TELEMETRY"
+                  type: bool
+                  default: "false"
+                  description: "Enable telemetry"
+                - name: enable_auth
+                  env: "ENABLE_AUTH"
+                  type: bool
+                  default: "false"
+                  description: "Enable authentication"
           - oidc:
               title: "OpenID Connect"
               settings:
-                - issuer_url:
-                    env: "OIDC_ISSUER_URL"
-                    default: "http://keycloak:8080/realms/inference-gateway-realm"
-                    description: "OIDC issuer URL"
-                - client_id:
-                    env: "OIDC_CLIENT_ID"
-                    default: "inference-gateway-client"
-                    description: "OIDC client ID"
-                    secret: true
-                - client_secret:
-                    env: "OIDC_CLIENT_SECRET"
-                    description: "OIDC client secret"
-                    secret: true
+                - name: issuer_url
+                  env: "OIDC_ISSUER_URL"
+                  type: string
+                  default: "http://keycloak:8080/realms/inference-gateway-realm"
+                  description: "OIDC issuer URL"
+                - name: client_id
+                  env: "OIDC_CLIENT_ID"
+                  type: string
+                  default: "inference-gateway-client"
+                  description: "OIDC client ID"
+                  secret: true
+                - name: client_secret
+                  env: "OIDC_CLIENT_SECRET"
+                  type: string
+                  description: "OIDC client secret"
+                  secret: true
           - server:
               title: "Server settings"
               settings:
-                - host:
-                    env: "SERVER_HOST"
-                    default: "0.0.0.0"
-                    description: "Server host"
-                - port:
-                    env: "SERVER_PORT"
-                    default: "8080"
-                    description: "Server port"
-                - read_timeout:
-                    env: "SERVER_READ_TIMEOUT"
-                    default: "30s"
-                    description: "Read timeout"
-                - write_timeout:
-                    env: "SERVER_WRITE_TIMEOUT"
-                    default: "30s"
-                    description: "Write timeout"
-                - idle_timeout:
-                    env: "SERVER_IDLE_TIMEOUT"
-                    default: "120s"
-                    description: "Idle timeout"
-                - tls_cert_path:
-                    env: "SERVER_TLS_CERT_PATH"
-                    description: "TLS certificate path"
-                - tls_key_path:
-                    env: "SERVER_TLS_KEY_PATH"
-                    description: "TLS key path"
+                - name: host
+                  env: "SERVER_HOST"
+                  type: string
+                  default: "0.0.0.0"
+                  description: "Server host"
+                - name: port
+                  env: "SERVER_PORT"
+                  type: string
+                  default: "8080"
+                  description: "Server port"
+                - name: read_timeout
+                  env: "SERVER_READ_TIMEOUT"
+                  type: time.Duration
+                  default: "30s"
+                  description: "Read timeout"
+                - name: write_timeout
+                  env: "SERVER_WRITE_TIMEOUT"
+                  type: time.Duration
+                  default: "30s"
+                  description: "Write timeout"
+                - name: idle_timeout
+                  env: "SERVER_IDLE_TIMEOUT"
+                  type: time.Duration
+                  default: "120s"
+                  description: "Idle timeout"
+                - name: tls_cert_path
+                  env: "SERVER_TLS_CERT_PATH"
+                  type: string
+                  description: "TLS certificate path"
+                - name: tls_key_path
+                  env: "SERVER_TLS_KEY_PATH"
+                  type: string
+                  description: "TLS key path"
           - client:
               title: "Client settings"
               settings:
-                - timeout:
-                    env: "CLIENT_TIMEOUT"
-                    default: "30s"
-                    description: "Client timeout"
-                - max_idle_conns:
-                    env: "CLIENT_MAX_IDLE_CONNS"
-                    default: "100"
-                    description: "Maximum idle connections"
-                - max_idle_conns_per_host:
-                    env: "CLIENT_MAX_IDLE_CONNS_PER_HOST"
-                    default: "100"
-                    description: "Maximum idle connections per host"
-                - idle_conn_timeout:
-                    env: "CLIENT_IDLE_CONN_TIMEOUT"
-                    default: "90s"
-                    description: "Idle connection timeout"
-                - tls_min_version:
-                    env: "CLIENT_TLS_MIN_VERSION"
-                    default: "TLS12"
-                    description: "Minimum TLS version"
+                - name: timeout
+                  env: "CLIENT_TIMEOUT"
+                  type: time.Duration
+                  default: "30s"
+                  description: "Client timeout"
+                - name: max_idle_conns
+                  env: "CLIENT_MAX_IDLE_CONNS"
+                  type: int
+                  default: "20"
+                  description: "Maximum idle connections"
+                - name: max_idle_conns_per_host
+                  env: "CLIENT_MAX_IDLE_CONNS_PER_HOST"
+                  type: int
+                  default: "20"
+                  description: "Maximum idle connections per host"
+                - name: idle_conn_timeout
+                  env: "CLIENT_IDLE_CONN_TIMEOUT"
+                  type: time.Duration
+                  default: "30s"
+                  description: "Idle connection timeout"
+                - name: tls_min_version
+                  env: "CLIENT_TLS_MIN_VERSION"
+                  type: string
+                  default: "TLS12"
+                  description: "Minimum TLS version"
           - providers:
               title: "Providers"
               settings:
-                - anthropic_api_url:
-                    env: "ANTHROPIC_API_URL"
-                    default: "https://api.anthropic.com"
-                    description: "Anthropic API URL"
-                - anthropic_api_key:
-                    env: "ANTHROPIC_API_KEY"
-                    description: "Anthropic API Key"
-                    secret: true
-                - cloudflare_api_url:
-                    env: "CLOUDFLARE_API_URL"
-                    default: "https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}"
-                    description: "Cloudflare API URL"
-                - cloudflare_api_key:
-                    env: "CLOUDFLARE_API_KEY"
-                    description: "Cloudflare API Key"
-                    secret: true
-                - cohere_api_url:
-                    env: "COHERE_API_URL"
-                    default: "https://api.cohere.com"
-                    description: "Cohere API URL"
-                - cohere_api_key:
-                    env: "COHERE_API_KEY"
-                    description: "Cohere API Key"
-                    secret: true
-                - google_api_url:
-                    env: "GOOGLE_API_URL"
-                    default: "https://generativelanguage.googleapis.com"
-                    description: "Google API URL"
-                - google_api_key:
-                    env: "GOOGLE_API_KEY"
-                    description: "Google API Key"
-                    secret: true
-                - groq_api_url:
-                    env: "GROQ_API_URL"
-                    default: "https://api.groq.com"
-                    description: "Groq API URL"
-                - groq_api_key:
-                    env: "GROQ_API_KEY"
-                    description: "Groq API Key"
-                    secret: true
-                - ollama_api_url:
-                    env: "OLLAMA_API_URL"
-                    default: "http://ollama:8080"
-                    description: "Ollama API URL"
-                - ollama_api_key:
-                    env: "OLLAMA_API_KEY"
-                    description: "Ollama API Key"
-                    secret: true
-                - openai_api_url:
-                    env: "OPENAI_API_URL"
-                    default: "https://api.openai.com"
-                    description: "OpenAI API URL"
-                - openai_api_key:
-                    env: "OPENAI_API_KEY"
-                    description: "OpenAI API Key"
-                    secret: true
+                - name: anthropic_api_url
+                  env: "ANTHROPIC_API_URL"
+                  type: string
+                  default: "https://api.anthropic.com"
+                  description: "Anthropic API URL"
+                - name: anthropic_api_key
+                  env: "ANTHROPIC_API_KEY"
+                  type: string
+                  description: "Anthropic API Key"
+                  secret: true
+                - name: cloudflare_api_url
+                  env: "CLOUDFLARE_API_URL"
+                  type: string
+                  default: "https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}"
+                  description: "Cloudflare API URL"
+                - name: cloudflare_api_key
+                  env: "CLOUDFLARE_API_KEY"
+                  type: string
+                  description: "Cloudflare API Key"
+                  secret: true
+                - name: cohere_api_url
+                  env: "COHERE_API_URL"
+                  type: string
+                  default: "https://api.cohere.com"
+                  description: "Cohere API URL"
+                - name: cohere_api_key
+                  env: "COHERE_API_KEY"
+                  type: string
+                  description: "Cohere API Key"
+                  secret: true
+                - name: google_api_url
+                  env: "GOOGLE_API_URL"
+                  type: string
+                  default: "https://generativelanguage.googleapis.com"
+                  description: "Google API URL"
+                - name: google_api_key
+                  env: "GOOGLE_API_KEY"
+                  type: string
+                  description: "Google API Key"
+                  secret: true
+                - name: groq_api_url
+                  env: "GROQ_API_URL"
+                  type: string
+                  default: "https://api.groq.com"
+                  description: "Groq API URL"
+                - name: groq_api_key
+                  env: "GROQ_API_KEY"
+                  type: string
+                  description: "Groq API Key"
+                  secret: true
+                - name: ollama_api_url
+                  env: "OLLAMA_API_URL"
+                  type: string
+                  default: "http://ollama:8080"
+                  description: "Ollama API URL"
+                - name: ollama_api_key
+                  env: "OLLAMA_API_KEY"
+                  type: string
+                  description: "Ollama API Key"
+                  secret: true
+                - name: openai_api_url
+                  env: "OPENAI_API_URL"
+                  type: string
+                  default: "https://api.openai.com"
+                  description: "OpenAI API URL"
+                - name: openai_api_key
+                  env: "OPENAI_API_KEY"
+                  type: string
+                  description: "OpenAI API Key"
+                  secret: true
       x-provider-configs:
         ollama:
           id: "ollama"

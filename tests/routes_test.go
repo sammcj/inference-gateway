@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/inference-gateway/inference-gateway/api"
@@ -28,19 +27,30 @@ func setupTestRouter(t *testing.T) (*gin.Engine, *mocks.MockLogger) {
 	cfg := config.Config{
 		ApplicationName: "inference-gateway-test",
 		Environment:     "test",
+		Server: &config.ServerConfig{
+			ReadTimeout: 5000, // 5 seconds
+		},
+		Providers: map[string]*providers.Config{
+			"provider1": {},
+			"provider2": {},
+		},
 	}
 
-	// Create HTTP client with reasonable timeout
-	timeout := 1 * time.Second
-	transport := providers.NewTransport(timeout)
-	client := providers.NewClient("http", "localhost", "8080", timeout, transport)
+	// Initialize the client configuration
+	clientConfig, err := providers.NewClientConfig()
+	if err != nil {
+		t.Fatalf("failed to initialize client configuration: %v", err)
+	}
+
+	// Create the HTTP client
+	client := providers.NewHTTPClient(clientConfig, "http", "localhost", "8080")
 
 	// Pass mockLogger as logger.Logger interface
 	var l logger.Logger = mockLogger
 	router := api.NewRouter(cfg, &l, client)
 	r := gin.New()
 	r.GET("/health", router.HealthcheckHandler)
-	r.GET("/llms", router.ListAllModelsHandler)
+	r.GET("/models", router.ListAllModelsHandler)
 	r.POST("/llms/:provider/generate", router.GenerateProvidersTokenHandler)
 
 	return r, mockLogger
@@ -77,7 +87,12 @@ func TestFetchAllModelsHandler(t *testing.T) {
 		},
 	}
 
-	client := providers.NewClient("http", "localhost", "8080", 1*time.Second, providers.NewTransport(1*time.Second))
+	// Initialize the client configuration
+	clientConfig, err := providers.NewClientConfig()
+	assert.NoError(t, err)
+
+	// Create the HTTP client
+	client := providers.NewHTTPClient(clientConfig, "http", "localhost", "8080")
 
 	// Initialize the router
 	router := api.NewRouter(*cfg, &log, client)
@@ -283,6 +298,13 @@ func TestProxyHandler_TokenValidation(t *testing.T) {
 			}
 			req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/proxy/%s/v1/models", tt.providerID), nil)
 			r.ServeHTTP(w, req)
+
+			assert.Equal(t, tt.expectedStatus, w.Code)
+
+			var response api.ErrorResponse
+			err := json.Unmarshal(w.Body.Bytes(), &response)
+			assert.NoError(t, err)
+			assert.Contains(t, response.Error, tt.expectedError)
 		})
 	}
 }

@@ -45,12 +45,13 @@ type ConfigSchema struct {
 }
 
 type Section struct {
-	Title    string                   `yaml:"title"`
-	Settings []map[string]ConfigField `yaml:"settings"`
+	Title    string    `yaml:"title"`
+	Settings []Setting `yaml:"settings"`
 }
 
-type ConfigField struct {
+type Setting struct {
 	Env         string `yaml:"env"`
+	Type        string `yaml:"type"`
 	Default     string `yaml:"default,omitempty"`
 	Description string `yaml:"description"`
 	Secret      bool   `yaml:"secret,omitempty"`
