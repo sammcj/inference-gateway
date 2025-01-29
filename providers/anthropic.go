@@ -13,7 +13,7 @@ type AnthropicModel struct {
 }
 
 type ListModelsResponseAnthropic struct {
-	Data    []AnthropicModel `json:"models"`
+	Data    []AnthropicModel `json:"data"`
 	HasMore bool             `json:"has_more"`
 	FirstID string           `json:"first_id"`
 	LastID  string           `json:"last_id"`
