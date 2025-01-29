@@ -110,17 +110,10 @@ data:
   {{- range $setting := $section.Settings }}
   {{- range $field := $setting }}
   {{- if not $field.Secret }}
-  {{- if not (eq $field.Env "{key}_API_URL") }}
   {{ $field.Env }}: "{{ if $field.Default }}{{ $field.Default }}{{ end }}"
   {{- end }}
   {{- end }}
   {{- end }}
-  {{- end }}
-  {{- end }}
-  {{- end }}
-  {{- if .Providers }}
-  {{- range $name, $provider := .Providers }}
-  {{ upper $name }}_API_URL: {{ $provider.URL }}
   {{- end }}
   {{- end }}
 `
