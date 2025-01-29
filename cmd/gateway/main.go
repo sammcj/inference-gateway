@@ -87,8 +87,11 @@ func main() {
 
 	clientConfig, err := providers.NewClientConfig()
 	if err != nil {
-		log.Fatalf("failed to initialize client configuration: %v", err)
+		span.RecordError(err)
+		log.Printf("fatal: failed to initialize client configuration: %v", err)
+		return
 	}
+
 	client := providers.NewHTTPClient(clientConfig, scheme, cfg.Server.Host, cfg.Server.Port)
 
 	api := api.NewRouter(cfg, &logger, client)
