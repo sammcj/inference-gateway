@@ -25,14 +25,30 @@
 | SERVER_IDLE_TIMEOUT | `120s` | Idle timeout |
 | SERVER_TLS_CERT_PATH | `""` | TLS certificate path |
 | SERVER_TLS_KEY_PATH | `""` | TLS key path |
-## API URLs and keys
+## Client settings
 
 | Environment Variable | Default Value | Description |
 |---------------------|---------------|-------------|
-| ANTHROPIC_API_URL | `https://api.anthropic.com` | The URL for Anthropic API |
-| CLOUDFLARE_API_URL | `https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}` | The URL for Cloudflare API |
-| COHERE_API_URL | `https://api.cohere.com` | The URL for Cohere API |
-| GOOGLE_API_URL | `https://generativelanguage.googleapis.com` | The URL for Google API |
-| GROQ_API_URL | `https://api.groq.com` | The URL for Groq API |
-| OLLAMA_API_URL | `http://ollama:8080` | The URL for Ollama API |
-| OPENAI_API_URL | `https://api.openai.com` | The URL for Openai API |
+| CLIENT_TIMEOUT | `30s` | Client timeout |
+| CLIENT_MAX_IDLE_CONNS | `100` | Maximum idle connections |
+| CLIENT_MAX_IDLE_CONNS_PER_HOST | `100` | Maximum idle connections per host |
+| CLIENT_IDLE_CONN_TIMEOUT | `90s` | Idle connection timeout |
+| CLIENT_TLS_MIN_VERSION | `TLS12` | Minimum TLS version |
+## Providers
+
+| Environment Variable | Default Value | Description |
+|---------------------|---------------|-------------|
+| ANTHROPIC_API_URL | `https://api.anthropic.com` | Anthropic API URL |
+| ANTHROPIC_API_KEY | `""` | Anthropic API Key |
+| CLOUDFLARE_API_URL | `https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}` | Cloudflare API URL |
+| CLOUDFLARE_API_KEY | `""` | Cloudflare API Key |
+| COHERE_API_URL | `https://api.cohere.com` | Cohere API URL |
+| COHERE_API_KEY | `""` | Cohere API Key |
+| GOOGLE_API_URL | `https://generativelanguage.googleapis.com` | Google API URL |
+| GOOGLE_API_KEY | `""` | Google API Key |
+| GROQ_API_URL | `https://api.groq.com` | Groq API URL |
+| GROQ_API_KEY | `""` | Groq API Key |
+| OLLAMA_API_URL | `http://ollama:8080` | Ollama API URL |
+| OLLAMA_API_KEY | `""` | Ollama API Key |
+| OPENAI_API_URL | `https://api.openai.com` | OpenAI API URL |
+| OPENAI_API_KEY | `""` | OpenAI API Key |

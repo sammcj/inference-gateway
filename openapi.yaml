@@ -509,15 +509,87 @@ components:
                 - tls_key_path:
                     env: "SERVER_TLS_KEY_PATH"
                     description: "TLS key path"
+          - client:
+              title: "Client settings"
+              settings:
+                - timeout:
+                    env: "CLIENT_TIMEOUT"
+                    default: "30s"
+                    description: "Client timeout"
+                - max_idle_conns:
+                    env: "CLIENT_MAX_IDLE_CONNS"
+                    default: "100"
+                    description: "Maximum idle connections"
+                - max_idle_conns_per_host:
+                    env: "CLIENT_MAX_IDLE_CONNS_PER_HOST"
+                    default: "100"
+                    description: "Maximum idle connections per host"
+                - idle_conn_timeout:
+                    env: "CLIENT_IDLE_CONN_TIMEOUT"
+                    default: "90s"
+                    description: "Idle connection timeout"
+                - tls_min_version:
+                    env: "CLIENT_TLS_MIN_VERSION"
+                    default: "TLS12"
+                    description: "Minimum TLS version"
           - providers:
               title: "Providers"
               settings:
-                - url:
-                    env: "{key}_API_URL"
-                    description: "The provider API URL"
-                - token:
-                    env: "{key}_API_KEY"
-                    description: "The provider API key"
+                - anthropic_api_url:
+                    env: "ANTHROPIC_API_URL"
+                    default: "https://api.anthropic.com"
+                    description: "Anthropic API URL"
+                - anthropic_api_key:
+                    env: "ANTHROPIC_API_KEY"
+                    description: "Anthropic API Key"
+                    secret: true
+                - cloudflare_api_url:
+                    env: "CLOUDFLARE_API_URL"
+                    default: "https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}"
+                    description: "Cloudflare API URL"
+                - cloudflare_api_key:
+                    env: "CLOUDFLARE_API_KEY"
+                    description: "Cloudflare API Key"
+                    secret: true
+                - cohere_api_url:
+                    env: "COHERE_API_URL"
+                    default: "https://api.cohere.com"
+                    description: "Cohere API URL"
+                - cohere_api_key:
+                    env: "COHERE_API_KEY"
+                    description: "Cohere API Key"
+                    secret: true
+                - google_api_url:
+                    env: "GOOGLE_API_URL"
+                    default: "https://generativelanguage.googleapis.com"
+                    description: "Google API URL"
+                - google_api_key:
+                    env: "GOOGLE_API_KEY"
+                    description: "Google API Key"
+                    secret: true
+                - groq_api_url:
+                    env: "GROQ_API_URL"
+                    default: "https://api.groq.com"
+                    description: "Groq API URL"
+                - groq_api_key:
+                    env: "GROQ_API_KEY"
+                    description: "Groq API Key"
+                    secret: true
+                - ollama_api_url:
+                    env: "OLLAMA_API_URL"
+                    default: "http://ollama:8080"
+                    description: "Ollama API URL"
+                - ollama_api_key:
+                    env: "OLLAMA_API_KEY"
+                    description: "Ollama API Key"
+                    secret: true
+                - openai_api_url:
+                    env: "OPENAI_API_URL"
+                    default: "https://api.openai.com"
+                    description: "OpenAI API URL"
+                - openai_api_key:
+                    env: "OPENAI_API_KEY"
+                    description: "OpenAI API Key"
                     secret: true
       x-provider-configs:
         ollama:

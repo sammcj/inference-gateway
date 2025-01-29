@@ -21,19 +21,10 @@ func GenerateEnvExample(output string, oas string) error {
 # {{ $section.Title }}
 {{- range $setting := $section.Settings }}
 {{- range $field := $setting }}
-{{- if not (eq $field.Env "{key}_API_URL") }}
-{{- if not (eq $field.Env "{key}_API_KEY") }}
 {{ $field.Env }}={{ if $field.Default }}{{ $field.Default }}{{ end }}
 {{- end }}
 {{- end }}
 {{- end }}
-{{- end }}
-{{- end }}
-{{- end }}
-# API URLs and keys
-{{- range $name, $provider := .Providers }}
-{{ upper $name }}_API_URL={{ $provider.URL }}
-{{ upper $name }}_API_KEY=
 {{- end }}
 `
 

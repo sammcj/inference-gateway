@@ -21,7 +21,6 @@ func GenerateConfigurationsMD(filePath string, oas string) error {
 
 {{- range $section := .Sections }}
 {{- range $name, $section := $section }}
-{{- if not (eq $section.Title "Providers") }}
 ## {{ $section.Title }}
 
 | Environment Variable | Default Value | Description |
@@ -33,14 +32,6 @@ func GenerateConfigurationsMD(filePath string, oas string) error {
 {{- end }}
 
 {{- end }}
-{{- end }}
-{{- end }}
-## API URLs and keys
-
-| Environment Variable | Default Value | Description |
-|---------------------|---------------|-------------|
-{{- range $name, $provider := .Providers }}
-| {{ upper $name }}_API_URL | ` + "`{{ $provider.URL }}`" + ` | The URL for {{ title $name }} API |
 {{- end }}
 `
 

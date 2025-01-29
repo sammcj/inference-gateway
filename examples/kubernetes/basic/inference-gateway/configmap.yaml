@@ -22,11 +22,17 @@ data:
   SERVER_IDLE_TIMEOUT: "120s"
   SERVER_TLS_CERT_PATH: ""
   SERVER_TLS_KEY_PATH: ""
+  # Client settings
+  CLIENT_TIMEOUT: "30s"
+  CLIENT_MAX_IDLE_CONNS: "100"
+  CLIENT_MAX_IDLE_CONNS_PER_HOST: "100"
+  CLIENT_IDLE_CONN_TIMEOUT: "90s"
+  CLIENT_TLS_MIN_VERSION: "TLS12"
   # Providers
-  ANTHROPIC_API_URL: https://api.anthropic.com
-  CLOUDFLARE_API_URL: https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}
-  COHERE_API_URL: https://api.cohere.com
-  GOOGLE_API_URL: https://generativelanguage.googleapis.com
-  GROQ_API_URL: https://api.groq.com
-  OLLAMA_API_URL: http://ollama:8080
-  OPENAI_API_URL: https://api.openai.com
+  ANTHROPIC_API_URL: "https://api.anthropic.com"
+  CLOUDFLARE_API_URL: "https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}"
+  COHERE_API_URL: "https://api.cohere.com"
+  GOOGLE_API_URL: "https://generativelanguage.googleapis.com"
+  GROQ_API_URL: "https://api.groq.com"
+  OLLAMA_API_URL: "http://ollama:8080"
+  OPENAI_API_URL: "https://api.openai.com"
