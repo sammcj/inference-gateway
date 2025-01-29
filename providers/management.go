@@ -14,6 +14,7 @@ import (
 
 //go:generate mockgen -source=management.go -destination=../tests/mocks/provider.go -package=mocks
 type Provider interface {
+	// Getters
 	GetID() string
 	GetName() string
 	GetURL() string
@@ -22,8 +23,9 @@ type Provider interface {
 	GetExtraHeaders() map[string][]string
 	GetClient() Client
 
-	ListModels() (ListModelsResponse, error)
-	GenerateTokens(model string, messages []Message) (GenerateResponse, error)
+	// Fetchers
+	ListModels(ctx context.Context) (ListModelsResponse, error)
+	GenerateTokens(ctx context.Context, model string, messages []Message) (GenerateResponse, error)
 }
 
 type ProviderImpl struct {
@@ -105,7 +107,7 @@ func (p *ProviderImpl) GetClient() Client {
 	return p.client
 }
 
-func (p *ProviderImpl) ListModels() (ListModelsResponse, error) {
+func (p *ProviderImpl) ListModels(ctx context.Context) (ListModelsResponse, error) {
 	baseURL, err := url.Parse(p.GetURL())
 	if err != nil {
 		p.logger.Error("failed to parse base URL", err)
@@ -116,7 +118,6 @@ func (p *ProviderImpl) ListModels() (ListModelsResponse, error) {
 
 	p.logger.Debug("list models", "url", url)
 
-	ctx := context.Background()
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		p.logger.Error("failed to create request", err)
@@ -200,7 +201,7 @@ func (p *ProviderImpl) ListModels() (ListModelsResponse, error) {
 	}
 }
 
-func (p *ProviderImpl) GenerateTokens(model string, messages []Message) (GenerateResponse, error) {
+func (p *ProviderImpl) GenerateTokens(ctx context.Context, model string, messages []Message) (GenerateResponse, error) {
 	if p == nil {
 		return GenerateResponse{}, errors.New("provider cannot be nil")
 	}
@@ -231,16 +232,11 @@ func (p *ProviderImpl) GenerateTokens(model string, messages []Message) (Generat
 			p.logger.Error("failed to marshal request", err)
 			return GenerateResponse{}, fmt.Errorf("failed to marshal request: %w", err)
 		}
-		resp, err := p.client.Post(url, "application/json", string(payloadBytes))
+
+		resp, err := fetchTokens(ctx, p.client, url, payloadBytes, p.logger)
 		if err != nil {
 			p.logger.Error("failed to make request", err)
 			return GenerateResponse{}, fmt.Errorf("failed to make request: %w", err)
-		}
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			p.logger.Error("request failed", fmt.Errorf("status code: %d", resp.StatusCode))
-			return GenerateResponse{}, fmt.Errorf("request failed with status code: %d", resp.StatusCode)
 		}
 
 		// Response
@@ -258,16 +254,11 @@ func (p *ProviderImpl) GenerateTokens(model string, messages []Message) (Generat
 			p.logger.Error("failed to marshal request", err)
 			return GenerateResponse{}, fmt.Errorf("failed to marshal request: %w", err)
 		}
-		resp, err := p.client.Post(url, "application/json", string(payloadBytes))
+
+		resp, err := fetchTokens(ctx, p.client, url, payloadBytes, p.logger)
 		if err != nil {
 			p.logger.Error("failed to make request", err)
 			return GenerateResponse{}, fmt.Errorf("failed to make request: %w", err)
-		}
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			p.logger.Error("request failed", fmt.Errorf("status code: %d", resp.StatusCode))
-			return GenerateResponse{}, fmt.Errorf("request failed with status code: %d", resp.StatusCode)
 		}
 
 		// Response
@@ -285,16 +276,11 @@ func (p *ProviderImpl) GenerateTokens(model string, messages []Message) (Generat
 			p.logger.Error("failed to marshal request", err)
 			return GenerateResponse{}, fmt.Errorf("failed to marshal request: %w", err)
 		}
-		resp, err := p.client.Post(url, "application/json", string(payloadBytes))
+
+		resp, err := fetchTokens(ctx, p.client, url, payloadBytes, p.logger)
 		if err != nil {
 			p.logger.Error("failed to make request", err)
 			return GenerateResponse{}, fmt.Errorf("failed to make request: %w", err)
-		}
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			p.logger.Error("request failed", fmt.Errorf("status code: %d", resp.StatusCode))
-			return GenerateResponse{}, fmt.Errorf("request failed with status code: %d", resp.StatusCode)
 		}
 
 		// Response
@@ -313,16 +299,11 @@ func (p *ProviderImpl) GenerateTokens(model string, messages []Message) (Generat
 			p.logger.Error("failed to marshal request", err)
 			return GenerateResponse{}, fmt.Errorf("failed to marshal request: %w", err)
 		}
-		resp, err := p.client.Post(url, "application/json", string(payloadBytes))
+
+		resp, err := fetchTokens(ctx, p.client, url, payloadBytes, p.logger)
 		if err != nil {
 			p.logger.Error("failed to make request", err)
 			return GenerateResponse{}, fmt.Errorf("failed to make request: %w", err)
-		}
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			p.logger.Error("request failed", fmt.Errorf("status code: %d", resp.StatusCode))
-			return GenerateResponse{}, fmt.Errorf("request failed with status code: %d", resp.StatusCode)
 		}
 
 		// Response
@@ -341,16 +322,11 @@ func (p *ProviderImpl) GenerateTokens(model string, messages []Message) (Generat
 			p.logger.Error("failed to marshal request", err)
 			return GenerateResponse{}, fmt.Errorf("failed to marshal request: %w", err)
 		}
-		resp, err := p.client.Post(url, "application/json", string(payloadBytes))
+
+		resp, err := fetchTokens(ctx, p.client, url, payloadBytes, p.logger)
 		if err != nil {
 			p.logger.Error("failed to make request", err)
 			return GenerateResponse{}, fmt.Errorf("failed to make request: %w", err)
-		}
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			p.logger.Error("request failed", fmt.Errorf("status code: %d", resp.StatusCode))
-			return GenerateResponse{}, fmt.Errorf("request failed with status code: %d", resp.StatusCode)
 		}
 
 		// Response
@@ -368,16 +344,11 @@ func (p *ProviderImpl) GenerateTokens(model string, messages []Message) (Generat
 			p.logger.Error("failed to marshal request", err)
 			return GenerateResponse{}, fmt.Errorf("failed to marshal request: %w", err)
 		}
-		resp, err := p.client.Post(url, "application/json", string(payloadBytes))
+
+		resp, err := fetchTokens(ctx, p.client, url, payloadBytes, p.logger)
 		if err != nil {
 			p.logger.Error("failed to make request", err)
 			return GenerateResponse{}, fmt.Errorf("failed to make request: %w", err)
-		}
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			p.logger.Error("request failed", fmt.Errorf("status code: %d", resp.StatusCode))
-			return GenerateResponse{}, fmt.Errorf("request failed with status code: %d", resp.StatusCode)
 		}
 
 		// Response
@@ -395,16 +366,11 @@ func (p *ProviderImpl) GenerateTokens(model string, messages []Message) (Generat
 			p.logger.Error("failed to marshal request", err)
 			return GenerateResponse{}, fmt.Errorf("failed to marshal request: %w", err)
 		}
-		resp, err := p.client.Post(url, "application/json", string(payloadBytes))
+
+		resp, err := fetchTokens(ctx, p.client, url, payloadBytes, p.logger)
 		if err != nil {
 			p.logger.Error("failed to make request", err)
 			return GenerateResponse{}, fmt.Errorf("failed to make request: %w", err)
-		}
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			p.logger.Error("request failed", fmt.Errorf("status code: %d", resp.StatusCode))
-			return GenerateResponse{}, fmt.Errorf("request failed with status code: %d", resp.StatusCode)
 		}
 
 		// Response
@@ -418,4 +384,26 @@ func (p *ProviderImpl) GenerateTokens(model string, messages []Message) (Generat
 		p.logger.Error("unsupported provider", nil)
 		return GenerateResponse{}, fmt.Errorf("unsupported provider: %s", p.GetID())
 	}
+}
+
+func fetchTokens(ctx context.Context, client Client, url string, payload []byte, logger l.Logger) (*http.Response, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, strings.NewReader(string(payload)))
+	if err != nil {
+		logger.Error("failed to create request", err)
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		logger.Error("failed to make request", err)
+		return nil, fmt.Errorf("failed to make request: %w", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		logger.Error("request failed", fmt.Errorf("status code: %d", resp.StatusCode))
+		return nil, fmt.Errorf("request failed with status code: %d", resp.StatusCode)
+	}
+
+	return resp, nil
 }

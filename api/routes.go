@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -8,6 +9,7 @@ import (
 	"net/url"
 	"strings"
 	"sync"
+	"time"
 
 	proxymodifier "github.com/inference-gateway/inference-gateway/internal/proxy"
 
@@ -149,17 +151,25 @@ func (router *RouterImpl) ListModelsHandler(c *gin.Context) {
 	provider, err := providers.NewProvider(router.cfg.Providers, c.Param("provider"), &router.logger, &router.client)
 	if err != nil {
 		if strings.Contains(err.Error(), "token not configured") {
-			router.logger.Error("provider requires authentication but no API key was configured", err, "provider", provider)
+			router.logger.Error("provider requires authentication but no API key was configured", err, "provider", provider.GetName())
 			c.JSON(http.StatusBadRequest, ErrorResponse{Error: "Provider requires an API key. Please configure the provider's API key."})
 			return
 		}
-		router.logger.Error("provider not found or not supported", err, "provider", provider)
+		router.logger.Error("provider not found or not supported", err, "provider", provider.GetName())
 		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "Provider not found. Please check the list of supported providers."})
 		return
 	}
 
-	response, err := provider.ListModels()
+	ctx, cancel := context.WithTimeout(context.Background(), router.cfg.Server.ReadTimeout*time.Millisecond)
+	defer cancel()
+
+	response, err := provider.ListModels(ctx)
 	if err != nil {
+		if ctx.Err() == context.DeadlineExceeded {
+			router.logger.Error("request timed out", err, "provider", provider.GetName())
+			c.JSON(http.StatusGatewayTimeout, ErrorResponse{Error: "Request timed out"})
+			return
+		}
 		router.logger.Error("failed to list models", err, "provider", provider.GetName())
 		c.JSON(http.StatusBadGateway, ErrorResponse{Error: "Failed to list models"})
 		return
@@ -173,6 +183,9 @@ func (router *RouterImpl) ListAllModelsHandler(c *gin.Context) {
 	providersCfg := router.cfg.Providers
 
 	ch := make(chan providers.ListModelsResponse, len(providersCfg))
+
+	ctx, cancel := context.WithTimeout(context.Background(), router.cfg.Server.ReadTimeout*time.Millisecond)
+	defer cancel()
 
 	for providerID := range providersCfg {
 		wg.Add(1)
@@ -189,8 +202,16 @@ func (router *RouterImpl) ListAllModelsHandler(c *gin.Context) {
 				return
 			}
 
-			response, err := provider.ListModels()
+			response, err := provider.ListModels(ctx)
 			if err != nil {
+				if ctx.Err() == context.DeadlineExceeded {
+					router.logger.Error("request timed out", err, "provider", id)
+					ch <- providers.ListModelsResponse{
+						Provider: id,
+						Models:   make([]providers.Model, 0),
+					}
+					return
+				}
 				router.logger.Error("failed to list models", err, "provider", id)
 				ch <- providers.ListModelsResponse{
 					Provider: id,
@@ -220,6 +241,7 @@ func (router *RouterImpl) ListAllModelsHandler(c *gin.Context) {
 func (router *RouterImpl) GenerateProvidersTokenHandler(c *gin.Context) {
 	var req providers.GenerateRequest
 	if err := json.NewDecoder(c.Request.Body).Decode(&req); err != nil {
+		router.logger.Error("failed to decode request", err)
 		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "Failed to decode request"})
 		return
 	}
@@ -233,19 +255,26 @@ func (router *RouterImpl) GenerateProvidersTokenHandler(c *gin.Context) {
 	provider, err := providers.NewProvider(router.cfg.Providers, c.Param("provider"), &router.logger, &router.client)
 	if err != nil {
 		if strings.Contains(err.Error(), "token not configured") {
-			router.logger.Error("provider requires authentication but no API key was configured", err, "provider", provider)
+			router.logger.Error("provider requires authentication but no API key was configured", err, "provider", c.Param("provider"))
 			c.JSON(http.StatusBadRequest, ErrorResponse{Error: "Provider requires an API key. Please configure the provider's API key."})
 			return
 		}
-		router.logger.Error("provider not found or not supported", err, "provider", provider)
+		router.logger.Error("provider not found or not supported", err, "provider", c.Param("provider"))
 		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "Provider not found. Please check the list of supported providers."})
 		return
 	}
 
-	var response providers.GenerateResponse
-	response, err = provider.GenerateTokens(req.Model, req.Messages)
+	ctx, cancel := context.WithTimeout(context.Background(), router.cfg.Server.ReadTimeout*time.Millisecond)
+	defer cancel()
+
+	response, err := provider.GenerateTokens(ctx, req.Model, req.Messages)
 	if err != nil {
-		router.logger.Error("failed to generate tokens", err, "provider", provider)
+		if ctx.Err() == context.DeadlineExceeded {
+			router.logger.Error("request timed out", err, "provider", c.Param("provider"))
+			c.JSON(http.StatusGatewayTimeout, ErrorResponse{Error: "Request timed out"})
+			return
+		}
+		router.logger.Error("failed to generate tokens", err, "provider", c.Param("provider"))
 		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "Failed to generate tokens"})
 		return
 	}

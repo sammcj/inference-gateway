@@ -62,17 +62,47 @@ func TestHealthcheckHandler(t *testing.T) {
 }
 
 func TestFetchAllModelsHandler(t *testing.T) {
-	r, mockLogger := setupTestRouter(t)
-	mockLogger.EXPECT().Debug(gomock.Any()).AnyTimes()
-
-	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/llms", nil)
-	r.ServeHTTP(w, req)
-
-	assert.Equal(t, http.StatusOK, w.Code)
-	var response []providers.ListModelsResponse
-	err := json.Unmarshal(w.Body.Bytes(), &response)
+	// Initialize the logger
+	log, err := logger.NewLogger("development")
 	assert.NoError(t, err)
+
+	// Initialize the configuration
+	cfg := &config.Config{
+		Server: &config.ServerConfig{
+			ReadTimeout: 5000, // 5 seconds
+		},
+		Providers: map[string]*providers.Config{
+			"provider1": {},
+			"provider2": {},
+		},
+	}
+
+	client := providers.NewClient("http", "localhost", "8080", 1*time.Second, providers.NewTransport(1*time.Second))
+
+	// Initialize the router
+	router := api.NewRouter(*cfg, &log, client)
+
+	// Create a new Gin engine
+	gin.SetMode(gin.TestMode)
+	r := gin.New()
+	r.GET("/models", router.ListAllModelsHandler)
+
+	// Create a new HTTP request
+	req, err := http.NewRequest(http.MethodGet, "/models", nil)
+	assert.NoError(t, err)
+
+	// Create a new HTTP recorder
+	w := httptest.NewRecorder()
+
+	// Create a new Gin context
+	c, _ := gin.CreateTestContext(w)
+	c.Request = req
+
+	// Call the handler
+	router.ListAllModelsHandler(c)
+
+	// Check the response
+	assert.Equal(t, http.StatusOK, w.Code)
 }
 
 func TestGenerateProvidersTokenHandler(t *testing.T) {

@@ -10,6 +10,7 @@
 package mocks
 
 import (
+	context "context"
 	reflect "reflect"
 
 	providers "github.com/inference-gateway/inference-gateway/providers"
@@ -41,18 +42,18 @@ func (m *MockProvider) EXPECT() *MockProviderMockRecorder {
 }
 
 // GenerateTokens mocks base method.
-func (m *MockProvider) GenerateTokens(model string, messages []providers.Message) (providers.GenerateResponse, error) {
+func (m *MockProvider) GenerateTokens(ctx context.Context, model string, messages []providers.Message) (providers.GenerateResponse, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GenerateTokens", model, messages)
+	ret := m.ctrl.Call(m, "GenerateTokens", ctx, model, messages)
 	ret0, _ := ret[0].(providers.GenerateResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GenerateTokens indicates an expected call of GenerateTokens.
-func (mr *MockProviderMockRecorder) GenerateTokens(model, messages any) *gomock.Call {
+func (mr *MockProviderMockRecorder) GenerateTokens(ctx, model, messages any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateTokens", reflect.TypeOf((*MockProvider)(nil).GenerateTokens), model, messages)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateTokens", reflect.TypeOf((*MockProvider)(nil).GenerateTokens), ctx, model, messages)
 }
 
 // GetAuthType mocks base method.
@@ -154,16 +155,16 @@ func (mr *MockProviderMockRecorder) GetURL() *gomock.Call {
 }
 
 // ListModels mocks base method.
-func (m *MockProvider) ListModels() (providers.ListModelsResponse, error) {
+func (m *MockProvider) ListModels(ctx context.Context) (providers.ListModelsResponse, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListModels")
+	ret := m.ctrl.Call(m, "ListModels", ctx)
 	ret0, _ := ret[0].(providers.ListModelsResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ListModels indicates an expected call of ListModels.
-func (mr *MockProviderMockRecorder) ListModels() *gomock.Call {
+func (mr *MockProviderMockRecorder) ListModels(ctx any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListModels", reflect.TypeOf((*MockProvider)(nil).ListModels))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListModels", reflect.TypeOf((*MockProvider)(nil).ListModels), ctx)
 }
