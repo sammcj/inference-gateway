@@ -1,6 +1,7 @@
 package providers
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -114,12 +115,30 @@ func (p *ProviderImpl) ListModels() (ListModelsResponse, error) {
 	url := "/proxy/" + p.GetID() + baseURL.Path + p.EndpointList()
 
 	p.logger.Debug("list models", "url", url)
-	resp, err := p.client.Get(url)
+
+	ctx := context.Background()
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		p.logger.Error("failed to create request", err)
+		return ListModelsResponse{}, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	resp, err := p.client.Do(req)
 	if err != nil {
 		p.logger.Error("failed to make request", err, "provider", p.GetName())
-		return ListModelsResponse{}, fmt.Errorf("failed to make request: %w", err)
+		return ListModelsResponse{
+			Provider: p.GetID(),
+			Models:   make([]Model, 0),
+		}, fmt.Errorf("failed to reach provider %s: %w", p.GetName(), err)
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return ListModelsResponse{
+			Provider: p.GetID(),
+			Models:   make([]Model, 0),
+		}, fmt.Errorf("failed with status code: %d", resp.StatusCode)
+	}
 
 	switch p.GetID() {
 	case OllamaID:

@@ -65,6 +65,9 @@ func NewTransport(timeout time.Duration) *http.Transport {
 }
 
 func (c *ClientImpl) Do(req *http.Request) (*http.Response, error) {
+	req.URL.Scheme = c.scheme
+	req.URL.Host = c.hostname + ":" + c.port
+
 	return c.client.Do(req)
 }
 

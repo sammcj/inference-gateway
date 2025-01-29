@@ -160,8 +160,8 @@ func (router *RouterImpl) ListModelsHandler(c *gin.Context) {
 
 	response, err := provider.ListModels()
 	if err != nil {
-		router.logger.Error("failed to list models", err, "provider", provider)
-		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "Failed to list models"})
+		router.logger.Error("failed to list models", err, "provider", provider.GetName())
+		c.JSON(http.StatusBadGateway, ErrorResponse{Error: "Failed to list models"})
 		return
 	}
 
