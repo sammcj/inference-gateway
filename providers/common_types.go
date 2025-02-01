@@ -22,7 +22,6 @@ const (
 	AnthropicDefaultBaseURL  = "https://api.anthropic.com"
 	CloudflareDefaultBaseURL = "https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}"
 	CohereDefaultBaseURL     = "https://api.cohere.com"
-	GoogleDefaultBaseURL     = "https://generativelanguage.googleapis.com"
 	GroqDefaultBaseURL       = "https://api.groq.com"
 	OllamaDefaultBaseURL     = "http://ollama:8080"
 	OpenaiDefaultBaseURL     = "https://api.openai.com"
@@ -33,7 +32,6 @@ const (
 	AnthropicID  = "anthropic"
 	CloudflareID = "cloudflare"
 	CohereID     = "cohere"
-	GoogleID     = "google"
 	GroqID       = "groq"
 	OllamaID     = "ollama"
 	OpenaiID     = "openai"
@@ -44,7 +42,6 @@ const (
 	AnthropicDisplayName  = "Anthropic"
 	CloudflareDisplayName = "Cloudflare"
 	CohereDisplayName     = "Cohere"
-	GoogleDisplayName     = "Google"
 	GroqDisplayName       = "Groq"
 	OllamaDisplayName     = "Ollama"
 	OpenaiDisplayName     = "Openai"
@@ -135,8 +132,8 @@ type SSEvent struct {
 	Data      []byte
 }
 
-// parseSSEvents parses a Server-Sent Event from a byte slice
-func parseSSEvents(line []byte) (*SSEvent, error) {
+// ParseSSEvents parses a Server-Sent Event from a byte slice
+func ParseSSEvents(line []byte) (*SSEvent, error) {
 	if len(bytes.TrimSpace(line)) == 0 {
 		return nil, fmt.Errorf("empty line")
 	}
@@ -233,10 +230,6 @@ func NewStreamParser(l logger.Logger, provider string) (StreamParser, error) {
 		}, nil
 	case OpenaiID:
 		return &OpenaiStreamParser{
-			logger: l,
-		}, nil
-	case GoogleID:
-		return &GoogleStreamParser{
 			logger: l,
 		}, nil
 	case GroqID:
