@@ -1,5 +1,11 @@
 package providers
 
+import (
+	"bufio"
+
+	"github.com/inference-gateway/inference-gateway/logger"
+)
+
 type GroqModel struct {
 	ID            string      `json:"id"`
 	Object        string      `json:"object"`
@@ -48,9 +54,9 @@ type GenerateRequestGroq struct {
 
 func (r *GenerateRequest) TransformGroq() GenerateRequestGroq {
 	return GenerateRequestGroq{
-		Messages: r.Messages,
-		Model:    r.Model,
-		// Set default temperature to 1.0 as per Groq docs
+		Messages:    r.Messages,
+		Model:       r.Model,
+		Stream:      &r.Stream,
 		Temperature: float64Ptr(1.0),
 	}
 }
@@ -70,9 +76,15 @@ type GroqMessage struct {
 	Content string `json:"content"`
 }
 
+type GroqDelta struct {
+	Role    string `json:"role"`
+	Content string `json:"content"`
+}
+
 type GroqChoice struct {
 	Index        int         `json:"index"`
 	Message      GroqMessage `json:"message"`
+	Delta        GroqDelta   `json:"delta,omitempty"`
 	LogProbs     interface{} `json:"logprobs"`
 	FinishReason string      `json:"finish_reason"`
 }
@@ -95,12 +107,73 @@ func (g *GenerateResponseGroq) Transform() GenerateResponse {
 		return GenerateResponse{}
 	}
 
-	return GenerateResponse{
-		Provider: GroqDisplayName,
-		Response: ResponseTokens{
-			Role:    g.Choices[0].Message.Role,
-			Model:   g.Model,
-			Content: g.Choices[0].Message.Content,
-		},
+	response := ResponseTokens{
+		Model: g.Model,
+		Role:  MessageRoleAssistant,
 	}
+
+	// Handle non-streaming case using Message first
+	if g.Choices[0].Message.Content != "" {
+		response.Content = g.Choices[0].Message.Content
+		response.Role = g.Choices[0].Message.Role
+		return GenerateResponse{
+			Provider:  GroqDisplayName,
+			Response:  response,
+			EventType: EventContentDelta,
+		}
+	}
+
+	// Handle streaming cases with Delta field
+
+	// Handle initial message with role
+	if g.Choices[0].Delta.Role == MessageRoleAssistant && g.Choices[0].Delta.Content == "" {
+		return GenerateResponse{
+			Provider:  GroqDisplayName,
+			Response:  response,
+			EventType: EventMessageStart,
+		}
+	}
+
+	// Handle content delta
+	if g.Choices[0].Delta.Content != "" {
+		response.Content = g.Choices[0].Delta.Content
+		return GenerateResponse{
+			Provider:  GroqDisplayName,
+			Response:  response,
+			EventType: EventContentDelta,
+		}
+	}
+
+	// Handle stream end (empty delta with finish_reason "stop")
+	if g.Choices[0].FinishReason == "stop" {
+		return GenerateResponse{
+			Provider:  GroqDisplayName,
+			Response:  response,
+			EventType: EventStreamEnd,
+		}
+	}
+
+	return GenerateResponse{
+		Provider:  GroqDisplayName,
+		Response:  response,
+		EventType: EventContentDelta,
+	}
+}
+
+type GroqStreamParser struct {
+	logger logger.Logger
+}
+
+func (p *GroqStreamParser) ParseChunk(reader *bufio.Reader) (*SSEvent, error) {
+	rawchunk, err := readSSEventsChunk(reader)
+	if err != nil {
+		return nil, err
+	}
+
+	event, err := parseSSEvents(rawchunk)
+	if err != nil {
+		return nil, err
+	}
+
+	return event, nil
 }

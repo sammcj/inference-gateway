@@ -1,10 +1,13 @@
 package providers
 
 import (
+	"bufio"
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -26,6 +29,7 @@ type Provider interface {
 	// Fetchers
 	ListModels(ctx context.Context) (ListModelsResponse, error)
 	GenerateTokens(ctx context.Context, model string, messages []Message) (GenerateResponse, error)
+	StreamTokens(ctx context.Context, model string, messages []Message) (<-chan GenerateResponse, error)
 }
 
 type ProviderImpl struct {
@@ -72,11 +76,7 @@ func (p *ProviderImpl) GetName() string {
 }
 
 func (p *ProviderImpl) GetURL() string {
-	baseURL := p.url
-	if !strings.HasPrefix(baseURL, "http://") && !strings.HasPrefix(baseURL, "https://") {
-		baseURL = "http://" + baseURL
-	}
-	return baseURL
+	return p.url
 }
 
 func (p *ProviderImpl) GetToken() string {
@@ -115,8 +115,6 @@ func (p *ProviderImpl) ListModels(ctx context.Context) (ListModelsResponse, erro
 	}
 
 	url := "/proxy/" + p.GetID() + baseURL.Path + p.EndpointList()
-
-	p.logger.Debug("list models", "url", url)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
@@ -212,7 +210,6 @@ func (p *ProviderImpl) GenerateTokens(ctx context.Context, model string, message
 		return GenerateResponse{}, fmt.Errorf("failed to parse base URL: %v", err)
 	}
 
-	// Construct URL with model parameter if needed
 	url := "/proxy/" + p.GetID() + baseURL.Path + p.EndpointGenerate()
 	if p.GetID() == GoogleID || p.GetID() == CloudflareID {
 		url = strings.Replace(url, "{model}", model, 1)
@@ -384,6 +381,197 @@ func (p *ProviderImpl) GenerateTokens(ctx context.Context, model string, message
 		p.logger.Error("unsupported provider", nil)
 		return GenerateResponse{}, fmt.Errorf("unsupported provider: %s", p.GetID())
 	}
+}
+
+func (p *ProviderImpl) StreamTokens(ctx context.Context, model string, messages []Message) (<-chan GenerateResponse, error) {
+	if p == nil {
+		return nil, errors.New("provider cannot be nil")
+	}
+
+	baseURL, err := url.Parse(p.GetURL())
+	if err != nil {
+		p.logger.Error("failed to parse base URL", err)
+		return nil, fmt.Errorf("failed to parse base URL: %v", err)
+	}
+
+	url := "/proxy/" + p.GetID() + baseURL.Path + p.EndpointGenerate()
+	if p.GetID() == GoogleID || p.GetID() == CloudflareID {
+		url = strings.Replace(url, "{model}", model, 1)
+	}
+
+	streamCh := make(chan GenerateResponse)
+
+	genRequest := GenerateRequest{
+		Model:    model,
+		Messages: messages,
+		Stream:   true,
+	}
+
+	// Transform request based on provider
+	var payloadBytes []byte
+	switch p.GetID() {
+	case OllamaID:
+		payload := genRequest.TransformOllama()
+		payloadBytes, err = json.Marshal(payload)
+	case OpenaiID:
+		payload := genRequest.TransformOpenai()
+		payloadBytes, err = json.Marshal(payload)
+	case GroqID:
+		payload := genRequest.TransformGroq()
+		payloadBytes, err = json.Marshal(payload)
+	case GoogleID:
+		payload := genRequest.TransformGoogle()
+		payloadBytes, err = json.Marshal(payload)
+	case CloudflareID:
+		if genRequest.Stream {
+			p.logger.Error("streaming not supported for Cloudflare provider", nil)
+			return nil, fmt.Errorf("streaming is not supported for Cloudflare provider")
+		}
+		payload := genRequest.TransformCloudflare()
+		payloadBytes, err = json.Marshal(payload)
+	case CohereID:
+		payload := genRequest.TransformCohere()
+		payloadBytes, err = json.Marshal(payload)
+	case AnthropicID:
+		payload := genRequest.TransformAnthropic()
+		payloadBytes, err = json.Marshal(payload)
+	default:
+		p.logger.Error("unsupported provider", nil)
+		return nil, fmt.Errorf("unsupported provider")
+	}
+
+	if err != nil {
+		p.logger.Error("failed to marshal request", err)
+		return nil, fmt.Errorf("failed to marshal request: %v", err)
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(payloadBytes))
+	if err != nil {
+		p.logger.Error("failed to create request", err)
+		return nil, fmt.Errorf("failed to create request: %v", err)
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "text/event-stream")
+
+	resp, err := p.client.Do(req)
+	if err != nil {
+		p.logger.Error("failed to make request", err)
+		return nil, fmt.Errorf("failed to make request: %v", err)
+	}
+
+	reader := bufio.NewReader(resp.Body)
+
+	go func() {
+		defer resp.Body.Close()
+		defer close(streamCh)
+
+		for {
+			streamParser, err := NewStreamParser(p.logger, p.GetID())
+			if err != nil {
+				p.logger.Error("failed to create stream parser", err)
+				return
+			}
+
+			event, err := streamParser.ParseChunk(reader)
+			if err != nil {
+				if err == io.EOF {
+					return
+				}
+				p.logger.Error("failed to read chunk", err)
+				return
+			}
+
+			if event.EventType == EventStreamEnd {
+				// Close the channel by returning
+				return
+			}
+
+			var chunk interface{}
+			switch p.GetID() {
+			case OllamaID:
+				var response GenerateResponseOllama
+				if err := json.Unmarshal(event.Data, &response); err != nil {
+					p.logger.Error("failed to unmarshal chunk", err)
+					continue
+				}
+				chunk = response
+			case OpenaiID:
+				var response GenerateResponseOpenai
+				if err := json.Unmarshal(event.Data, &response); err != nil {
+					p.logger.Error("failed to unmarshal chunk", err)
+					continue
+				}
+				chunk = response
+			case GroqID:
+				var response GenerateResponseGroq
+				if err := json.Unmarshal(event.Data, &response); err != nil {
+					p.logger.Error("failed to unmarshal chunk", err)
+					continue
+				}
+				chunk = response
+			case GoogleID:
+				var response GenerateResponseGoogle
+				if err := json.Unmarshal(event.Data, &response); err != nil {
+					p.logger.Error("failed to unmarshal chunk", err)
+					continue
+				}
+				chunk = response
+			case CloudflareID:
+				var response GenerateResponseCloudflare
+				if err := json.Unmarshal(event.Data, &response); err != nil {
+					p.logger.Error("failed to unmarshal chunk", err)
+					continue
+				}
+				chunk = response
+			case CohereID:
+				var response CohereStreamResponse
+				if err := json.Unmarshal(event.Data, &response); err != nil {
+					p.logger.Error("failed to unmarshal chunk", err)
+					return
+				}
+				chunk = response
+			case AnthropicID:
+				var response GenerateResponseAnthropic
+				if err := json.Unmarshal(event.Data, &response); err != nil {
+					p.logger.Error("failed to unmarshal chunk", err)
+					continue
+				}
+				chunk = response
+			default:
+				p.logger.Error("unsupported provider for streaming", nil)
+				return
+			}
+
+			// Transform and send chunk
+			select {
+			case <-ctx.Done():
+				return
+			default:
+				switch v := chunk.(type) {
+				case GenerateResponseOllama:
+					streamCh <- v.Transform()
+				case GenerateResponseOpenai:
+					streamCh <- v.Transform()
+				case GenerateResponseGroq:
+					streamCh <- v.Transform()
+				case GenerateResponseGoogle:
+					streamCh <- v.Transform()
+				case GenerateResponseCloudflare:
+					streamCh <- v.Transform()
+				case CohereStreamResponse:
+					streamCh <- v.Transform()
+				case GenerateResponseAnthropic:
+					streamCh <- v.Transform()
+				default:
+					p.logger.Error("unsupported response type", nil)
+					return
+				}
+			}
+		}
+	}()
+
+	return streamCh, nil
 }
 
 func fetchTokens(ctx context.Context, client Client, url string, payload []byte, logger l.Logger) (*http.Response, error) {

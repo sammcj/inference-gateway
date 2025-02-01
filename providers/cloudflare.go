@@ -1,5 +1,11 @@
 package providers
 
+import (
+	"bufio"
+
+	"github.com/inference-gateway/inference-gateway/logger"
+)
+
 type CloudflareModel struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
@@ -54,9 +60,9 @@ type GenerateRequestCloudflare struct {
 
 func (r *GenerateRequest) TransformCloudflare() GenerateRequestCloudflare {
 	return GenerateRequestCloudflare{
-		Messages: r.Messages,
-		Model:    r.Model,
-		// Set default temperature
+		Messages:    r.Messages,
+		Model:       r.Model,
+		Stream:      &r.Stream,
 		Temperature: float64Ptr(0.7),
 	}
 }
@@ -76,9 +82,27 @@ func (g *GenerateResponseCloudflare) Transform() GenerateResponse {
 	return GenerateResponse{
 		Provider: CloudflareDisplayName,
 		Response: ResponseTokens{
-			Role:    RoleAssistant,
+			Role:    MessageRoleAssistant,
 			Content: g.Result.Response,
 			Model:   "", // Cloudflare doesn't return model info in response
 		},
 	}
+}
+
+type CloudflareStreamParser struct {
+	logger logger.Logger
+}
+
+func (p *CloudflareStreamParser) ParseChunk(reader *bufio.Reader) (*SSEvent, error) {
+	rawchunk, err := readSSEventsChunk(reader)
+	if err != nil {
+		return nil, err
+	}
+
+	event, err := parseSSEvents(rawchunk)
+	if err != nil {
+		return nil, err
+	}
+
+	return event, nil
 }

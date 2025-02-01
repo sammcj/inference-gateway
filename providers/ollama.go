@@ -1,5 +1,12 @@
 package providers
 
+import (
+	"bufio"
+	"bytes"
+
+	"github.com/inference-gateway/inference-gateway/logger"
+)
+
 type OllamaDetails struct {
 	Format            string      `json:"format"`
 	Family            string      `json:"family"`
@@ -83,7 +90,7 @@ func (r *GenerateRequest) TransformOllama() GenerateRequestOllama {
 
 	// Use first message as system prompt if it exists and is a system message
 	var systemPrompt string
-	if len(r.Messages) > 1 && r.Messages[0].Role == RoleSystem {
+	if len(r.Messages) > 1 && r.Messages[0].Role == MessageRoleSystem {
 		systemPrompt = r.Messages[0].Content
 	}
 
@@ -91,7 +98,7 @@ func (r *GenerateRequest) TransformOllama() GenerateRequestOllama {
 		Model:  r.Model,
 		Prompt: lastMessage,
 		System: systemPrompt,
-		Stream: false, // Default to non-streaming
+		Stream: r.Stream,
 		Options: &OllamaOptions{
 			Temperature: float64Ptr(0.7), // Default temperature
 		},
@@ -103,17 +110,22 @@ type GenerateResponseOllama struct {
 	CreatedAt          string `json:"created_at"`
 	Response           string `json:"response"`
 	Done               bool   `json:"done"`
-	DoneReason         string `json:"done_reason"`
-	Context            []int  `json:"context"`
-	TotalDuration      int64  `json:"total_duration"`
-	LoadDuration       int64  `json:"load_duration"`
-	PromptEvalCount    int    `json:"prompt_eval_count"`
-	PromptEvalDuration int64  `json:"prompt_eval_duration"`
-	EvalCount          int    `json:"eval_count"`
-	EvalDuration       int64  `json:"eval_duration"`
+	DoneReason         string `json:"done_reason,omitempty"`
+	Context            []int  `json:"context,omitempty"`
+	TotalDuration      int64  `json:"total_duration,omitempty"`
+	LoadDuration       int64  `json:"load_duration,omitempty"`
+	PromptEvalCount    int    `json:"prompt_eval_count,omitempty"`
+	PromptEvalDuration int64  `json:"prompt_eval_duration,omitempty"`
+	EvalCount          int    `json:"eval_count,omitempty"`
+	EvalDuration       int64  `json:"eval_duration,omitempty"`
 }
 
 func (g *GenerateResponseOllama) Transform() GenerateResponse {
+	event := EventContentDelta
+	if g.Done {
+		event = EventStreamEnd
+	}
+
 	return GenerateResponse{
 		Provider: OllamaDisplayName,
 		Response: ResponseTokens{
@@ -121,5 +133,37 @@ func (g *GenerateResponseOllama) Transform() GenerateResponse {
 			Model:   g.Model,
 			Role:    "assistant",
 		},
+		EventType: event,
 	}
+}
+
+type OllamaStreamParser struct {
+	logger logger.Logger
+}
+
+func (p *OllamaStreamParser) ParseChunk(reader *bufio.Reader) (*SSEvent, error) {
+	// It's good that they kept it simple, raw bytes
+	// so no need to pass it through parseSSEvents
+	rawchunk, err := reader.ReadBytes('\n')
+	if err != nil {
+		return nil, err
+	}
+
+	event := EventStreamStart
+
+	// It's a weird API where we have to check for "done" to determine if it's a delta or end event
+	// Better would be if there were some metadata in the stream, so we don't have to search in the entire json for "done"
+	// But it is what it is - hopefully they improve it in the future
+	if bytes.Contains(rawchunk, []byte(`"done":false`)) {
+		event = EventContentDelta
+	}
+
+	if bytes.Contains(rawchunk, []byte(`"done":true`)) {
+		event = EventStreamEnd
+	}
+
+	return &SSEvent{
+		EventType: event,
+		Data:      rawchunk,
+	}, nil
 }

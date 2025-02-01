@@ -1,9 +1,12 @@
 package api
 
 import (
+	"bufio"
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -95,15 +98,107 @@ func (router *RouterImpl) ProxyHandler(c *gin.Context) {
 		}
 	}
 
-	// Setup common headers
-	c.Request.Header.Set("Content-Type", "application/json")
-	c.Request.Header.Set("Accept", "application/json")
+	// Check if streaming is requested
+	isStreaming := c.Request.Header.Get("Accept") == "text/event-stream" || c.Request.Header.Get("Content-Type") == "text/event-stream"
 
-	// Create and configure proxy
+	if isStreaming {
+		handleStreamingRequest(c, provider, router)
+		return
+	}
+
+	// Non-streaming case: Setup reverse proxy
+	handleProxyRequest(c, provider, router)
+}
+
+func handleStreamingRequest(c *gin.Context, provider providers.Provider, router *RouterImpl) {
+	for k, v := range map[string]string{
+		"Content-Type":      "text/event-stream",
+		"Cache-Control":     "no-cache",
+		"Connection":        "keep-alive",
+		"Transfer-Encoding": "chunked",
+	} {
+		c.Header(k, v)
+	}
+
+	providerURL := provider.GetURL()
+	fullURL := providerURL + strings.TrimPrefix(c.Request.URL.Path, "/proxy/"+c.Param("provider"))
+
+	// Read request body with a 10MB size limit for now, to prevent abuse
+	// Will make it configurable later perhaps as a middleware
+	const maxBodySize = 10 << 20
+	body, err := io.ReadAll(io.LimitReader(c.Request.Body, maxBodySize))
+	if err != nil {
+		router.logger.Error("failed to read request body", err)
+		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "Failed to read request"})
+		return
+	}
+	if len(body) >= int(maxBodySize) {
+		c.JSON(http.StatusRequestEntityTooLarge, ErrorResponse{Error: "Request body too large"})
+		return
+	}
+
+	ctx := c.Request.Context()
+	upstreamReq, err := http.NewRequestWithContext(ctx, c.Request.Method, fullURL, bytes.NewReader(body))
+	if err != nil {
+		router.logger.Error("failed to create upstream request", err)
+		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "Failed to create upstream request"})
+		return
+	}
+
+	upstreamReq.Header = c.Request.Header.Clone()
+
+	resp, err := router.client.Do(upstreamReq)
+	if err != nil {
+		router.logger.Error("failed to make upstream request", err)
+		c.JSON(http.StatusBadGateway, ErrorResponse{Error: "Failed to reach upstream server"})
+		return
+	}
+	defer resp.Body.Close()
+
+	reader := bufio.NewReaderSize(resp.Body, 4096)
+
+	c.Stream(func(w io.Writer) bool {
+		select {
+		case <-ctx.Done():
+			return false
+		default:
+		}
+
+		line, err := reader.ReadBytes('\n')
+		if err != nil {
+			if err != io.EOF {
+				router.logger.Error("failed to read stream", err,
+					"url", fullURL,
+					"method", c.Request.Method)
+			}
+			return false
+		}
+
+		if len(line) == 0 {
+			return true
+		}
+
+		if _, err := w.Write(line); err != nil {
+			router.logger.Error("failed to write response", err,
+				"bytes", len(line))
+			return false
+		}
+
+		if flusher, ok := w.(http.Flusher); ok {
+			flusher.Flush()
+		}
+
+		return true
+	})
+}
+
+func handleProxyRequest(c *gin.Context, provider providers.Provider, router *RouterImpl) {
 	remote, _ := url.Parse(provider.GetURL() + c.Request.URL.Path)
 	proxy := httputil.NewSingleHostReverseProxy(remote)
 
-	// Add error handler for proxy failures
+	c.Request.Header.Set("Content-Type", "application/json")
+	c.Request.Header.Set("Accept", "application/json")
+
 	proxy.ErrorHandler = func(w http.ResponseWriter, r *http.Request, err error) {
 		router.logger.Error("proxy request failed", err)
 		w.Header().Set("Content-Type", "application/json")
@@ -116,7 +211,6 @@ func (router *RouterImpl) ProxyHandler(c *gin.Context) {
 		}
 	}
 
-	// Configure proxy director
 	proxy.Director = func(req *http.Request) {
 		req.Header = c.Request.Header
 		req.Host = remote.Host
@@ -129,11 +223,11 @@ func (router *RouterImpl) ProxyHandler(c *gin.Context) {
 				"from", c.Request.URL.String(),
 				"to", req.URL.String(),
 				"method", req.Method,
+				"headers", req.Header,
 			)
 		}
 	}
 
-	// Log proxy responses in development mode only
 	if router.cfg.Environment == "development" {
 		devModifier := proxymodifier.NewDevResponseModifier(router.logger)
 		proxy.ModifyResponse = devModifier.Modify
@@ -240,8 +334,7 @@ func (router *RouterImpl) ListAllModelsHandler(c *gin.Context) {
 
 func (router *RouterImpl) GenerateProvidersTokenHandler(c *gin.Context) {
 	var req providers.GenerateRequest
-	if err := json.NewDecoder(c.Request.Body).Decode(&req); err != nil {
-		router.logger.Error("failed to decode request", err)
+	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "Failed to decode request"})
 		return
 	}
@@ -266,6 +359,80 @@ func (router *RouterImpl) GenerateProvidersTokenHandler(c *gin.Context) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), router.cfg.Server.ReadTimeout*time.Millisecond)
 	defer cancel()
+
+	if req.Stream {
+		// Set streaming headers
+		c.Header("Content-Type", "text/event-stream")
+		c.Header("Cache-Control", "no-cache")
+		c.Header("Connection", "keep-alive")
+		c.Header("Transfer-Encoding", "chunked")
+
+		// Create streaming channel
+		streamCh, err := provider.StreamTokens(ctx, req.Model, req.Messages)
+		if err != nil {
+			router.logger.Error("failed to start streaming", err)
+			c.JSON(http.StatusBadRequest, ErrorResponse{Error: "Failed to start streaming"})
+			return
+		}
+
+		// Use Gin's streaming with proper context handling
+		c.Stream(func(w io.Writer) bool {
+			select {
+			case resp, ok := <-streamCh:
+				if !ok {
+					return false
+				}
+				// Marshal the token to JSON
+				jsonData, err := json.Marshal(resp.Response) // Marshal only the response part
+				if err != nil {
+					router.logger.Error("failed to marshal token", err)
+					return false
+				}
+
+				// Standardize the response types also for Ollama
+				if req.SSEvents {
+					switch resp.EventType {
+					case providers.EventMessageStart:
+						c.SSEvent(string(providers.EventMessageStart), string(providers.EventMessageStartValue))
+
+					case providers.EventStreamStart:
+						c.SSEvent(string(providers.EventStreamStart), string(providers.EventStreamStartValue))
+
+					case providers.EventContentStart:
+						c.SSEvent(string(providers.EventContentStart), string(providers.EventContentStartValue))
+
+					case providers.EventContentDelta:
+						c.SSEvent(string(providers.EventContentDelta), string(jsonData))
+
+					case providers.EventContentEnd:
+						c.SSEvent(string(providers.EventContentEnd), string(providers.EventContentEndValue))
+
+					case providers.EventMessageEnd:
+						c.SSEvent(string(providers.EventMessageEnd), string(providers.EventMessageEndValue))
+
+					case providers.EventStreamEnd:
+						c.SSEvent(string(providers.EventStreamEnd), string(providers.EventStreamEndValue))
+
+					}
+					return true
+				}
+
+				// Write Raw JSON chunk
+				if _, err := c.Writer.Write(jsonData); err != nil {
+					router.logger.Error("failed to write response chunk", err)
+					return false
+				}
+				if _, err := c.Writer.Write([]byte("\n")); err != nil {
+					router.logger.Error("failed to write newline", err)
+					return false
+				}
+				return true
+			case <-ctx.Done():
+				return false
+			}
+		})
+		return
+	}
 
 	response, err := provider.GenerateTokens(ctx, req.Model, req.Messages)
 	if err != nil {

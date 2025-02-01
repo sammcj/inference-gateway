@@ -1,5 +1,11 @@
 package providers
 
+import (
+	"bufio"
+
+	"github.com/inference-gateway/inference-gateway/logger"
+)
+
 // Extra headers for Anthropic provider
 var AnthropicExtraHeaders = map[string][]string{
 	"anthropic-version": {"2023-06-01"},
@@ -80,4 +86,22 @@ func (g *GenerateResponseAnthropic) Transform() GenerateResponse {
 			Model:   g.Model,
 		},
 	}
+}
+
+type AnthropicStreamParser struct {
+	logger logger.Logger
+}
+
+func (p *AnthropicStreamParser) ParseChunk(reader *bufio.Reader) (*SSEvent, error) {
+	rawchunk, err := readSSEventsChunk(reader)
+	if err != nil {
+		return nil, err
+	}
+
+	event, err := parseSSEvents(rawchunk)
+	if err != nil {
+		return nil, err
+	}
+
+	return event, nil
 }

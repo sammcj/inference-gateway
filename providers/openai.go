@@ -1,5 +1,11 @@
 package providers
 
+import (
+	"bufio"
+
+	"github.com/inference-gateway/inference-gateway/logger"
+)
+
 type OpenaiPermission struct {
 	ID                 string `json:"id"`
 	Object             string `json:"object"`
@@ -96,4 +102,22 @@ func (g *GenerateResponseOpenai) Transform() GenerateResponse {
 			Content: g.Choices[0].Message.Content,
 		},
 	}
+}
+
+type OpenaiStreamParser struct {
+	logger logger.Logger
+}
+
+func (p *OpenaiStreamParser) ParseChunk(reader *bufio.Reader) (*SSEvent, error) {
+	rawchunk, err := readSSEventsChunk(reader)
+	if err != nil {
+		return nil, err
+	}
+
+	event, err := parseSSEvents(rawchunk)
+	if err != nil {
+		return nil, err
+	}
+
+	return event, nil
 }
