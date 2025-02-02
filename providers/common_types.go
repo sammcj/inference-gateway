@@ -58,7 +58,7 @@ type GenerateRequest struct {
 	Messages []Message `json:"messages"`
 	Model    string    `json:"model"`
 	Stream   bool      `json:"stream"`
-	SSEvents bool      `json:"ss_events"`
+	SSEvents bool      `json:"ssevents"`
 }
 
 type GenerateResponse struct {

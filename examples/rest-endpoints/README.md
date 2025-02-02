@@ -41,6 +41,6 @@ You can set the stream as an optional flag in the request body to enable streami
     }
   ],
   "stream": true,
-  "ss_events": true // Optional parameter to enable Server Sent Events(SSE), for easy parsing on the client side using browser's EventSource API
+  "ssevents": true // Optional parameter to enable Server Sent Events(SSE), for easy parsing on the client side using browser's EventSource API
 }
 ```
