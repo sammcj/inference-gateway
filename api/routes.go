@@ -221,12 +221,11 @@ func handleProxyRequest(c *gin.Context, provider providers.Provider, router *Rou
 		req.URL.Path = c.Param("path")
 
 		if router.cfg.Environment == "development" {
-			router.logger.Debug("proxying request",
-				"from", c.Request.URL.String(),
-				"to", req.URL.String(),
-				"method", req.Method,
-				"headers", req.Header,
-			)
+			reqModifier := proxymodifier.NewDevRequestModifier(router.logger)
+			if err := reqModifier.Modify(req); err != nil {
+				router.logger.Error("failed to modify request", err)
+				return
+			}
 		}
 	}
 
@@ -432,7 +431,7 @@ func (router *RouterImpl) GenerateProvidersTokenHandler(c *gin.Context) {
 		return
 	}
 
-	response, err := provider.GenerateTokens(ctx, req.Model, req.Messages)
+	response, err := provider.GenerateTokens(ctx, req.Model, req.Messages, req.Tools)
 	if err != nil {
 		if err == context.DeadlineExceeded || ctx.Err() == context.DeadlineExceeded {
 			router.logger.Error("request timed out", err, "provider", c.Param("provider"))

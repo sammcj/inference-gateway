@@ -27,8 +27,8 @@ Assuming you've deployed the Inference Gateway, you can interact with the langua
 
 You can set the stream as an optional flag in the request body to enable streaming of tokens. The default value is `false`.
 
-```json
-{
+```bash
+curl -X POST http://localhost:8080/llms/ollama/generate -d '{
   "model": "phi3:3.8b",
   "messages": [
     {
@@ -41,6 +41,39 @@ You can set the stream as an optional flag in the request body to enable streami
     }
   ],
   "stream": true,
-  "ssevents": true // Optional parameter to enable Server Sent Events(SSE), for easy parsing on the client side using browser's EventSource API
-}
+  "ssevents": true
+}' | jq .
+```
+
+### Tool Calls
+
+You can provide tools that the LLM can use to perform specific functions. Here are some examples:
+
+```bash
+curl -X POST http://localhost:8080/llms/ollama/generate -d '{
+  "model": "llama3.2:1b",
+  "messages": [
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": "What is the current weather in Toronto?"}
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "get_current_weather",
+        "description": "Get the current weather of a city",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "city": {
+              "type": "string",
+              "description": "The name of the city"
+            }
+          },
+          "required": ["city"]
+        }
+      }
+    }
+  ]
+}' | jq .
 ```

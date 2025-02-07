@@ -3,6 +3,7 @@ package providers
 import (
 	"bufio"
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -51,7 +52,34 @@ const (
 	MessageRoleSystem    = "system"
 	MessageRoleUser      = "user"
 	MessageRoleAssistant = "assistant"
+	MessageRoleTool      = "tool"
 )
+
+// ToolProperty represents a parameter property
+type ToolProperty struct {
+	Type        string `json:"type"`
+	Description string `json:"description"`
+}
+
+// ToolParams represents the parameters for a function tool
+type ToolParams struct {
+	Type       string                  `json:"type"`
+	Properties map[string]ToolProperty `json:"properties"`
+	Required   []string                `json:"required"`
+}
+
+// FunctionTool represents a function that can be called
+type FunctionTool struct {
+	Name        string     `json:"name"`
+	Description string     `json:"description"`
+	Parameters  ToolParams `json:"parameters"`
+}
+
+// Tool represents a function tool that can be called by the LLM
+type Tool struct {
+	Type     string        `json:"type"`
+	Function *FunctionTool `json:"function,omitempty"`
+}
 
 // Common response and request types
 type GenerateRequest struct {
@@ -59,6 +87,21 @@ type GenerateRequest struct {
 	Model    string    `json:"model"`
 	Stream   bool      `json:"stream"`
 	SSEvents bool      `json:"ssevents"`
+	Tools    []Tool    `json:"tools"`
+}
+
+// ToolCall represents a tool invocation by the LLM
+type ToolCall struct {
+	ID       string           `json:"id,omitempty"`
+	Type     string           `json:"type,omitempty"`
+	Function FunctionToolCall `json:"function"`
+}
+
+// FunctionToolCall represents a function call
+type FunctionToolCall struct {
+	Name        string          `json:"name"`
+	Description string          `json:"description,omitempty"`
+	Arguments   json.RawMessage `json:"arguments"`
 }
 
 type GenerateResponse struct {
@@ -73,8 +116,10 @@ type ListModelsResponse struct {
 }
 
 type Message struct {
-	Content string `json:"content"`
-	Role    string `json:"role"`
+	Content   string     `json:"content"`
+	Role      string     `json:"role"`
+	ToolCalls []ToolCall `json:"tool_calls,omitempty"`
+	Reasoning string     `json:"reasoning,omitempty"`
 }
 
 type Model struct {
@@ -82,16 +127,21 @@ type Model struct {
 }
 
 type ResponseTokens struct {
-	Content string `json:"content"`
-	Model   string `json:"model,omitempty"`
-	Role    string `json:"role,omitempty"`
+	Content   string     `json:"content"`
+	Model     string     `json:"model,omitempty"`
+	Role      string     `json:"role,omitempty"`
+	ToolCalls []ToolCall `json:"tool_calls,omitempty"`
 }
 
-func float64Ptr(v float64) *float64 {
+func Float64Ptr(v float64) *float64 {
 	return &v
 }
 
-func intPtr(v int) *int {
+func IntPtr(v int) *int {
+	return &v
+}
+
+func BoolPtr(v bool) *bool {
 	return &v
 }
 
@@ -233,9 +283,7 @@ func NewStreamParser(l logger.Logger, provider string) (StreamParser, error) {
 			logger: l,
 		}, nil
 	case GroqID:
-		return &GroqStreamParser{
-			logger: l,
-		}, nil
+		return NewGroqStreamParser(l), nil
 	case CloudflareID:
 		return &CloudflareStreamParser{
 			logger: l,

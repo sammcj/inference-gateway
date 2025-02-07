@@ -50,6 +50,7 @@ type GenerateRequestGroq struct {
 	} `json:"response_format,omitempty"`
 	Seed        *int    `json:"seed,omitempty"`
 	ServiceTier *string `json:"service_tier,omitempty"`
+	Tools       []Tool  `json:"tools,omitempty"`
 }
 
 func (r *GenerateRequest) TransformGroq() GenerateRequestGroq {
@@ -57,7 +58,8 @@ func (r *GenerateRequest) TransformGroq() GenerateRequestGroq {
 		Messages:    r.Messages,
 		Model:       r.Model,
 		Stream:      &r.Stream,
-		Temperature: float64Ptr(1.0),
+		Temperature: Float64Ptr(1.0),
+		Tools:       r.Tools,
 	}
 }
 
@@ -71,11 +73,6 @@ type GroqUsage struct {
 	TotalTime        float64 `json:"total_time"`
 }
 
-type GroqMessage struct {
-	Role    string `json:"role"`
-	Content string `json:"content"`
-}
-
 type GroqDelta struct {
 	Role    string `json:"role"`
 	Content string `json:"content"`
@@ -83,7 +80,7 @@ type GroqDelta struct {
 
 type GroqChoice struct {
 	Index        int         `json:"index"`
-	Message      GroqMessage `json:"message"`
+	Message      Message     `json:"message"`
 	Delta        GroqDelta   `json:"delta,omitempty"`
 	LogProbs     interface{} `json:"logprobs"`
 	FinishReason string      `json:"finish_reason"`
@@ -112,51 +109,45 @@ func (g *GenerateResponseGroq) Transform() GenerateResponse {
 		Role:  MessageRoleAssistant,
 	}
 
-	// Handle non-streaming case using Message first
-	if g.Choices[0].Message.Content != "" {
-		response.Content = g.Choices[0].Message.Content
-		response.Role = g.Choices[0].Message.Role
-		return GenerateResponse{
-			Provider:  GroqDisplayName,
-			Response:  response,
-			EventType: EventContentDelta,
-		}
+	choice := g.Choices[0]
+	resp := GenerateResponse{
+		Provider: GroqDisplayName,
+		Response: response,
 	}
 
-	// Handle streaming cases with Delta field
+	switch {
+	case len(choice.Message.ToolCalls) > 0:
+		resp.Response.Content = choice.Message.Reasoning
+		resp.Response.ToolCalls = choice.Message.ToolCalls
+		return resp
 
-	// Handle initial message with role
-	if g.Choices[0].Delta.Role == MessageRoleAssistant && g.Choices[0].Delta.Content == "" {
-		return GenerateResponse{
-			Provider:  GroqDisplayName,
-			Response:  response,
-			EventType: EventMessageStart,
-		}
+	case choice.Message.Content != "":
+		resp.Response.Content = choice.Message.Content
+		resp.Response.Role = choice.Message.Role
+		resp.EventType = EventContentDelta
+		return resp
+
+	case choice.Delta.Role == MessageRoleAssistant && choice.Delta.Content == "":
+		resp.EventType = EventMessageStart
+		return resp
+
+	case choice.Delta.Content != "":
+		resp.Response.Content = choice.Delta.Content
+		resp.EventType = EventContentDelta
+		return resp
+
+	case choice.FinishReason == "stop":
+		resp.EventType = EventStreamEnd
+		return resp
 	}
 
-	// Handle content delta
-	if g.Choices[0].Delta.Content != "" {
-		response.Content = g.Choices[0].Delta.Content
-		return GenerateResponse{
-			Provider:  GroqDisplayName,
-			Response:  response,
-			EventType: EventContentDelta,
-		}
-	}
+	resp.EventType = EventContentDelta
+	return resp
+}
 
-	// Handle stream end (empty delta with finish_reason "stop")
-	if g.Choices[0].FinishReason == "stop" {
-		return GenerateResponse{
-			Provider:  GroqDisplayName,
-			Response:  response,
-			EventType: EventStreamEnd,
-		}
-	}
-
-	return GenerateResponse{
-		Provider:  GroqDisplayName,
-		Response:  response,
-		EventType: EventContentDelta,
+func NewGroqStreamParser(logger logger.Logger) *GroqStreamParser {
+	return &GroqStreamParser{
+		logger: logger,
 	}
 }
 
