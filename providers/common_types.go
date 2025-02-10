@@ -83,11 +83,12 @@ type Tool struct {
 
 // Common response and request types
 type GenerateRequest struct {
-	Messages []Message `json:"messages"`
-	Model    string    `json:"model"`
-	Stream   bool      `json:"stream"`
-	SSEvents bool      `json:"ssevents"`
-	Tools    []Tool    `json:"tools"`
+	Messages  []Message `json:"messages"`
+	Model     string    `json:"model"`
+	Stream    bool      `json:"stream"`
+	SSEvents  bool      `json:"ssevents"`
+	Tools     []Tool    `json:"tools"`
+	MaxTokens int       `json:"max_tokens,omitempty"`
 }
 
 // ToolCall represents a tool invocation by the LLM
@@ -108,6 +109,7 @@ type GenerateResponse struct {
 	Provider  string         `json:"provider"`
 	Response  ResponseTokens `json:"response"`
 	EventType EventType      `json:"event_type,omitempty"`
+	Usage     *Usage         `json:"usage,omitempty"`
 }
 
 type ListModelsResponse struct {
@@ -132,6 +134,16 @@ type ResponseTokens struct {
 	Model     string     `json:"model,omitempty"`
 	Role      string     `json:"role,omitempty"`
 	ToolCalls []ToolCall `json:"tool_calls,omitempty"`
+}
+
+type Usage struct {
+	QueueTime        float64 `json:"queue_time"`
+	PromptTokens     int     `json:"prompt_tokens"`
+	PromptTime       float64 `json:"prompt_time"`
+	CompletionTokens int     `json:"completion_tokens"`
+	CompletionTime   float64 `json:"completion_time"`
+	TotalTokens      int     `json:"total_tokens"`
+	TotalTime        float64 `json:"total_time"`
 }
 
 func Float64Ptr(v float64) *float64 {

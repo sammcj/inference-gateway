@@ -35,17 +35,17 @@ func (l *ListModelsResponseGroq) Transform() ListModelsResponse {
 }
 
 type GenerateRequestGroq struct {
-	Messages         []Message `json:"messages"`
-	Model            string    `json:"model"`
-	Temperature      *float64  `json:"temperature,omitempty"`
-	MaxTokens        *int      `json:"max_tokens,omitempty"`
-	TopP             *float64  `json:"top_p,omitempty"`
-	FrequencyPenalty *float64  `json:"frequency_penalty,omitempty"`
-	PresencePenalty  *float64  `json:"presence_penalty,omitempty"`
-	Stream           *bool     `json:"stream,omitempty"`
-	Stop             []string  `json:"stop,omitempty"`
-	User             *string   `json:"user,omitempty"`
-	ResponseFormat   *struct {
+	Messages            []Message `json:"messages"`
+	Model               string    `json:"model"`
+	Temperature         *float64  `json:"temperature,omitempty"`
+	MaxCompletionTokens int       `json:"max_completion_tokens,omitempty"`
+	TopP                *float64  `json:"top_p,omitempty"`
+	FrequencyPenalty    *float64  `json:"frequency_penalty,omitempty"`
+	PresencePenalty     *float64  `json:"presence_penalty,omitempty"`
+	Stream              *bool     `json:"stream,omitempty"`
+	Stop                []string  `json:"stop,omitempty"`
+	User                *string   `json:"user,omitempty"`
+	ResponseFormat      *struct {
 		Type string `json:"type"`
 	} `json:"response_format,omitempty"`
 	Seed        *int    `json:"seed,omitempty"`
@@ -55,11 +55,12 @@ type GenerateRequestGroq struct {
 
 func (r *GenerateRequest) TransformGroq() GenerateRequestGroq {
 	return GenerateRequestGroq{
-		Messages:    r.Messages,
-		Model:       r.Model,
-		Stream:      &r.Stream,
-		Temperature: Float64Ptr(1.0),
-		Tools:       r.Tools,
+		Messages:            r.Messages,
+		Model:               r.Model,
+		Stream:              &r.Stream,
+		Temperature:         Float64Ptr(1.0),
+		Tools:               r.Tools,
+		MaxCompletionTokens: r.MaxTokens,
 	}
 }
 
@@ -92,7 +93,7 @@ type GenerateResponseGroq struct {
 	Created           int64        `json:"created"`
 	Model             string       `json:"model"`
 	Choices           []GroqChoice `json:"choices"`
-	Usage             GroqUsage    `json:"usage"`
+	Usage             *GroqUsage   `json:"usage,omitempty"`
 	SystemFingerprint string       `json:"system_fingerprint"`
 	XGroq             struct {
 		ID string `json:"id"`
@@ -109,12 +110,24 @@ func (g *GenerateResponseGroq) Transform() GenerateResponse {
 		Role:  MessageRoleAssistant,
 	}
 
-	choice := g.Choices[0]
 	resp := GenerateResponse{
 		Provider: GroqDisplayName,
 		Response: response,
 	}
 
+	if g.Usage != nil {
+		resp.Usage = &Usage{
+			QueueTime:        g.Usage.QueueTime,
+			PromptTokens:     g.Usage.PromptTokens,
+			PromptTime:       g.Usage.PromptTime,
+			CompletionTokens: g.Usage.CompletionTokens,
+			CompletionTime:   g.Usage.CompletionTime,
+			TotalTokens:      g.Usage.TotalTokens,
+			TotalTime:        g.Usage.TotalTime,
+		}
+	}
+
+	choice := g.Choices[0]
 	switch {
 	case len(choice.Message.ToolCalls) > 0:
 		resp.Response.Content = choice.Message.Reasoning
@@ -124,7 +137,6 @@ func (g *GenerateResponseGroq) Transform() GenerateResponse {
 	case choice.Message.Content != "":
 		resp.Response.Content = choice.Message.Content
 		resp.Response.Role = choice.Message.Role
-		resp.EventType = EventContentDelta
 		return resp
 
 	case choice.Delta.Role == MessageRoleAssistant && choice.Delta.Content == "":
