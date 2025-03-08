@@ -1,0 +1,19 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: inference-gateway
+  namespace: monitoring
+  labels:
+    app: inference-gateway
+spec:
+  selector:
+    matchLabels:
+      app: inference-gateway
+  namespaceSelector:
+    matchNames:
+      - inference-gateway
+  endpoints:
+    - port: metrics
+      interval: 15s
+      path: /metrics
