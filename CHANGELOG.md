@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.18](https://github.com/inference-gateway/inference-gateway/compare/v0.2.17...v0.2.18) (2025-03-10)
+
+### 🐛 Bug Fixes
+
+* **release:** Correct version extraction regex to include 'v' prefix ([79a910f](https://github.com/inference-gateway/inference-gateway/commit/79a910f54120bd3b7f2d73756d55f8d12b19dcf6))
+* **release:** Update version extraction to remove 'v' prefix and adjust image push command ([3e99f6f](https://github.com/inference-gateway/inference-gateway/commit/3e99f6f634d45618adffae2caa8ccb8be044a888))
+
 ## [0.2.17](https://github.com/inference-gateway/inference-gateway/compare/v0.2.16...v0.2.17) (2025-03-10)
 
 ### 👷 CI
