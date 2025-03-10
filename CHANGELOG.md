@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.17](https://github.com/inference-gateway/inference-gateway/compare/v0.2.16...v0.2.17) (2025-03-10)
+
+### 👷 CI
+
+* Add step to push container images in release workflow ([e72c480](https://github.com/inference-gateway/inference-gateway/commit/e72c480e59531931aec286d0f74e8fe8f6e84b3e))
+
 ## [0.2.16](https://github.com/inference-gateway/inference-gateway/compare/v0.2.15...v0.2.16) (2025-03-10)
 
 ### 👷 CI
