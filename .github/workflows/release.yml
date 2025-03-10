@@ -84,7 +84,7 @@ jobs:
           fi
 
           # Extract version from dry run output
-          VERSION=$(echo "$DRY_OUTPUT" | grep -o "The next release version is [0-9]\+\.[0-9]\+\.[0-9]\+\(-rc\.[0-9]\+\)\?" | cut -d ' ' -f6)
+          VERSION=$(echo "$DRY_OUTPUT" | grep -o "The next release version is v[0-9]\+\.[0-9]\+\.[0-9]\+\(-rc\.[0-9]\+\)\?" | cut -d ' ' -f6)
           if [ -z "$VERSION" ]; then
             echo "Error: Could not determine version"
             exit 1
