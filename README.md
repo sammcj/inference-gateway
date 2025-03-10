@@ -52,22 +52,42 @@ The Inference Gateway is a proxy server designed to facilitate access to various
 You can horizontally scale the Inference Gateway to handle multiple requests from clients. The Inference Gateway will forward the requests to the respective provider and return the response to the client. The following diagram illustrates the flow:
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#326CE5', 'primaryTextColor': '#fff', 'lineColor': '#5D8AA8', 'secondaryColor': '#006100' }, 'fontFamily': 'Arial', 'flowchart': {'nodeSpacing': 50, 'rankSpacing': 70, 'padding': 15}}}%%
+
+
 graph TD
-    A[Client] --> |POST /llms/provider/generate| Auth[Inference Gateway]
-    A[Client] --> |POST /llms/provider/generate| Auth[Inference Gateway]
-    A[Client] --> |POST /llms/provider/generate| Auth[Inference Gateway]
-    Auth[Optional OIDC] --> |Auth?| IG1[Inference Gateway]
-    Auth[Optional OIDC] --> |Auth?| IG2[Inference Gateway]
-    Auth[Optional OIDC] --> |Auth?| IG3[Inference Gateway]
-    IG1 --> P[Proxy Gateway]
-    IG2 --> P[Proxy Gateway]
-    IG3 --> P[Proxy Gateway]
-    P[Proxy Gateway] --> C[Ollama]
-    P[Proxy Gateway] --> D[Groq]
-    P[Proxy Gateway] --> E[OpenAI]
-    P[Proxy Gateway] --> G[Cloudflare]
-    P[Proxy Gateway] --> H[Cohere]
-    P[Proxy Gateway] --> H[Anthropic]
+    %% Client nodes
+    A["👥 Clients / 🤖 Agents"] --> |POST /llms/provider/generate| Auth
+
+    %% Auth node
+    Auth["🔒 Optional OIDC"] --> |Auth?| IG1
+    Auth --> |Auth?| IG2
+    Auth --> |Auth?| IG3
+
+    %% Gateway nodes
+    IG1["🖥️ Inference Gateway"] --> P
+    IG2["🖥️ Inference Gateway"] --> P
+    IG3["🖥️ Inference Gateway"] --> P
+
+    %% Proxy and providers
+    P["🔌 Proxy Gateway"] --> C["🦙 Ollama"]
+    P --> D["🚀 Groq"]
+    P --> E["☁️ OpenAI"]
+    P --> G["⚡ Cloudflare"]
+    P --> H1["💬 Cohere"]
+    P --> H2["🧠 Anthropic"]
+
+    %% Define styles
+    classDef client fill:#9370DB,stroke:#333,stroke-width:1px,color:white;
+    classDef auth fill:#F5A800,stroke:#333,stroke-width:1px,color:black;
+    classDef gateway fill:#326CE5,stroke:#fff,stroke-width:1px,color:white;
+    classDef provider fill:#32CD32,stroke:#333,stroke-width:1px,color:white;
+
+    %% Apply styles
+    class A client;
+    class Auth auth;
+    class IG1,IG2,IG3,P gateway;
+    class C,D,E,G,H1,H2 provider;
 ```
 
 Client is sending:
