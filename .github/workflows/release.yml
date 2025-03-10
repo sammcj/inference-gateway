@@ -159,3 +159,10 @@ jobs:
           if [ -f "dist/checksums.txt" ]; then
             gh release upload v${VERSION} "dist/checksums.txt" --clobber
           fi
+
+      - name: Push container images
+        run: |
+          docker push ghcr.io/${{ github.repository }}:${{ needs.github_release.outputs.new_release_version }}
+          if [[ ! "${{ needs.github_release.outputs.new_release_version }}" =~ -rc ]]; then
+            docker push ghcr.io/${{ github.repository }}:latest
+          fi
