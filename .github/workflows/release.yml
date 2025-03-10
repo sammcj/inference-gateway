@@ -166,3 +166,7 @@ jobs:
           if [[ ! "${{ needs.github_release.outputs.new_release_version }}" =~ -rc ]]; then
             docker push ghcr.io/${{ github.repository }}:latest
           fi
+
+      - name: Sign container images
+        run: |
+          echo "TODO: Sign container images"
