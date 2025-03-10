@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.16](https://github.com/inference-gateway/inference-gateway/compare/v0.2.15...v0.2.16) (2025-03-10)
+
+### 👷 CI
+
+* Change release trigger to manual workflow dispatch ([a93ff17](https://github.com/inference-gateway/inference-gateway/commit/a93ff172f8d34b398ba55da3c127b68339a83a3b))
+* Improve release workflow with semantic release auto versioning and changelog generation ([#40](https://github.com/inference-gateway/inference-gateway/issues/40)) ([cd7045c](https://github.com/inference-gateway/inference-gateway/commit/cd7045cd5c7c15990be8ff173f497653730d44ec))
+
+### 📚 Documentation
+
+* Add tool-use support and streaming responses to README ([af990a3](https://github.com/inference-gateway/inference-gateway/commit/af990a371142b726142beb06a08a11552a7abc58))
+* Enhance diagram in README ([f98c3ff](https://github.com/inference-gateway/inference-gateway/commit/f98c3ff37b4084daa734c4b812598df60654afb8))
+* **examples:** Add TLS configuration setup example for Inference Gateway ([#39](https://github.com/inference-gateway/inference-gateway/issues/39)) ([844df89](https://github.com/inference-gateway/inference-gateway/commit/844df89a5e335419e3d62e1d9240016e36c485d8))
+* **fix:** Table was broken, fixed it ([a059a78](https://github.com/inference-gateway/inference-gateway/commit/a059a780f18c06eb2d1c2967e7c6d34fbe8921fd))
+* Update OpenTelemetry description for clarity, keep it short and concise ([bd51700](https://github.com/inference-gateway/inference-gateway/commit/bd5170064d20869191c8e35aba5c4f4123ab1994))
+
 ## [0.2.16-rc.13](https://github.com/inference-gateway/inference-gateway/compare/v0.2.16-rc.12...v0.2.16-rc.13) (2025-03-10)
 
 ### 🔨 Miscellaneous
