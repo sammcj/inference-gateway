@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.20](https://github.com/inference-gateway/inference-gateway/compare/v0.2.19...v0.2.20) (2025-03-10)
+
+### 👷 CI
+
+* **cleanup:** Remove redundant step in workflow ([#43](https://github.com/inference-gateway/inference-gateway/issues/43)) ([95c083e](https://github.com/inference-gateway/inference-gateway/commit/95c083e3eb4f559edfaff7dce7fb3f6046e62d71))
+
 ## [0.2.20-rc.3](https://github.com/inference-gateway/inference-gateway/compare/v0.2.20-rc.2...v0.2.20-rc.3) (2025-03-10)
 
 ### 👷 CI
