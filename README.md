@@ -34,7 +34,7 @@ The Inference Gateway is a proxy server designed to facilitate access to various
 - ⚙️ **Environment Configuration**: Easily configure API keys and URLs through environment variables.
 - 🐳 **Docker Support**: Use Docker and Docker Compose for easy setup and deployment.
 - ☸️ **Kubernetes Support**: Ready for deployment in Kubernetes environments.
-- 📊 **OpenTelemetry Tracing**: Enable tracing for the server to monitor and analyze performance.
+- 📊 **OpenTelemetry**: Monitor and analyze performance.
 - 🛡️ **Production Ready**: Built with production in mind, with configurable timeouts and TLS support.
 - 🌿 **Lightweight**: Includes only essential libraries and runtime, resulting in smaller size binary of ~10.8MB.
 - 📉 **Minimal Resource Consumption**: Designed to consume minimal resources and have a lower footprint.
