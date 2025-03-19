@@ -5,12 +5,8 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"io"
 	"net/http"
-	"net/url"
-	"strings"
 
 	l "github.com/inference-gateway/inference-gateway/logger"
 )
@@ -27,8 +23,8 @@ type Provider interface {
 
 	// Fetchers
 	ListModels(ctx context.Context) (ListModelsResponse, error)
-	GenerateTokens(ctx context.Context, model string, messages []Message, tools []Tool, maxTokens int) (GenerateResponse, error)
-	StreamTokens(ctx context.Context, model string, messages []Message) (<-chan GenerateResponse, error)
+	ChatCompletions(ctx context.Context, req CreateChatCompletionRequest) (CreateChatCompletionResponse, error)
+	StreamChatCompletions(ctx context.Context, req CreateChatCompletionRequest) (<-chan []byte, error)
 }
 
 type ProviderImpl struct {
@@ -67,458 +63,204 @@ func (p *ProviderImpl) GetExtraHeaders() map[string][]string {
 	return p.extraHeaders
 }
 
-func (p *ProviderImpl) EndpointList() string {
-	return p.endpoints.List
+func (p *ProviderImpl) EndpointModels() string {
+	return p.endpoints.Models
 }
 
-func (p *ProviderImpl) EndpointGenerate() string {
-	return p.endpoints.Generate
+func (p *ProviderImpl) EndpointChat() string {
+	return p.endpoints.Chat
 }
 
+// ListModels fetches the list of models available from the provider and returns them in OpenAI compatible format
 func (p *ProviderImpl) ListModels(ctx context.Context) (ListModelsResponse, error) {
-	baseURL, err := url.Parse(p.GetURL())
+	url := "/proxy/" + p.GetID() + p.EndpointModels()
+
+	response, err := p.client.Get(url)
 	if err != nil {
-		p.logger.Error("failed to parse base URL", err)
-		return ListModelsResponse{}, fmt.Errorf("failed to parse base URL: %v", err)
+		p.logger.Error("Failed to list models", err, "provider", p.GetName(), "url", url)
+		return ListModelsResponse{}, err
 	}
 
-	url := "/proxy/" + p.GetID() + baseURL.Path + p.EndpointList()
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
-	if err != nil {
-		p.logger.Error("failed to create request", err)
-		return ListModelsResponse{}, fmt.Errorf("failed to create request: %w", err)
+	if response.StatusCode != http.StatusOK {
+		err := fmt.Errorf("HTTP error: %d - Error fetching models", response.StatusCode)
+		p.logger.Error("Non-200 status code when listing models", err, "provider", p.GetName(), "statusCode", response.StatusCode)
+		return ListModelsResponse{}, err
 	}
 
-	resp, err := p.client.Do(req)
-	if err != nil {
-		p.logger.Error("failed to make request", err, "provider", p.GetName())
-		return ListModelsResponse{
-			Provider: p.GetID(),
-			Models:   make([]Model, 0),
-		}, fmt.Errorf("failed to reach provider %s: %w", p.GetName(), err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return ListModelsResponse{
-			Provider: p.GetID(),
-			Models:   make([]Model, 0),
-		}, fmt.Errorf("failed with status code: %d", resp.StatusCode)
-	}
-
+	var transformer ListModelsTransformer
 	switch p.GetID() {
 	case OllamaID:
-		var response ListModelsResponseOllama
-		err = json.NewDecoder(resp.Body).Decode(&response)
-		if err != nil {
-			p.logger.Error("failed to decode response", err, "provider", p.GetName())
-			return ListModelsResponse{}, fmt.Errorf("failed to decode response: %w", err)
+		var resp ListModelsResponseOllama
+		if err := json.NewDecoder(response.Body).Decode(&resp); err != nil {
+			p.logger.Error("Failed to unmarshal response", err, "provider", p.GetName(), "url", url)
+			return ListModelsResponse{}, err
 		}
-		return response.Transform(), nil
-	case GroqID:
-		var response ListModelsResponseGroq
-		err = json.NewDecoder(resp.Body).Decode(&response)
-		if err != nil {
-			p.logger.Error("failed to decode response", err, "provider", p.GetName())
-			return ListModelsResponse{}, fmt.Errorf("failed to decode response: %w", err)
-		}
-		return response.Transform(), nil
-	case OpenaiID:
-		var response ListModelsResponseOpenai
-		err = json.NewDecoder(resp.Body).Decode(&response)
-		if err != nil {
-			p.logger.Error("failed to decode response", err, "provider", p.GetName())
-			return ListModelsResponse{}, fmt.Errorf("failed to decode response: %w", err)
-		}
-		return response.Transform(), nil
+		transformer = &resp
 	case CloudflareID:
-		var response ListModelsResponseCloudflare
-		if err = json.NewDecoder(resp.Body).Decode(&response); err != nil {
-			p.logger.Error("failed to decode response", err, "provider", p.GetName())
-			return ListModelsResponse{}, fmt.Errorf("failed to decode response: %w", err)
+		var resp ListModelsResponseCloudflare
+		if err := json.NewDecoder(response.Body).Decode(&resp); err != nil {
+			p.logger.Error("Failed to unmarshal response", err, "provider", p.GetName(), "url", url)
+			return ListModelsResponse{}, err
 		}
-		return response.Transform(), nil
-	case CohereID:
-		var response ListModelsResponseCohere
-		if err = json.NewDecoder(resp.Body).Decode(&response); err != nil {
-			p.logger.Error("failed to decode response", err, "provider", p.GetName())
-			return ListModelsResponse{}, fmt.Errorf("failed to decode response: %w", err)
-		}
-		return response.Transform(), nil
+		transformer = &resp
 	case AnthropicID:
-		var response ListModelsResponseAnthropic
-		if err = json.NewDecoder(resp.Body).Decode(&response); err != nil {
-			p.logger.Error("failed to decode response", err, "provider", p.GetName())
-			return ListModelsResponse{}, fmt.Errorf("failed to decode response: %w", err)
+		var resp ListModelsResponseAnthropic
+		if err := json.NewDecoder(response.Body).Decode(&resp); err != nil {
+			p.logger.Error("Failed to unmarshal response", err, "provider", p.GetName(), "url", url)
+			return ListModelsResponse{}, err
 		}
-		return response.Transform(), nil
+		transformer = &resp
+	case CohereID:
+		var resp ListModelsResponseCohere
+		if err := json.NewDecoder(response.Body).Decode(&resp); err != nil {
+			p.logger.Error("Failed to unmarshal response", err, "provider", p.GetName(), "url", url)
+			return ListModelsResponse{}, err
+		}
+		transformer = &resp
+	case GroqID:
+		var resp ListModelsResponseGroq
+		if err := json.NewDecoder(response.Body).Decode(&resp); err != nil {
+			p.logger.Error("Failed to unmarshal response", err, "provider", p.GetName(), "url", url)
+			return ListModelsResponse{}, err
+		}
+		transformer = &resp
 	default:
-		p.logger.Error("provider not found", nil, "provider", p.GetName())
-		return ListModelsResponse{}, fmt.Errorf("failed to decode response: %w", err)
+		var resp ListModelsResponseOpenai
+		if err := json.NewDecoder(response.Body).Decode(&resp); err != nil {
+			p.logger.Error("Failed to unmarshal response", err, "provider", p.GetName(), "url", url)
+			return ListModelsResponse{}, err
+		}
+		transformer = &resp
 	}
+
+	return transformer.Transform(), nil
 }
 
-func (p *ProviderImpl) GenerateTokens(ctx context.Context, model string, messages []Message, tools []Tool, maxTokens int) (GenerateResponse, error) {
-	if p == nil {
-		return GenerateResponse{}, errors.New("provider cannot be nil")
-	}
+// ChatCompletions generates chat completions from the provider
+func (p *ProviderImpl) ChatCompletions(ctx context.Context, req CreateChatCompletionRequest) (CreateChatCompletionResponse, error) {
+	proxyURL := "/proxy/" + p.GetID() + p.EndpointChat()
 
-	baseURL, err := url.Parse(p.GetURL())
+	reqBody, err := json.Marshal(req)
 	if err != nil {
-		p.logger.Error("failed to parse base URL", err)
-		return GenerateResponse{}, fmt.Errorf("failed to parse base URL: %v", err)
+		p.logger.Error("Failed to marshal request", err, "provider", p.GetName())
+		return CreateChatCompletionResponse{}, err
 	}
 
-	url := "/proxy/" + p.GetID() + baseURL.Path + p.EndpointGenerate()
-	if p.GetID() == CloudflareID {
-		url = strings.Replace(url, "{model}", model, 1)
+	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, proxyURL, bytes.NewBuffer(reqBody))
+	if err != nil {
+		p.logger.Error("Failed to create request", err, "provider", p.GetName(), "url", proxyURL)
+		return CreateChatCompletionResponse{}, err
 	}
 
-	genRequest := GenerateRequest{
-		Model:     model,
-		Messages:  messages,
-		Tools:     tools,
-		MaxTokens: maxTokens,
+	httpReq.Header.Set("Content-Type", "application/json")
+
+	response, err := p.client.Do(httpReq)
+	if err != nil {
+		p.logger.Error("Failed to send request", err, "provider", p.GetName(), "url", proxyURL)
+		return CreateChatCompletionResponse{}, err
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode != http.StatusOK {
+		err := fmt.Errorf("HTTP error: %d - Error generating chat completion", response.StatusCode)
+		p.logger.Error("Non-200 status code", err, "provider", p.GetName(), "statusCode", response.StatusCode)
+		return CreateChatCompletionResponse{}, err
 	}
 
-	switch p.GetID() {
-	case OllamaID:
-		// Request
-		payload := genRequest.TransformOllama()
-		payloadBytes, err := json.Marshal(payload)
-		if err != nil {
-			p.logger.Error("failed to marshal request", err)
-			return GenerateResponse{}, fmt.Errorf("failed to marshal request: %w", err)
-		}
-
-		resp, err := fetchTokens(ctx, p.client, url, payloadBytes, p.logger)
-		if err != nil {
-			p.logger.Error("failed to make request", err)
-			return GenerateResponse{}, fmt.Errorf("failed to make request: %w", err)
-		}
-
-		// Response
-		var response GenerateResponseOllama
-		if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-			p.logger.Error("failed to decode response", err)
-			return GenerateResponse{}, fmt.Errorf("failed to decode response: %w", err)
-		}
-		return response.Transform(), nil
-	case GroqID:
-		// Request
-		payload := genRequest.TransformGroq()
-		payloadBytes, err := json.Marshal(payload)
-		if err != nil {
-			p.logger.Error("failed to marshal request", err)
-			return GenerateResponse{}, fmt.Errorf("failed to marshal request: %w", err)
-		}
-
-		resp, err := fetchTokens(ctx, p.client, url, payloadBytes, p.logger)
-		if err != nil {
-			p.logger.Error("failed to make request", err)
-			return GenerateResponse{}, fmt.Errorf("failed to make request: %w", err)
-		}
-
-		// Response
-		var response GenerateResponseGroq
-		if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-			p.logger.Error("failed to decode response", err)
-			return GenerateResponse{}, fmt.Errorf("failed to decode response: %w", err)
-		}
-		return response.Transform(), nil
-	case OpenaiID:
-		// Request
-		payload := genRequest.TransformOpenai()
-		payloadBytes, err := json.Marshal(payload)
-		if err != nil {
-			p.logger.Error("failed to marshal request", err)
-			return GenerateResponse{}, fmt.Errorf("failed to marshal request: %w", err)
-		}
-
-		resp, err := fetchTokens(ctx, p.client, url, payloadBytes, p.logger)
-		if err != nil {
-			p.logger.Error("failed to make request", err)
-			return GenerateResponse{}, fmt.Errorf("failed to make request: %w", err)
-		}
-
-		// Response
-		var response GenerateResponseOpenai
-		err = json.NewDecoder(resp.Body).Decode(&response)
-		if err != nil {
-			p.logger.Error("failed to decode response", err, "provider", p.GetName())
-			return GenerateResponse{}, fmt.Errorf("failed to decode response: %w", err)
-		}
-		return response.Transform(), nil
-	case CloudflareID:
-		// Request
-		payload := genRequest.TransformCloudflare()
-		payloadBytes, err := json.Marshal(payload)
-		if err != nil {
-			p.logger.Error("failed to marshal request", err)
-			return GenerateResponse{}, fmt.Errorf("failed to marshal request: %w", err)
-		}
-
-		resp, err := fetchTokens(ctx, p.client, url, payloadBytes, p.logger)
-		if err != nil {
-			p.logger.Error("failed to make request", err)
-			return GenerateResponse{}, fmt.Errorf("failed to make request: %w", err)
-		}
-
-		// Response
-		var response GenerateResponseCloudflare
-		if err = json.NewDecoder(resp.Body).Decode(&response); err != nil {
-			p.logger.Error("failed to decode response", err, "provider", p.GetName())
-			return GenerateResponse{}, fmt.Errorf("failed to decode response: %w", err)
-		}
-		return response.Transform(), nil
-	case CohereID:
-		// Request
-		payload := genRequest.TransformCohere()
-		payloadBytes, err := json.Marshal(payload)
-		if err != nil {
-			p.logger.Error("failed to marshal request", err)
-			return GenerateResponse{}, fmt.Errorf("failed to marshal request: %w", err)
-		}
-
-		resp, err := fetchTokens(ctx, p.client, url, payloadBytes, p.logger)
-		if err != nil {
-			p.logger.Error("failed to make request", err)
-			return GenerateResponse{}, fmt.Errorf("failed to make request: %w", err)
-		}
-
-		// Response
-		var response GenerateResponseCohere
-		if err = json.NewDecoder(resp.Body).Decode(&response); err != nil {
-			p.logger.Error("failed to decode response", err, "provider", p.GetName())
-			return GenerateResponse{}, fmt.Errorf("failed to decode response: %w", err)
-		}
-		return response.Transform(), nil
-	case AnthropicID:
-		// Request
-		payload := genRequest.TransformAnthropic()
-		payloadBytes, err := json.Marshal(payload)
-		if err != nil {
-			p.logger.Error("failed to marshal request", err)
-			return GenerateResponse{}, fmt.Errorf("failed to marshal request: %w", err)
-		}
-
-		resp, err := fetchTokens(ctx, p.client, url, payloadBytes, p.logger)
-		if err != nil {
-			p.logger.Error("failed to make request", err)
-			return GenerateResponse{}, fmt.Errorf("failed to make request: %w", err)
-		}
-
-		// Response
-		var response GenerateResponseAnthropic
-		if err = json.NewDecoder(resp.Body).Decode(&response); err != nil {
-			p.logger.Error("failed to decode response", err, "provider", p.GetName())
-			return GenerateResponse{}, fmt.Errorf("failed to decode response: %w", err)
-		}
-		return response.Transform(), nil
-	default:
-		p.logger.Error("unsupported provider", nil)
-		return GenerateResponse{}, fmt.Errorf("unsupported provider: %s", p.GetID())
+	var resp CreateChatCompletionResponse
+	if err := json.NewDecoder(response.Body).Decode(&resp); err != nil {
+		p.logger.Error("Failed to unmarshal response", err, "provider", p.GetName())
+		return CreateChatCompletionResponse{}, err
 	}
+
+	return resp, nil
 }
 
-func (p *ProviderImpl) StreamTokens(ctx context.Context, model string, messages []Message) (<-chan GenerateResponse, error) {
-	if p == nil {
-		return nil, errors.New("provider cannot be nil")
+// StreamChatCompletions generates chat completions from the provider using streaming
+func (p *ProviderImpl) StreamChatCompletions(ctx context.Context, req CreateChatCompletionRequest) (<-chan []byte, error) {
+	proxyURL := "/proxy/" + p.GetID() + p.EndpointChat()
+
+	// Enforce usage tracking for streaming completions
+	req.StreamOptions = &ChatCompletionStreamOptions{
+		IncludeUsage: true,
 	}
 
-	baseURL, err := url.Parse(p.GetURL())
+	// Special case - cohere doesn't like stream_options, so we don't
+	// include it - probably they haven't implemented it yet in their OpenAI "compatible" API
+	if p.GetID() == CohereID {
+		req.StreamOptions = nil
+	}
+
+	p.logger.Debug("Streaming chat completions", "provider", p.GetName(), "url", proxyURL, "request", req)
+
+	reqBody, err := json.Marshal(req)
 	if err != nil {
-		p.logger.Error("failed to parse base URL", err)
-		return nil, fmt.Errorf("failed to parse base URL: %v", err)
+		p.logger.Error("Failed to marshal request", err, "provider", p.GetName())
+		return nil, err
 	}
 
-	url := "/proxy/" + p.GetID() + baseURL.Path + p.EndpointGenerate()
-	if p.GetID() == CloudflareID {
-		url = strings.Replace(url, "{model}", model, 1)
-	}
-
-	streamCh := make(chan GenerateResponse)
-
-	genRequest := GenerateRequest{
-		Model:    model,
-		Messages: messages,
-		Stream:   true,
-	}
-
-	// Transform request based on provider
-	var payloadBytes []byte
-	switch p.GetID() {
-	case OllamaID:
-		payload := genRequest.TransformOllama()
-		payloadBytes, err = json.Marshal(payload)
-	case OpenaiID:
-		payload := genRequest.TransformOpenai()
-		payloadBytes, err = json.Marshal(payload)
-	case GroqID:
-		payload := genRequest.TransformGroq()
-		payloadBytes, err = json.Marshal(payload)
-	case CloudflareID:
-		if genRequest.Stream {
-			p.logger.Error("streaming not supported for Cloudflare provider", nil)
-			return nil, fmt.Errorf("streaming is not supported for Cloudflare provider")
-		}
-		payload := genRequest.TransformCloudflare()
-		payloadBytes, err = json.Marshal(payload)
-	case CohereID:
-		payload := genRequest.TransformCohere()
-		payloadBytes, err = json.Marshal(payload)
-	case AnthropicID:
-		payload := genRequest.TransformAnthropic()
-		payloadBytes, err = json.Marshal(payload)
-	default:
-		p.logger.Error("unsupported provider", nil)
-		return nil, fmt.Errorf("unsupported provider")
-	}
-
+	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, proxyURL, bytes.NewBuffer(reqBody))
 	if err != nil {
-		p.logger.Error("failed to marshal request", err)
-		return nil, fmt.Errorf("failed to marshal request: %v", err)
+		p.logger.Error("Failed to create request", err, "provider", p.GetName(), "url", proxyURL)
+		return nil, err
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(payloadBytes))
+	httpReq.Header.Set("Content-Type", "application/json")
+	httpReq.Header.Set("Accept", "text/event-stream")
+
+	response, err := p.client.Do(httpReq)
 	if err != nil {
-		p.logger.Error("failed to create request", err)
-		return nil, fmt.Errorf("failed to create request: %v", err)
+		p.logger.Error("Failed to send request", err, "provider", p.GetName(), "url", proxyURL)
+		return nil, err
 	}
 
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Accept", "text/event-stream")
-
-	resp, err := p.client.Do(req)
-	if err != nil {
-		p.logger.Error("failed to make request", err)
-		return nil, fmt.Errorf("failed to make request: %v", err)
+	if response.StatusCode != http.StatusOK {
+		response.Body.Close()
+		err := fmt.Errorf("HTTP error: %d - Error generating streaming chat completion", response.StatusCode)
+		p.logger.Error("Non-200 status code", err, "provider", p.GetName(), "statusCode", response.StatusCode)
+		return nil, err
 	}
 
-	reader := bufio.NewReader(resp.Body)
-
+	stream := make(chan []byte, 100)
 	go func() {
-		defer resp.Body.Close()
-		defer close(streamCh)
+		defer response.Body.Close()
+		defer close(stream)
+
+		reader := bufio.NewReader(response.Body)
 
 		for {
-			streamParser, err := NewStreamParser(p.logger, p.GetID())
+			line, err := reader.ReadBytes('\n')
 			if err != nil {
-				p.logger.Error("failed to create stream parser", err)
+				if err.Error() != "EOF" {
+					p.logger.Error("Error reading stream", err, "provider", p.GetName())
+				} else {
+					p.logger.Debug("Stream ended gracefully", "provider", p.GetName())
+				}
 				return
 			}
 
-			event, err := streamParser.ParseChunk(reader)
-			if err != nil {
-				if err == io.EOF {
+			line = bytes.TrimSpace(line)
+			if len(line) == 0 {
+				continue
+			}
+
+			if bytes.HasPrefix(line, []byte("data: ")) {
+				line = bytes.TrimPrefix(line, []byte("data: "))
+
+				if bytes.Equal(line, []byte("[DONE]")) {
+					p.logger.Debug("Stream completed", "provider", p.GetName())
 					return
 				}
-				p.logger.Error("failed to read chunk", err)
-				return
-			}
 
-			if event.EventType == EventStreamEnd {
-				// Close the channel by returning
-				return
-			}
-
-			var chunk interface{}
-			switch p.GetID() {
-			case OllamaID:
-				var response GenerateResponseOllama
-				if err := json.Unmarshal(event.Data, &response); err != nil {
-					p.logger.Error("failed to unmarshal chunk", err)
-					continue
-				}
-				chunk = response
-			case OpenaiID:
-				var response GenerateResponseOpenai
-				if err := json.Unmarshal(event.Data, &response); err != nil {
-					p.logger.Error("failed to unmarshal chunk", err)
-					continue
-				}
-				chunk = response
-			case GroqID:
-				var response GenerateResponseGroq
-				if err := json.Unmarshal(event.Data, &response); err != nil {
-					p.logger.Error("failed to unmarshal chunk", err)
-					continue
-				}
-				chunk = response
-			case CloudflareID:
-				var response GenerateResponseCloudflare
-				if err := json.Unmarshal(event.Data, &response); err != nil {
-					p.logger.Error("failed to unmarshal chunk", err)
-					continue
-				}
-				chunk = response
-			case CohereID:
-				var response CohereStreamResponse
-				if err := json.Unmarshal(event.Data, &response); err != nil {
-					p.logger.Error("failed to unmarshal chunk", err)
-					return
-				}
-				chunk = response
-			case AnthropicID:
-				var response GenerateResponseAnthropic
-				if err := json.Unmarshal(event.Data, &response); err != nil {
-					p.logger.Error("failed to unmarshal chunk", err)
-					continue
-				}
-				chunk = response
-			default:
-				p.logger.Error("unsupported provider for streaming", nil)
-				return
-			}
-
-			// Transform and send chunk
-			select {
-			case <-ctx.Done():
-				return
-			default:
-				switch v := chunk.(type) {
-				case GenerateResponseOllama:
-					streamCh <- v.Transform()
-				case GenerateResponseOpenai:
-					streamCh <- v.Transform()
-				case GenerateResponseGroq:
-					streamCh <- v.Transform()
-				case GenerateResponseCloudflare:
-					streamCh <- v.Transform()
-				case CohereStreamResponse:
-					streamCh <- v.Transform()
-				case GenerateResponseAnthropic:
-					streamCh <- v.Transform()
-				default:
-					p.logger.Error("unsupported response type", nil)
+				select {
+				case stream <- line:
+				case <-ctx.Done():
+					p.logger.Debug("Stream context canceled", "provider", p.GetName())
 					return
 				}
 			}
 		}
 	}()
 
-	return streamCh, nil
-}
-
-func fetchTokens(ctx context.Context, client Client, url string, payload []byte, logger l.Logger) (*http.Response, error) {
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, strings.NewReader(string(payload)))
-	if err != nil {
-		logger.Error("failed to create request", err)
-		return nil, fmt.Errorf("failed to create request: %w", err)
-	}
-	req.Header.Set("Content-Type", "application/json")
-
-	resp, err := client.Do(req)
-	if err != nil {
-		logger.Error("failed to make request", err)
-		return nil, fmt.Errorf("failed to make request: %w", err)
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		logger.Error("request failed", fmt.Errorf("status code: %d", resp.StatusCode))
-		return nil, fmt.Errorf("request failed with status code: %d", resp.StatusCode)
-	}
-
-	return resp, nil
+	return stream, nil
 }

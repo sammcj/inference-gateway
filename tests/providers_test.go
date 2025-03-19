@@ -2,460 +2,278 @@ package tests
 
 import (
 	"context"
-	"io"
 	"net/http"
-	"strings"
+	"net/http/httptest"
 	"testing"
 
+	"github.com/inference-gateway/inference-gateway/logger"
 	"github.com/inference-gateway/inference-gateway/providers"
 	"github.com/inference-gateway/inference-gateway/tests/mocks"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )
 
-func TestStreamTokens(t *testing.T) {
-	tests := []struct {
-		name              string
-		provider          string
-		model             string
-		mockResponse      string
-		messages          []providers.Message
-		expectedResponses []providers.GenerateResponse
-		testCancel        bool
-		expectError       bool
-	}{
-		{
-			name:     "Ollama successful response",
-			provider: providers.OllamaID,
-			mockResponse: `{"model":"phi3:3.8b","created_at":"2025-01-30T19:15:55.740038795Z","response":"how","done":false}
-{"model":"phi3:3.8b","created_at":"2025-01-30T19:15:55.740038795Z","response":" are","done":false}
-{"model":"phi3:3.8b","created_at":"2025-01-30T19:15:55.740038795Z","response":" you?","done":false}
-{"model":"phi3:3.8b","created_at":"2025-01-31T16:47:15.158460303Z","response":"","done":true,"done_reason":"stop","context":[32006,29871],"total_duration":14508007757,"load_duration":4831567378,"prompt_eval_count":34,"prompt_eval_duration":1266000000,"eval_count":108,"eval_duration":8405000000}
+// TestProviderRegistry tests the provider registry functionality
+func TestProviderRegistry(t *testing.T) {
+	log, err := logger.NewLogger("test")
+	assert.NoError(t, err)
 
-`,
-			messages: []providers.Message{
-				{Role: "user", Content: "Hello"},
+	cfg := map[string]*providers.Config{
+		providers.OpenaiID: {
+			ID:       providers.OpenaiID,
+			Name:     providers.OpenaiDisplayName,
+			URL:      providers.OpenaiDefaultBaseURL,
+			Token:    "test-token",
+			AuthType: providers.AuthTypeBearer,
+			Endpoints: providers.Endpoints{
+				Models: providers.OpenaiModelsEndpoint,
+				Chat:   providers.OpenaiChatEndpoint,
 			},
-			expectedResponses: []providers.GenerateResponse{
-				{
-					Provider: "Ollama",
-					Response: providers.ResponseTokens{
-						Content: "how",
-						Model:   "phi3:3.8b",
-						Role:    "assistant",
-					},
-					EventType: providers.EventContentDelta,
-				},
-				{
-					Provider: "Ollama",
-					Response: providers.ResponseTokens{
-						Content: " are",
-						Model:   "phi3:3.8b",
-						Role:    "assistant",
-					},
-					EventType: providers.EventContentDelta,
-				},
-				{
-					Provider: "Ollama",
-					Response: providers.ResponseTokens{
-						Content: " you?",
-						Model:   "phi3:3.8b",
-						Role:    "assistant",
-					},
-					EventType: providers.EventContentDelta,
-				},
-			},
-			testCancel:  false,
-			expectError: false,
 		},
-		{
-			name:     "Context cancellation",
-			provider: providers.OllamaID,
-			mockResponse: `{"model":"phi3:3.8b","created_at":"2025-01-30T19:15:55.740038795Z","response":" are","done":false}
-                        `,
-			messages: []providers.Message{
-				{Role: "user", Content: "Hello"},
-			},
-			testCancel:  true,
-			expectError: false,
-		},
-		{
-			name:     "Groq successful response",
-			provider: providers.GroqID,
-			model:    "deepseek-r1-distill-llama-70b",
-			mockResponse: `
-data: {"id":"chatcmpl-***","object":"chat.completion.chunk","created":1738346484,"model":"deepseek-r1-distill-llama-70b","system_fingerprint":"fp_***","choices":[{"index":0,"delta":{"role":"assistant","content":""},"logprobs":null,"finish_reason":null}],"x_groq":{"id":"req_***"}}
-
-data: {"id":"chatcmpl-***","object":"chat.completion.chunk","created":1738346484,"model":"deepseek-r1-distill-llama-70b","system_fingerprint":"fp_***","choices":[{"index":0,"delta":{"content":"\\u003cthink\\u003e"},"logprobs":null,"finish_reason":null}]}
-
-data: {"id":"chatcmpl-***","object":"chat.completion.chunk","created":1738346484,"model":"deepseek-r1-distill-llama-70b","system_fingerprint":"fp_***","choices":[{"index":0,"delta":{"content":"\\n\\n"},"logprobs":null,"finish_reason":null}]}
-
-data: {"id":"chatcmpl-***","object":"chat.completion.chunk","created":1738346484,"model":"deepseek-r1-distill-llama-70b","system_fingerprint":"fp_***","choices":[{"index":0,"delta":{"content":"\\u003c/think\\u003e"},"logprobs":null,"finish_reason":null}]}
-
-data: {"id":"chatcmpl-***","object":"chat.completion.chunk","created":1738346484,"model":"deepseek-r1-distill-llama-70b","system_fingerprint":"fp_***","choices":[{"index":0,"delta":{"content":"\\n\\n"},"logprobs":null,"finish_reason":null}]}
-
-data: {"id":"chatcmpl-***","object":"chat.completion.chunk","created":1738346484,"model":"deepseek-r1-distill-llama-70b","system_fingerprint":"fp_***","choices":[{"index":0,"delta":{"content":"Hello"},"logprobs":null,"finish_reason":null}]}
-
-data: {"id":"chatcmpl-***","object":"chat.completion.chunk","created":1738346484,"model":"deepseek-r1-distill-llama-70b","system_fingerprint":"fp_***","choices":[{"index":0,"delta":{"content":"!"},"logprobs":null,"finish_reason":null}]}
-
-data: {"id":"chatcmpl-***","object":"chat.completion.chunk","created":1738346484,"model":"deepseek-r1-distill-llama-70b","system_fingerprint":"fp_***","choices":[{"index":0,"delta":{"content":" How"},"logprobs":null,"finish_reason":null}]}
-
-data: {"id":"chatcmpl-***","object":"chat.completion.chunk","created":1738346484,"model":"deepseek-r1-distill-llama-70b","system_fingerprint":"fp_***","choices":[{"index":0,"delta":{"content":" can"},"logprobs":null,"finish_reason":null}]}
-
-data: {"id":"chatcmpl-***","object":"chat.completion.chunk","created":1738346484,"model":"deepseek-r1-distill-llama-70b","system_fingerprint":"fp_***","choices":[{"index":0,"delta":{"content":" I"},"logprobs":null,"finish_reason":null}]}
-
-data: {"id":"chatcmpl-***","object":"chat.completion.chunk","created":1738346484,"model":"deepseek-r1-distill-llama-70b","system_fingerprint":"fp_***","choices":[{"index":0,"delta":{"content":" assist"},"logprobs":null,"finish_reason":null}]}
-
-data: {"id":"chatcmpl-***","object":"chat.completion.chunk","created":1738346484,"model":"deepseek-r1-distill-llama-70b","system_fingerprint":"fp_***","choices":[{"index":0,"delta":{"content":" you"},"logprobs":null,"finish_reason":null}]}
-
-data: {"id":"chatcmpl-***","object":"chat.completion.chunk","created":1738346484,"model":"deepseek-r1-distill-llama-70b","system_fingerprint":"fp_***","choices":[{"index":0,"delta":{"content":" today"},"logprobs":null,"finish_reason":null}]}
-
-data: {"id":"chatcmpl-***","object":"chat.completion.chunk","created":1738346484,"model":"deepseek-r1-distill-llama-70b","system_fingerprint":"fp_***","choices":[{"index":0,"delta":{"content":"?"},"logprobs":null,"finish_reason":null}]}
-
-data: {"id":"chatcmpl-***","object":"chat.completion.chunk","created":1738346484,"model":"deepseek-r1-distill-llama-70b","system_fingerprint":"fp_***","choices":[{"index":0,"delta":{"content":" 😊"},"logprobs":null,"finish_reason":null}]}
-
-data: {"id":"chatcmpl-***","object":"chat.completion.chunk","created":1738346485,"model":"deepseek-r1-distill-llama-70b","system_fingerprint":"fp_***","choices":[{"index":0,"delta":{},"logprobs":null,"finish_reason":"stop"}],"x_groq":{"id":"req_***","usage":{"queue_time":0.027146241,"prompt_tokens":10,"prompt_time":0.003496928,"completion_tokens":16,"completion_time":0.058181818,"total_tokens":26,"total_time":0.061678746}}}
-
-data: [DONE]
-
-`,
-			messages: []providers.Message{
-				{Role: "user", Content: "Hi"},
-			},
-			expectedResponses: []providers.GenerateResponse{
-				{
-					Provider: providers.GroqDisplayName,
-					Response: providers.ResponseTokens{
-						Content: "",
-						Model:   "deepseek-r1-distill-llama-70b",
-						Role:    "assistant",
-					},
-					EventType: providers.EventMessageStart,
-				},
-				{
-					Provider: providers.GroqDisplayName,
-					Response: providers.ResponseTokens{
-						Content: "\\u003cthink\\u003e",
-						Model:   "deepseek-r1-distill-llama-70b",
-						Role:    "assistant",
-					},
-					EventType: providers.EventContentDelta,
-				},
-				{
-					Provider: providers.GroqDisplayName,
-					Response: providers.ResponseTokens{
-						Content: "\\n\\n",
-						Model:   "deepseek-r1-distill-llama-70b",
-						Role:    "assistant",
-					},
-					EventType: providers.EventContentDelta,
-				},
-				{
-					Provider: providers.GroqDisplayName,
-					Response: providers.ResponseTokens{
-						Content: "\\u003c/think\\u003e",
-						Model:   "deepseek-r1-distill-llama-70b",
-						Role:    "assistant",
-					},
-					EventType: providers.EventContentDelta,
-				},
-				{
-					Provider: providers.GroqDisplayName,
-					Response: providers.ResponseTokens{
-						Content: "\\n\\n",
-						Model:   "deepseek-r1-distill-llama-70b",
-						Role:    "assistant",
-					},
-					EventType: providers.EventContentDelta,
-				},
-				{
-					Provider: providers.GroqDisplayName,
-					Response: providers.ResponseTokens{
-						Content: "Hello",
-						Model:   "deepseek-r1-distill-llama-70b",
-						Role:    "assistant",
-					},
-					EventType: providers.EventContentDelta,
-				},
-				{
-					Provider: providers.GroqDisplayName,
-					Response: providers.ResponseTokens{
-						Content: "!",
-						Model:   "deepseek-r1-distill-llama-70b",
-						Role:    "assistant",
-					},
-					EventType: providers.EventContentDelta,
-				},
-				{
-					Provider: providers.GroqDisplayName,
-					Response: providers.ResponseTokens{
-						Content: " How",
-						Model:   "deepseek-r1-distill-llama-70b",
-						Role:    "assistant",
-					},
-					EventType: providers.EventContentDelta,
-				},
-				{
-					Provider: providers.GroqDisplayName,
-					Response: providers.ResponseTokens{
-						Content: " can",
-						Model:   "deepseek-r1-distill-llama-70b",
-						Role:    "assistant",
-					},
-					EventType: providers.EventContentDelta,
-				},
-				{
-					Provider: providers.GroqDisplayName,
-					Response: providers.ResponseTokens{
-						Content: " I",
-						Model:   "deepseek-r1-distill-llama-70b",
-						Role:    "assistant",
-					},
-					EventType: providers.EventContentDelta,
-				},
-				{
-					Provider: providers.GroqDisplayName,
-					Response: providers.ResponseTokens{
-						Content: " assist",
-						Model:   "deepseek-r1-distill-llama-70b",
-						Role:    "assistant",
-					},
-					EventType: providers.EventContentDelta,
-				},
-				{
-					Provider: providers.GroqDisplayName,
-					Response: providers.ResponseTokens{
-						Content: " you",
-						Model:   "deepseek-r1-distill-llama-70b",
-						Role:    "assistant",
-					},
-					EventType: providers.EventContentDelta,
-				},
-				{
-					Provider: providers.GroqDisplayName,
-					Response: providers.ResponseTokens{
-						Content: " today",
-						Model:   "deepseek-r1-distill-llama-70b",
-						Role:    "assistant",
-					},
-					EventType: providers.EventContentDelta,
-				},
-				{
-					Provider: providers.GroqDisplayName,
-					Response: providers.ResponseTokens{
-						Content: "?",
-						Model:   "deepseek-r1-distill-llama-70b",
-						Role:    "assistant",
-					},
-					EventType: providers.EventContentDelta,
-				},
-				{
-					Provider: providers.GroqDisplayName,
-					Response: providers.ResponseTokens{
-						Content: " 😊",
-						Model:   "deepseek-r1-distill-llama-70b",
-						Role:    "assistant",
-					},
-					EventType: providers.EventContentDelta,
-				},
-				{
-					Provider: providers.GroqDisplayName,
-					Response: providers.ResponseTokens{
-						Content: "",
-						Model:   "deepseek-r1-distill-llama-70b",
-						Role:    "assistant",
-					},
-					EventType: providers.EventStreamEnd,
-				},
-			},
-			testCancel:  false,
-			expectError: false,
-		},
-		{
-			name:     "Cohere successful response",
-			provider: providers.CohereID,
-			mockResponse: `
-
-event: message-start
-data: {"id":"***","type":"message-start","delta":{"message":{"role":"assistant","content":[],"tool_plan":"","tool_calls":[],"citations":[]}}}
-
-event: content-start
-data: {"type":"content-start","index":0,"delta":{"message":{"content":{"type":"text","text":""}}}}
-
-event: content-delta
-data: {"type":"content-delta","index":0,"delta":{"message":{"content":{"text":"Hello"}}}}
-
-event: content-delta
-data: {"type":"content-delta","index":0,"delta":{"message":{"content":{"text":"oooo"}}}}
-
-event: content-end
-data: {"type":"content-end","index":0}
-
-event: message-end
-data:  {"type":"message-end","delta":{"finish_reason":"COMPLETE","usage":{"billed_units":{"input_tokens":18,"output_tokens":55},"tokens":{"input_tokens":27,"output_tokens":55}}}}
-
-        `,
-			messages: []providers.Message{
-				{Role: "user", Content: "Hello"},
-			},
-			expectedResponses: []providers.GenerateResponse{
-				{
-					Provider: providers.CohereDisplayName,
-					Response: providers.ResponseTokens{
-						Content: "",
-						Model:   "N/A",
-						Role:    "assistant",
-					},
-					EventType: providers.EventMessageStart,
-				},
-				{
-					Provider: providers.CohereDisplayName,
-					Response: providers.ResponseTokens{
-						Content: "",
-						Model:   "N/A",
-						Role:    "assistant",
-					},
-					EventType: providers.EventContentStart,
-				},
-				{
-					Provider: providers.CohereDisplayName,
-					Response: providers.ResponseTokens{
-						Content: "Hello",
-						Model:   "N/A",
-						Role:    "assistant",
-					},
-					EventType: providers.EventContentDelta,
-				},
-				{
-					Provider: providers.CohereDisplayName,
-					Response: providers.ResponseTokens{
-						Content: "oooo",
-						Model:   "N/A",
-						Role:    "assistant",
-					},
-					EventType: providers.EventContentDelta,
-				},
-				{
-					Provider: providers.CohereDisplayName,
-					Response: providers.ResponseTokens{
-						Content: "",
-						Model:   "N/A",
-						Role:    "assistant",
-					},
-					EventType: providers.EventContentEnd,
-				},
-				{
-					Provider: providers.CohereDisplayName,
-					Response: providers.ResponseTokens{
-						Content: "",
-						Model:   "N/A",
-						Role:    "assistant",
-					},
-					EventType: providers.EventMessageEnd,
-				},
+		providers.OllamaID: {
+			ID:       providers.OllamaID,
+			Name:     providers.OllamaDisplayName,
+			URL:      providers.OllamaDefaultBaseURL,
+			AuthType: providers.AuthTypeNone,
+			Endpoints: providers.Endpoints{
+				Models: providers.OllamaModelsEndpoint,
+				Chat:   providers.OllamaChatEndpoint,
 			},
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	registry := providers.NewProviderRegistry(cfg, log)
+
+	providerConfigs := registry.GetProviders()
+	assert.Equal(t, len(cfg), len(providerConfigs))
+	assert.Equal(t, cfg[providers.OpenaiID], providerConfigs[providers.OpenaiID])
+	assert.Equal(t, cfg[providers.OllamaID], providerConfigs[providers.OllamaID])
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockClient := mocks.NewMockClient(ctrl)
+
+	openaiProvider, err := registry.BuildProvider(providers.OpenaiID, mockClient)
+	require.NoError(t, err)
+	assert.Equal(t, providers.OpenaiID, openaiProvider.GetID())
+	assert.Equal(t, providers.OpenaiDisplayName, openaiProvider.GetName())
+	assert.Equal(t, providers.OpenaiDefaultBaseURL, openaiProvider.GetURL())
+	assert.Equal(t, "test-token", openaiProvider.GetToken())
+	assert.Equal(t, providers.AuthTypeBearer, openaiProvider.GetAuthType())
+
+	_, err = registry.BuildProvider("invalid-provider", mockClient)
+	assert.Error(t, err)
+}
+
+// TestProviderChatCompletions tests chat completions functionality
+func TestProviderChatCompletions(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, "/proxy/openai/chat/completions", r.URL.Path)
+		assert.Equal(t, "application/json", r.Header.Get("Content-Type"))
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, err := w.Write([]byte(`{
+            "id": "test-completion-id",
+            "object": "chat.completion",
+            "created": 1677858242,
+            "model": "gpt-3.5-turbo",
+            "choices": [
+                {
+                    "message": {
+                        "role": "assistant",
+                        "content": "This is a test response."
+                    },
+                    "finish_reason": "stop",
+                    "index": 0
+                }
+            ]
+        }`))
+		assert.NoError(t, err)
+	}))
+	defer server.Close()
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockClient := mocks.NewMockClient(ctrl)
+
+	mockClient.EXPECT().
+		Do(gomock.Any()).
+		DoAndReturn(func(req *http.Request) (*http.Response, error) {
+			assert.Equal(t, "POST", req.Method)
+			assert.Contains(t, req.URL.Path, "/chat/completions")
+			assert.Equal(t, "application/json", req.Header.Get("Content-Type"))
+
+			return http.DefaultClient.Post(server.URL+"/proxy/openai/chat/completions", "application/json", nil)
+		})
+
+	log, err := logger.NewLogger("test")
+	assert.NoError(t, err)
+
+	config := &providers.Config{
+		ID:       providers.OpenaiID,
+		Name:     providers.OpenaiDisplayName,
+		URL:      server.URL,
+		Token:    "test-token",
+		AuthType: providers.AuthTypeBearer,
+		Endpoints: providers.Endpoints{
+			Chat: providers.OpenaiChatEndpoint,
+		},
+	}
+
+	registry := providers.NewProviderRegistry(map[string]*providers.Config{
+		providers.OpenaiID: config,
+	}, log)
+
+	provider, err := registry.BuildProvider(providers.OpenaiID, mockClient)
+	assert.NoError(t, err)
+
+	roleUser := providers.MessageRoleUser
+	req := providers.CreateChatCompletionRequest{
+		Model: "gpt-3.5-turbo",
+		Messages: []*providers.Message{
+			{
+				Role:    &roleUser,
+				Content: "Hello, how are you?",
+			},
+		},
+	}
+
+	resp, err := provider.ChatCompletions(context.Background(), req)
+	assert.NoError(t, err)
+	assert.Equal(t, "test-completion-id", resp.ID)
+	assert.Equal(t, "gpt-3.5-turbo", resp.Model)
+	assert.Equal(t, 1, len(resp.Choices))
+	assert.Equal(t, "This is a test response.", resp.Choices[0].Message.Content)
+	assert.Equal(t, "stop", string(resp.Choices[0].FinishReason))
+}
+
+// TestProviderListModels tests listing models functionality
+func TestProviderListModels(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, "/proxy/openai/models", r.URL.Path)
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, err := w.Write([]byte(`{
+            "data": [
+                {
+                    "id": "gpt-3.5-turbo",
+                    "object": "model",
+                    "created": 1677610602,
+                    "owned_by": "openai"
+                },
+                {
+                    "id": "gpt-4",
+                    "object": "model",
+                    "created": 1677649963,
+                    "owned_by": "openai"
+                }
+            ]
+        }`))
+		assert.NoError(t, err)
+	}))
+	defer server.Close()
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockClient := mocks.NewMockClient(ctrl)
+
+	mockClient.EXPECT().
+		Get(gomock.Any()).
+		DoAndReturn(func(url string) (*http.Response, error) {
+			return http.DefaultClient.Get(server.URL + "/proxy/openai/models")
+		})
+
+	log, err := logger.NewLogger("test")
+	assert.NoError(t, err)
+
+	config := &providers.Config{
+		ID:       providers.OpenaiID,
+		Name:     providers.OpenaiDisplayName,
+		URL:      server.URL,
+		Token:    "test-token",
+		AuthType: providers.AuthTypeBearer,
+		Endpoints: providers.Endpoints{
+			Models: providers.OpenaiModelsEndpoint,
+		},
+	}
+
+	registry := providers.NewProviderRegistry(map[string]*providers.Config{
+		providers.OpenaiID: config,
+	}, log)
+
+	provider, err := registry.BuildProvider(providers.OpenaiID, mockClient)
+	assert.NoError(t, err)
+
+	resp, err := provider.ListModels(context.Background())
+	assert.NoError(t, err)
+	assert.Equal(t, 2, len(resp.Data))
+	assert.Equal(t, "gpt-3.5-turbo", resp.Data[0].ID)
+	assert.Equal(t, "gpt-4", resp.Data[1].ID)
+}
+
+// TestDifferentAuthTypes tests that different auth types are properly handled
+func TestDifferentAuthTypes(t *testing.T) {
+	log, err := logger.NewLogger("test")
+	assert.NoError(t, err)
+
+	testCases := []struct {
+		name         string
+		providerId   string
+		authType     string
+		token        string
+		extraHeaders map[string][]string
+	}{
+		{
+			name:       "Bearer Auth",
+			providerId: providers.OpenaiID,
+			authType:   providers.AuthTypeBearer,
+			token:      "sk-test-token",
+		},
+		{
+			name:       "X-Header Auth",
+			providerId: providers.AnthropicID,
+			authType:   providers.AuthTypeXheader,
+			token:      "anthropic-api-key",
+			extraHeaders: map[string][]string{
+				"anthropic-version": {"2023-06-01"},
+			},
+		},
+		{
+			name:       "No Auth",
+			providerId: providers.OllamaID,
+			authType:   providers.AuthTypeNone,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			cfg := map[string]*providers.Config{
+				tc.providerId: {
+					ID:           tc.providerId,
+					Name:         "Test Provider",
+					URL:          "http://example.com",
+					Token:        tc.token,
+					AuthType:     tc.authType,
+					ExtraHeaders: tc.extraHeaders,
+				},
+			}
+
+			registry := providers.NewProviderRegistry(cfg, log)
+
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
-
-			mockLogger := mocks.NewMockLogger(ctrl)
 			mockClient := mocks.NewMockClient(ctrl)
 
-			ctx, cancel := context.WithCancel(context.Background())
-			defer cancel()
+			provider, err := registry.BuildProvider(tc.providerId, mockClient)
+			require.NoError(t, err)
 
-			mockClient.
-				EXPECT().
-				Do(gomock.Any()).
-				Return(&http.Response{
-					Body:       io.NopCloser(strings.NewReader(tt.mockResponse)),
-					StatusCode: http.StatusOK,
-				}, nil)
-
-			var cfg *providers.Config
-			switch tt.provider {
-			case providers.OllamaID:
-				cfg = &providers.Config{
-					ID:   providers.OllamaID,
-					Name: "Ollama",
-					URL:  "http://test.local",
-					Endpoints: providers.Endpoints{
-						Generate: "/api/generate",
-						List:     "/api/tags",
-					},
-					AuthType: providers.AuthTypeNone,
-				}
-			case providers.GroqID:
-				cfg = &providers.Config{
-					ID:   providers.GroqID,
-					Name: "Groq",
-					URL:  "http://test.local",
-					Endpoints: providers.Endpoints{
-						Generate: "/api/generate",
-						List:     "/api/tags",
-					},
-					AuthType: providers.AuthTypeBearer,
-					Token:    "test-token",
-				}
-			case providers.CohereID:
-				cfg = &providers.Config{
-					ID:   providers.CohereID,
-					Name: "Cohere",
-					URL:  "http://test.local",
-					Endpoints: providers.Endpoints{
-						Generate: "/api/generate",
-						List:     "/api/tags",
-					},
-					AuthType: providers.AuthTypeBearer,
-					Token:    "test-token",
-				}
-			default:
-				cfg = &providers.Config{
-					ID:   tt.provider,
-					Name: "Default",
-					URL:  "http://test.local",
-					Endpoints: providers.Endpoints{
-						Generate: "/api/generate",
-						List:     "/api/tags",
-					},
-					AuthType: providers.AuthTypeNone,
-					Token:    "test-token",
-				}
-			}
-
-			providersRegistry := providers.NewProviderRegistry(
-				map[string]*providers.Config{
-					cfg.ID: cfg,
-				},
-				mockLogger,
-			)
-
-			var mc providers.Client = mockClient
-			provider, err := providersRegistry.BuildProvider(cfg.ID, mc)
-			assert.NoError(t, err)
-
-			ch, err := provider.StreamTokens(ctx, tt.model, tt.messages)
-			if tt.expectError {
-				assert.Error(t, err)
-				return
-			}
-			assert.NoError(t, err)
-			assert.NotNil(t, ch)
-
-			if !tt.testCancel {
-				var responses []providers.GenerateResponse
-				for resp := range ch {
-					responses = append(responses, resp)
-				}
-				assert.Equal(t, tt.expectedResponses, responses)
-			} else {
-				cancel()
-				_, ok := <-ch
-				assert.False(t, ok, "channel should be closed after cancellation")
+			assert.Equal(t, tc.authType, provider.GetAuthType())
+			assert.Equal(t, tc.token, provider.GetToken())
+			if tc.extraHeaders != nil {
+				assert.Equal(t, tc.extraHeaders, provider.GetExtraHeaders())
 			}
 		})
 	}

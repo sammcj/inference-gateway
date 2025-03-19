@@ -1,108 +1,44 @@
 package providers
 
-import (
-	"bufio"
+import "time"
 
-	"github.com/inference-gateway/inference-gateway/logger"
-)
-
-type CloudflareModel struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	CreatedAt   string `json:"created_at"`
-	ModifiedAt  string `json:"modified_at"`
-	Public      int    `json:"public"`
-	Model       string `json:"model"`
+type ModelCloudflare struct {
+	ID          string `json:"id,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
+	CreatedAt   string `json:"created_at,omitempty"`
+	ModifiedAt  string `json:"modified_at,omitempty"`
+	Public      int8   `json:"public,omitempty"`
+	Model       string `json:"model,omitempty"`
 }
 
 type ListModelsResponseCloudflare struct {
-	Result []CloudflareModel `json:"result"`
+	Success bool               `json:"success,omitempty"`
+	Result  []*ModelCloudflare `json:"result,omitempty"`
 }
 
 func (l *ListModelsResponseCloudflare) Transform() ListModelsResponse {
-	var models []Model
-	for _, model := range l.Result {
-		models = append(models, Model{
-			Name: model.Name,
-		})
+	models := make([]*Model, len(l.Result))
+	for i, model := range l.Result {
+		created := time.Now().Unix()
+		if model.CreatedAt != "" {
+			createdAt, err := time.Parse("2006-01-02 15:04:05.999", model.CreatedAt)
+			if err == nil {
+				created = createdAt.Unix()
+			}
+		}
+		models[i] = &Model{
+			ID:       model.Name,
+			Object:   "model",
+			Created:  created,
+			OwnedBy:  CloudflareID,
+			ServedBy: CloudflareID,
+		}
 	}
+
 	return ListModelsResponse{
 		Provider: CloudflareID,
-		Models:   models,
+		Object:   "list",
+		Data:     models,
 	}
-}
-
-type GenerateRequestCloudflare struct {
-	Model             string    `json:"model"`
-	Messages          []Message `json:"messages"`
-	FrequencyPenalty  *float64  `json:"frequency_penalty,omitempty"`
-	MaxTokens         *int      `json:"max_tokens,omitempty"`
-	PresencePenalty   *float64  `json:"presence_penalty,omitempty"`
-	RepetitionPenalty *float64  `json:"repetition_penalty,omitempty"`
-	Seed              *int      `json:"seed,omitempty"`
-	Stream            *bool     `json:"stream,omitempty"`
-	Temperature       *float64  `json:"temperature,omitempty"`
-	TopK              *int      `json:"top_k,omitempty"`
-	TopP              *float64  `json:"top_p,omitempty"`
-	Functions         []struct {
-		Code string `json:"code"`
-		Name string `json:"name"`
-	} `json:"functions,omitempty"`
-	Tools []struct {
-		Description string                 `json:"description,omitempty"`
-		Name        string                 `json:"name,omitempty"`
-		Parameters  map[string]interface{} `json:"parameters,omitempty"`
-		Function    map[string]interface{} `json:"function,omitempty"`
-		Type        string                 `json:"type,omitempty"`
-	} `json:"tools,omitempty"`
-}
-
-func (r *GenerateRequest) TransformCloudflare() GenerateRequestCloudflare {
-	return GenerateRequestCloudflare{
-		Messages:    r.Messages,
-		Model:       r.Model,
-		Stream:      &r.Stream,
-		Temperature: Float64Ptr(0.7),
-	}
-}
-
-type CloudflareResult struct {
-	Response string `json:"response"`
-}
-
-type GenerateResponseCloudflare struct {
-	Result   CloudflareResult `json:"result"`
-	Success  bool             `json:"success"`
-	Errors   []string         `json:"errors"`
-	Messages []string         `json:"messages"`
-}
-
-func (g *GenerateResponseCloudflare) Transform() GenerateResponse {
-	return GenerateResponse{
-		Provider: CloudflareDisplayName,
-		Response: ResponseTokens{
-			Role:    MessageRoleAssistant,
-			Content: g.Result.Response,
-			Model:   "", // Cloudflare doesn't return model info in response
-		},
-	}
-}
-
-type CloudflareStreamParser struct {
-	logger logger.Logger
-}
-
-func (p *CloudflareStreamParser) ParseChunk(reader *bufio.Reader) (*SSEvent, error) {
-	rawchunk, err := readSSEventsChunk(reader)
-	if err != nil {
-		return nil, err
-	}
-
-	event, err := ParseSSEvents(rawchunk)
-	if err != nil {
-		return nil, err
-	}
-
-	return event, nil
 }

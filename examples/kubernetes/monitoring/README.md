@@ -21,31 +21,6 @@ This setup includes:
 
 ## Implementation Steps
 
-Optionally deploy ollama for local LLMs:
-
-```bash
-kubectl create namespace ollama --dry-run=client -o yaml | kubectl apply --server-side -f -
-kubectl apply -f ollama/
-kubectl rollout status -n ollama deployment/ollama
-```
-
-Configure the Inference Gateway to use the local ollama service:
-
-```yaml
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: inference-gateway
-  namespace: inference-gateway
-  labels:
-    app: inference-gateway
-data:
-  ...
-    OLLAMA_API_URL: "http://ollama.ollama:11434" # <-- Change to http://ollama.ollama:11434
-  ...
-```
-
 1. Create the local cluster:
 
 ```bash
@@ -78,7 +53,30 @@ helm upgrade --install \
   --wait
 ```
 
-2. Enable telemetry in the Inference Gateway [configmap.yaml](inference-gateway/configmap.yaml):
+Optionally configure and deploy ollama for local LLMs:
+
+```yaml
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: inference-gateway
+  namespace: inference-gateway
+  labels:
+    app: inference-gateway
+data:
+  ...
+    OLLAMA_API_URL: "http://ollama.ollama:8080/v1" # <-- Changed to http://ollama.ollama:8080/v1
+  ...
+```
+
+```bash
+kubectl create namespace ollama --dry-run=client -o yaml | kubectl apply --server-side -f -
+kubectl apply -f ollama/
+kubectl rollout status -n ollama deployment/ollama
+```
+
+1. Enable telemetry in the Inference Gateway [configmap.yaml](inference-gateway/configmap.yaml):
 
 ```yaml
 ---
@@ -145,27 +143,30 @@ declare -A PROVIDER_MODELS
 PROVIDER_MODELS=(
   ["groq"]="llama-3.3-70b-versatile"
   ["cohere"]="command-r"
+  ["cloudflare"]="@cf/meta/llama-3.1-8b-instruct"
   ["ollama"]="tinyllama:latest"
 )
-PROVIDERS=("groq" "cohere" "ollama")
+PROVIDERS=("groq" "cohere" "cloudflare" "ollama")
 for PROVIDER in "${PROVIDERS[@]}"; do
   MODEL=${PROVIDER_MODELS[$PROVIDER]}
   echo "Testing $PROVIDER provider with model: $MODEL"
-  curl -s -X POST http://localhost:8080/llms/$PROVIDER/generate -d "{
+  curl -s -X POST http://localhost:8080/v1/chat/completions?provider=$PROVIDER -d "{
     \"model\": \"$MODEL\",
     \"messages\": [
       {\"role\": \"system\", \"content\": \"You are a helpful assistant.\"},
       {\"role\": \"user\", \"content\": \"Why is the sky blue? Keep it short and concise.\"}
-    ]
-  }" | jq '.'
+    ],
+    \"stream\": true,
+    \"max_tokens\": 50
+  }"
   echo -e "\n------------------------------------\n"
   sleep 2
 done
 ```
 
-7. View the metrics in the Grafana dashboard.
+1. View the metrics in the Grafana dashboard.
 
-8. When you're done, clean up the resources:
+2. When you're done, clean up the resources:
 
 ```bash
 ctlptl delete -f Cluster.yaml --cascade=true

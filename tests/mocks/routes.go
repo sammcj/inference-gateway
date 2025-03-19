@@ -40,16 +40,16 @@ func (m *MockRouter) EXPECT() *MockRouterMockRecorder {
 	return m.recorder
 }
 
-// GenerateProvidersTokenHandler mocks base method.
-func (m *MockRouter) GenerateProvidersTokenHandler(c *gin.Context) {
+// ChatCompletionsHandler mocks base method.
+func (m *MockRouter) ChatCompletionsHandler(c *gin.Context) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "GenerateProvidersTokenHandler", c)
+	m.ctrl.Call(m, "ChatCompletionsHandler", c)
 }
 
-// GenerateProvidersTokenHandler indicates an expected call of GenerateProvidersTokenHandler.
-func (mr *MockRouterMockRecorder) GenerateProvidersTokenHandler(c any) *gomock.Call {
+// ChatCompletionsHandler indicates an expected call of ChatCompletionsHandler.
+func (mr *MockRouterMockRecorder) ChatCompletionsHandler(c any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateProvidersTokenHandler", reflect.TypeOf((*MockRouter)(nil).GenerateProvidersTokenHandler), c)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ChatCompletionsHandler", reflect.TypeOf((*MockRouter)(nil).ChatCompletionsHandler), c)
 }
 
 // HealthcheckHandler mocks base method.
@@ -62,18 +62,6 @@ func (m *MockRouter) HealthcheckHandler(c *gin.Context) {
 func (mr *MockRouterMockRecorder) HealthcheckHandler(c any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HealthcheckHandler", reflect.TypeOf((*MockRouter)(nil).HealthcheckHandler), c)
-}
-
-// ListAllModelsHandler mocks base method.
-func (m *MockRouter) ListAllModelsHandler(c *gin.Context) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "ListAllModelsHandler", c)
-}
-
-// ListAllModelsHandler indicates an expected call of ListAllModelsHandler.
-func (mr *MockRouterMockRecorder) ListAllModelsHandler(c any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListAllModelsHandler", reflect.TypeOf((*MockRouter)(nil).ListAllModelsHandler), c)
 }
 
 // ListModelsHandler mocks base method.

@@ -4,32 +4,32 @@ Assuming you've deployed the Inference Gateway, you can interact with the langua
 
 ### GET Endpoints
 
-| Description            | Curl Command                                        |
-| ---------------------- | --------------------------------------------------- |
-| List all models        | `curl -X GET http://localhost:8080/llms`            |
-| List Ollama models     | `curl -X GET http://localhost:8080/llms/ollama`     |
-| List Groq models       | `curl -X GET http://localhost:8080/llms/groq`       |
-| List OpenAI models     | `curl -X GET http://localhost:8080/llms/openai`     |
-| List Cloudflare models | `curl -X GET http://localhost:8080/llms/cloudflare` |
-| List Cohere models     | `curl -X GET http://localhost:8080/llms/cohere`     |
-| List Anthropic models  | `curl -X GET http://localhost:8080/llms/anthropic`  |
+| Description            | Curl Command                                                      |
+| ---------------------- | ----------------------------------------------------------------- |
+| List all models        | `curl -X GET http://localhost:8080/v1/models`                     |
+| List Ollama models     | `curl -X GET http://localhost:8080/v1/models?provider=ollama`     |
+| List Groq models       | `curl -X GET http://localhost:8080/v1/models?provider=groq`       |
+| List OpenAI models     | `curl -X GET http://localhost:8080/v1/models?provider=openai`     |
+| List Cloudflare models | `curl -X GET http://localhost:8080/v1/models?provider=cloudflare` |
+| List Cohere models     | `curl -X GET http://localhost:8080/v1/models?provider=cohere`     |
+| List Anthropic models  | `curl -X GET http://localhost:8080/v1/models?provider=anthropic`  |
 
 ### POST Endpoints
 
-| Domain             | Curl Command                                                                                                                                                                                                                                             |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ollama.local       | `curl -X POST http://localhost:8080/llms/ollama/generate -d '{"model":"phi3:3.8b","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Why is the sky blue? keep it short and concise."}]}'`                 |
-| api.groq.com       | `curl -X POST http://localhost:8080/llms/groq/generate -d '{"model":"llama-3.3-70b-versatile","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Why is the sky blue? keep it short and concise."}]}'`     |
-| api.openai.com     | `curl -X POST http://localhost:8080/llms/openai/generate -d '{"model":"gpt-4o-mini","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Why is the sky blue? keep it short and concise."}]}'`               |
-| api.cloudflare.com | `curl -X POST http://localhost:8080/llms/cloudflare/generate -d '{"model":"llama-3.1-8b-instruct","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Why is the sky blue? keep it short and concise."}]}'` |
-| api.cohere.com     | `curl -X POST http://localhost:8080/llms/cohere/generate -d '{"model":"command-r","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Why is the sky blue? keep it short and concise."}]}'`                 |
-| api.anthropic.com  | `curl -X POST http://localhost:8080/llms/anthropic/generate -d '{"model":"claude-3-opus-20240229","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Why is the sky blue? keep it short and concise."}]}'` |
+| Domain             | Curl Command                                                                                                                                                                                                               |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ollama.local       | `curl -X POST http://localhost:8080/v1/chat/completions -d '{"model":"ollama/deepseek-r1:1.5b","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Hi"}]}'`                   |
+| api.groq.com       | `curl -X POST http://localhost:8080/v1/chat/completions -d '{"model":"groq/llama-3.3-70b-versatile","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Hi"}]}'`              |
+| api.openai.com     | `curl -X POST http://localhost:8080/v1/chat/completions -d '{"model":"openai/gpt-4o-mini","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Hi"}]}'`                        |
+| api.cloudflare.com | `curl -X POST http://localhost:8080/v1/chat/completions -d '{"model":"cloudflare/@cf/meta/llama-3.1-8b-instruct","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Hi"}]}'` |
+| api.cohere.com     | `curl -X POST http://localhost:8080/v1/chat/completions -d '{"model":"cohere/command-r","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Hi"}]}'`                          |
+| api.anthropic.com  | `curl -X POST http://localhost:8080/v1/chat/completions -d '{"model":"anthropic/claude-3-opus-20240229","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Hi"}]}'`          |
 
 You can set the stream as an optional flag in the request body to enable streaming of tokens. The default value is `false`.
 
 ```bash
-curl -X POST http://localhost:8080/llms/ollama/generate -d '{
-  "model": "phi3:3.8b",
+curl -X POST http://localhost:8080/v1/chat/completions?provider=ollama -d '{
+  "model": "deepseek-r1:1.5b",
   "messages": [
     {
       "role": "system",
@@ -37,13 +37,37 @@ curl -X POST http://localhost:8080/llms/ollama/generate -d '{
     },
     {
       "role": "user",
-      "content": "Why is the sky blue? keep it short and concise."
+      "content": "Hi, how are you doing today?"
     }
   ],
-  "stream": true,
-  "ssevents": true,
   "max_tokens": 40
 }' | jq .
+```
+
+Response:
+
+```json
+{
+  "id": "chatcmpl-753",
+  "object": "chat.completion",
+  "created": 1741879542,
+  "model": "deepseek-r1:1.5b",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "content": "<think>\nOkay, so the user greeted me and said \"Hi, how are you doing today?\" They're just starting to say that. I should respond in a friendly way.\n\nMaybe I can acknowledge their greeting and offer my help with something. Since they mentioned working on math problems or solving puzzles, I'll stick to that.\n\nI want to make sure I'm approaching it the right way. It's not a question yet, but if I see more of them, maybe I can offer more assistance. So responding with an emoji like 😊 would be nice.\n</think>\n\nHello! How are you doing today? 😊",
+        "role": "assistant"
+      },
+      "finish_reason": "length"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 40,
+    "completion_tokens": 40,
+    "total_tokens": 80
+  }
+}
 ```
 
 ### Tool Calls
@@ -51,7 +75,7 @@ curl -X POST http://localhost:8080/llms/ollama/generate -d '{
 You can provide tools that the LLM can use to perform specific functions. Here are some examples:
 
 ```bash
-curl -X POST http://localhost:8080/llms/groq/generate -d '{
+curl -X POST http://localhost:8080/v1/chat/completions?provider=groq -d '{
   "model": "deepseek-r1-distill-llama-70b",
   "messages": [
     {"role": "system", "content": "You are a helpful assistant."},
@@ -75,8 +99,7 @@ curl -X POST http://localhost:8080/llms/groq/generate -d '{
         }
       }
     }
-  ],
-  "max_tokens": 40
+  ]
 }' | jq .
 ```
 
@@ -84,21 +107,35 @@ Then the LLM will respond with a function call request as follow:
 
 ```json
 {
-  "provider": "Groq",
-  "response": {
-    "content": "Okay, the user is asking about the current weather in Toronto. I need to figure out how to respond. \n\nFirst, I should use the function provided in the tools. The function is called get_current_weather, and it requires a city parameter.\n\nSo, I'll call this function with Toronto as the city. I'll format the tool_call with the function name and the arguments as a JSON object.\n\nI'll make sure the JSON is correctly formatted, using double quotes around the strings. \n\nFinally, I'll enclose everything within the <tool_call> tags as specified. \n\nThat should give the user the weather information they're looking for.\n",
-    "model": "deepseek-r1-distill-llama-70b",
-    "role": "assistant",
-    "tool_calls": [
-      {
-        "id": "call_8k4k",
-        "type": "function",
-        "function": {
-          "name": "get_current_weather",
-          "arguments": "{\"city\": \"Toronto\"}"
-        }
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "content": "",
+        "reasoning": "Okay, the user is asking about the current weather in Toronto. I need to figure out how to respond using the tools provided. \n\nLooking at the tools section, there's a function called get_current_weather which takes a city name as a parameter. That seems perfect for this query.\n\nSo, I should call this function with \"Toronto\" as the city argument. I'll structure the response in the required XML format, making sure to use the correct tags and JSON structure inside.\n\nI should double-check the function name and parameters to ensure accuracy. The function name is get_current_weather, and the parameter is city as a string. So, the arguments JSON should have \"city\" set to \"Toronto\".\n\nPutting it all together, I'll create the XML tool_call with the function name and the arguments JSON. That should give the user the current weather in Toronto.\n",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"city\": \"Toronto\"}",
+              "name": "get_current_weather"
+            },
+            "id": "call_0e2n",
+            "type": "function"
+          }
+        ]
       }
-    ]
+    }
+  ],
+  "created": 1742314696,
+  "id": "chatcmpl-f14e1a5f-0c05-4c94-be1c-6d23f0c1ecb6",
+  "model": "deepseek-r1-distill-llama-70b",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 202,
+    "prompt_tokens": 150,
+    "total_tokens": 352
   }
 }
 ```
@@ -106,13 +143,13 @@ Then the LLM will respond with a function call request as follow:
 So you can response with the function call content as follow:
 
 ```bash
-curl -X POST http://localhost:8080/llms/groq/generate -d '{
+curl -X POST http://localhost:8080/v1/chat/completions?provider=groq -d '{
   "model": "deepseek-r1-distill-llama-70b",
   "messages": [
     {"role": "system", "content": "You are a helpful assistant."},
     {"role": "user", "content": "What is the current weather in Toronto?"},
     {"role": "assistant", "content": "Okay, the user is asking about the current weather in Toronto. I need to figure out how to respond. \n\nFirst, I should use the function provided in the tools. The function is called get_current_weather, and it requires a city parameter.\n\nSo, I will call this function with Toronto as the city. I will format the tool_call with the function name and the arguments as a JSON object.\n\nI will make sure the JSON is correctly formatted, using double quotes around the strings. \n\nFinally, I will enclose everything within the <tool_call> tags as specified. \n\nThat should give the user the weather information they are looking for.\n"},
-    {"role": "tool", "content": "89F", "tool_call_id": "call_8k4k"}
+    {"role": "tool", "content": "89F", "tool_call_id": "call_0e2n"}
   ]
 }' | jq .
 ```
@@ -121,14 +158,26 @@ Then the LLM will respond with the weather information as follow:
 
 ```json
 {
-  "provider": "Groq",
-  "response": {
-    "content": "<think>\nAlright, let's break down what happened here. The user asked about the current weather in Toronto. I decided to use the get_current_weather function, passing \"Toronto\" as the argument.\n\nI set up the tool_call correctly with the function name and the city in a JSON object. Then, I sent that off to get the weather data. The response came back with \"89F\" as the temperature.\n\nSo, now I need to explain this to the user in a helpful way. They wanted the temperature, and it's 89 degrees Fahrenheit. That's pretty warm, maybe even hot, depending on the season.\n\nI should convert that to Celsius for better understanding since Toronto might use that scale. 89F converts to about 31-32°C. That gives a clearer picture of how warm it is.\n\nI also want to make sure the user feels comfortable asking for more details if they need anything else. So, I'll end with a friendly note offering further assistance.\n</think>\n\nThe current temperature in Toronto is **89°F**. If you'd like more details about the weather, feel free to ask!",
-    "model": "deepseek-r1-distill-llama-70b",
-    "role": "assistant"
-  },
-  "event_type": "content-delta"
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "<think>\nAlright, so the user previously asked about the current weather in Toronto, and I responded by using the get_current_weather tool. Now, the user has provided a response that seems a bit unclear: \"89F\". I need to figure out what this means and how to proceed.\n\nFirst, I notice that the user's message includes some unusual characters: <｜tool▁outputs▁begin｜>89F<｜tool▁outputs▁end｜>. This looks like some sort of formatting or markup, possibly from a tool or system they're using. The \"89F\" part is likely the temperature they received, which is 89 degrees Fahrenheit. \n\nGiven that, it seems like they might be confirming the weather data or perhaps indicating that they received the information but want more details. Alternatively, they might be testing how I handle such inputs.\n\nI should consider that they might be interested in additional aspects of the weather, such as the conditions, humidity, wind speed, or perhaps the forecast. Since they provided a temperature, maybe they want to know if that's accurate or if there's more to the weather situation.\n\nI also need to make sure my response is helpful and provides value beyond just the temperature. Maybe I can ask if they need more details about the weather in Toronto or if they have specific aspects they're curious about.\n\nIt's important to keep the conversation flowing smoothly, so I should phrase my response in a friendly and open manner, encouraging them to specify what they need.\n</think>\n\nIt seems like you're referring to the current weather in Toronto, where the temperature is 89°F. If you'd like more details about the weather, such as conditions, humidity, or the forecast, feel free to ask!",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1742314733,
+  "id": "chatcmpl-12a36044-74b5-4fd7-973b-b31333d1118e",
+  "model": "deepseek-r1-distill-llama-70b",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 353,
+    "prompt_tokens": 173,
+    "total_tokens": 526
+  }
 }
 ```
 
-Then you would append it to the conversation and so goes on.
+Then you would append it to the conversation and so on.

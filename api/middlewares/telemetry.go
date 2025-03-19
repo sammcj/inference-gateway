@@ -48,15 +48,12 @@ func (t *TelemetryImpl) Middleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		startTime := time.Now()
 
-		t.logger.Debug("Request URL", "url", c.Request.URL.Path)
-		if !strings.Contains(c.Request.URL.Path, "/generate") {
+		if !strings.Contains(c.Request.URL.Path, "/v1/chat/completions") {
 			c.Next()
 			return
 		}
 
-		t.logger.Debug("Intercepting request for token usage")
-
-		var requestBody providers.GenerateRequest
+		var requestBody providers.CreateChatCompletionRequest
 		bodyBytes, _ := io.ReadAll(c.Request.Body)
 		c.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 		_ = json.Unmarshal(bodyBytes, &requestBody)
@@ -64,16 +61,35 @@ func (t *TelemetryImpl) Middleware() gin.HandlerFunc {
 
 		provider := "unknown"
 		switch {
-		case strings.Contains(c.Request.URL.Path, "/openai/"):
+		case strings.HasPrefix(model, "openai/"):
 			provider = "openai"
-		case strings.Contains(c.Request.URL.Path, "/anthropic/"):
+		case strings.HasPrefix(model, "anthropic/"):
 			provider = "anthropic"
-		case strings.Contains(c.Request.URL.Path, "/groq/"):
+		case strings.HasPrefix(model, "groq/"):
 			provider = "groq"
-		case strings.Contains(c.Request.URL.Path, "/cohere/"):
+		case strings.HasPrefix(model, "cohere/"):
 			provider = "cohere"
-		case strings.Contains(c.Request.URL.Path, "/ollama/"):
+		case strings.HasPrefix(model, "ollama/"):
 			provider = "ollama"
+		case strings.HasPrefix(model, "cloudflare/"):
+			provider = "cloudflare"
+		}
+
+		if provider == "unknown" {
+			switch {
+			case strings.Contains(c.Request.URL.RawQuery, "openai"):
+				provider = "openai"
+			case strings.Contains(c.Request.URL.RawQuery, "anthropic"):
+				provider = "anthropic"
+			case strings.Contains(c.Request.URL.RawQuery, "groq"):
+				provider = "groq"
+			case strings.Contains(c.Request.URL.RawQuery, "cohere"):
+				provider = "cohere"
+			case strings.Contains(c.Request.URL.RawQuery, "ollama"):
+				provider = "ollama"
+			case strings.Contains(c.Request.URL.RawQuery, "cloudflare"):
+				provider = "cloudflare"
+			}
 		}
 
 		w := &responseBodyWriter{
@@ -82,13 +98,12 @@ func (t *TelemetryImpl) Middleware() gin.HandlerFunc {
 		}
 		c.Writer = w
 
-		// For streaming responses, the token counts are in the final message
-		// which was already processed if this is SSE
-		if requestBody.Stream || strings.Contains(c.GetHeader("Content-Type"), "text/event-stream") {
-			return // TODO - need to handle stream responses
-		}
-
 		c.Next()
+
+		if provider == "unknown" {
+			t.logger.Debug("Unknown provider", "model", model)
+			return
+		}
 
 		// Post middleware begins
 		statusCode := c.Writer.Status()
@@ -97,52 +112,71 @@ func (t *TelemetryImpl) Middleware() gin.HandlerFunc {
 		t.telemetry.RecordResponseStatus(c.Request.Context(), provider, c.Request.Method, c.Request.URL.Path, statusCode)
 		t.telemetry.RecordRequestDuration(c.Request.Context(), provider, c.Request.Method, c.Request.URL.Path, duration)
 
-		var responseData map[string]any
-		if err := json.Unmarshal(w.body.Bytes(), &responseData); err == nil {
-			if usage, ok := responseData["usage"].(map[string]any); ok {
+		var promptTokens int64
+		var completionTokens int64
+		var totalTokens int64
+		if requestBody.Stream {
+			responseStr := w.body.String()
+			chunks := strings.Split(responseStr, "\n\n")
+			// We only care about the chunk before the last one which is [DONE]
+			if len(chunks) > 4 {
+				chunks = chunks[len(chunks)-4:]
+			}
 
-				promptTokens := int64(usage["prompt_tokens"].(float64))
-				completionTokens := int64(usage["completion_tokens"].(float64))
-				totalTokens := int64(usage["total_tokens"].(float64))
-				queueTime := usage["queue_time"].(float64)
-				promptTime := usage["prompt_time"].(float64)
-				compTime := usage["completion_time"].(float64)
-				totalTime := usage["total_time"].(float64)
+			var chatCompletionStreamResponse providers.CreateChatCompletionStreamResponse
+			for _, chunk := range chunks {
+				if chunk == "" {
+					continue
+				}
 
-				t.logger.Debug("Tokens usage",
-					"provider", provider,
-					"model", model,
-					"promptTokens", promptTokens,
-					"completionTokens", completionTokens,
-					"totalTokens", totalTokens,
-				)
+				if strings.HasPrefix(chunk, "data: ") {
+					chunk = strings.TrimPrefix(chunk, "data: ")
 
-				t.logger.Debug("Tokens Latency",
-					"queueTime", queueTime,
-					"promptTime", promptTime,
-					"compTime", compTime,
-					"totalTime", totalTime,
-				)
+					if chunk == "[DONE]" {
+						break
+					}
 
-				t.telemetry.RecordTokenUsage(
-					c.Request.Context(),
-					provider,
-					model,
-					promptTokens,
-					completionTokens,
-					totalTokens,
-				)
+					if err := json.Unmarshal([]byte(chunk), &chatCompletionStreamResponse); err != nil {
+						t.logger.Error("telemetry middleware - failed to unmarshal response", err)
+						break
+					}
 
-				t.telemetry.RecordLatency(
-					c.Request.Context(),
-					provider,
-					model,
-					queueTime,
-					promptTime,
-					compTime,
-					totalTime,
-				)
+					if chatCompletionStreamResponse.Usage != nil {
+						promptTokens = chatCompletionStreamResponse.Usage.PromptTokens
+						completionTokens = chatCompletionStreamResponse.Usage.CompletionTokens
+						totalTokens = chatCompletionStreamResponse.Usage.TotalTokens
+						break
+					}
+				}
+			}
+		} else {
+			var chatCompletionResponse providers.CreateChatCompletionResponse
+			if err := json.Unmarshal(w.body.Bytes(), &chatCompletionResponse); err != nil {
+				t.logger.Error("telemetry middleware - failed to unmarshal response", err)
+			}
+
+			if chatCompletionResponse.Usage != nil {
+				promptTokens = chatCompletionResponse.Usage.PromptTokens
+				completionTokens = chatCompletionResponse.Usage.CompletionTokens
+				totalTokens = chatCompletionResponse.Usage.TotalTokens
 			}
 		}
+
+		// t.logger.Debug("Tokens usage",
+		// 	"provider", provider,
+		// 	"model", model,
+		// 	"promptTokens", promptTokens,
+		// 	"completionTokens", completionTokens,
+		// 	"totalTokens", totalTokens,
+		// )
+
+		t.telemetry.RecordTokenUsage(
+			c.Request.Context(),
+			provider,
+			model,
+			promptTokens,
+			completionTokens,
+			totalTokens,
+		)
 	}
 }

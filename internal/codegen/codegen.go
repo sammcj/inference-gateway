@@ -10,33 +10,7 @@ import (
 	"github.com/inference-gateway/inference-gateway/internal/openapi"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
-	"gopkg.in/yaml.v3"
 )
-
-// GenerateProviders generates providers Request Response schemas from an OpenAPI spec
-func GenerateProviders(output string, openapiPath string) error {
-	// Read OpenAPI spec
-	data, err := os.ReadFile(openapiPath)
-	if err != nil {
-		return fmt.Errorf("failed to read OpenAPI spec: %w", err)
-	}
-
-	var schema openapi.OpenAPISchema
-	if err := yaml.Unmarshal(data, &schema); err != nil {
-		return fmt.Errorf("failed to parse OpenAPI spec: %w", err)
-	}
-
-	providers := schema.Components.Schemas.Providers.XProviderConfigs
-
-	// Generate provider files
-	for name, config := range providers {
-		if err := generateProviderFile(output, name, config); err != nil {
-			return fmt.Errorf("failed to generate provider %s: %w", name, err)
-		}
-	}
-
-	return nil
-}
 
 // GenerateConfig generates a configuration file from an OpenAPI spec
 func GenerateConfig(destination string, oas string) error {
@@ -269,54 +243,127 @@ func GenerateCommonTypes(destination string, oas string) error {
 	caser := cases.Title(language.English)
 
 	funcMap := template.FuncMap{
-		"title":        caser.String,
+		"title": caser.String,
+		"pascalCase": func(s string) string {
+			// Special case for common acronyms
+			if strings.ToLower(s) == "id" {
+				return "ID"
+			}
+
+			parts := strings.Split(s, "_")
+			for i, part := range parts {
+				parts[i] = cases.Title(language.English).String(strings.ToLower(part))
+			}
+			return strings.Join(parts, "")
+		},
 		"generateType": generateType,
+		"generateTag":  generateTag,
 		"hasPrefix":    strings.HasPrefix,
+		"hasKey": func(m map[string]openapi.SchemaProperty, key string) bool {
+			_, ok := m[key]
+			return ok
+		},
 	}
 
 	tmpl := template.Must(template.New("common").
 		Funcs(funcMap).
 		Parse(`package providers
 
-import "time"
-
 // The authentication type of the specific provider
 const (
-	{{- range $type := .Schemas.AuthType.Enum }}
-	AuthType{{title .}} = "{{.}}"
-	{{- end }}
+    AuthTypeBearer  = "bearer"
+    AuthTypeXheader = "xheader"
+    AuthTypeQuery   = "query"
+    AuthTypeNone    = "none"
 )
 
 // The default base URLs of each provider
 const (
+    {{- range $name, $config := .Providers }}
+    {{title $name}}DefaultBaseURL = "{{$config.URL}}"
+    {{- end }}
+)
+
+// The default endpoints of each provider
+const (
 	{{- range $name, $config := .Providers }}
-	{{title $name}}DefaultBaseURL = "{{$config.URL}}"
+	{{title $name}}ModelsEndpoint = "{{(index $config.Endpoints "models").Endpoint}}"
+	{{title $name}}ChatEndpoint   = "{{(index $config.Endpoints "chat").Endpoint}}"
 	{{- end }}
 )
 
 // The ID's of each provider
 const (
-	{{- range $name, $config := .Providers }}
-	{{title $name}}ID = "{{$config.ID}}"
-	{{- end }}
+    {{- range $name, $config := .Providers }}
+    {{title $name}}ID = "{{$config.ID}}"
+    {{- end }}
 )
 
 // Display names for providers
 const (
-	{{- range $name, $config := .Providers }}  
-	{{title $name}}DisplayName = "{{title $name}}"
-	{{- end }}
+    {{- range $name, $config := .Providers }}  
+    {{title $name}}DisplayName = "{{title $name}}"
+    {{- end }}
 )
 
-// Common response and request types
-{{- range $name, $schema := .Schemas }}
-type {{$name}} struct {
-	{{- range $field, $prop := $schema.Properties }}
-	{{title $field}} {{generateType $prop}} ` + "`json:\"{{$field}}\"`" + `
-	{{- end }}
+// MessageRole represents the role of a message sender
+type MessageRole string
+
+// Message role enum values
+const (
+    MessageRoleSystem    MessageRole = "system"
+    MessageRoleUser      MessageRole = "user"
+    MessageRoleAssistant MessageRole = "assistant"
+    MessageRoleTool      MessageRole = "tool"
+)
+
+// ChatCompletionToolType represents a value type of a Tool in the API
+type ChatCompletionToolType string
+
+// ChatCompletionTool represents tool types in the API, currently only function supported
+const (
+    ChatCompletionToolTypeFunction ChatCompletionToolType = "function"
+)
+
+// FinishReason represents the reason for finishing a chat completion
+type FinishReason string
+
+// Chat completion finish reasons
+const (
+    FinishReasonStop          FinishReason = "stop"
+    FinishReasonLength        FinishReason = "length"
+    FinishReasonToolCalls     FinishReason = "tool_calls"
+    FinishReasonContentFilter FinishReason = "content_filter"
+)
+
+// ListModelsTransformer interface for transforming provider-specific responses
+type ListModelsTransformer interface {
+    Transform() ListModelsResponse
 }
 
+{{- range $name, $schema := .Schemas }}
+{{- if eq (len $schema.Enum) 0 }}
+{{- if ne $name "Config" }}
+{{- if ne $name "Providers" }}
+
+// {{$name}} represents a {{$name}} in the API
+type {{$name}} struct {
+    {{- range $field, $prop := $schema.Properties }}
+    {{- if not (hasPrefix $field "x-") }}
+    {{pascalCase $field}} {{generateType $prop}} {{generateTag $field $prop $schema.Required}}
+    {{- end }}
+    {{- end }}
+}
 {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+// Transform converts provider-specific response to common format
+func (p *CreateChatCompletionResponse) Transform() CreateChatCompletionResponse {
+	return *p
+}
+
 `))
 
 	data := struct {
@@ -333,13 +380,17 @@ type {{$name}} struct {
 	}
 	defer f.Close()
 
+	if len(schema.Components.Schemas.Providers.XProviderConfigs) == 0 {
+		return fmt.Errorf("no provider configurations found in OpenAPI spec")
+	}
+
 	if err := tmpl.Execute(f, data); err != nil {
 		return err
 	}
 
 	cmd := exec.Command("go", "fmt", destination)
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("failed to format %s: %w", destination, err)
+		fmt.Printf("Warning: Failed to format %s: %v\n", destination, err)
 	}
 
 	return nil
@@ -455,12 +506,12 @@ func (c *ClientImpl) Do(req *http.Request) (*http.Response, error) {
 }
 
 func (c *ClientImpl) Get(url string) (*http.Response, error) {
-    fullURL := c.scheme + "://" + c.hostname + ":" + c.port + url
+    fullURL := c.scheme + "://" + c.hostname + ":" + c.port + "/" + strings.TrimPrefix(url, "/")
     return c.client.Get(fullURL)
 }
 
 func (c *ClientImpl) Post(url string, bodyType string, body string) (*http.Response, error) {
-    fullURL := c.scheme + "://" + c.hostname + ":" + c.port + url
+    fullURL := c.scheme + "://" + c.hostname + ":" + c.port + "/" + strings.TrimPrefix(url, "/")
     req, err := http.NewRequest("POST", fullURL, nil)
     if err != nil {
         return nil, err
@@ -500,110 +551,11 @@ func (c *ClientImpl) Post(url string, bodyType string, body string) (*http.Respo
 	return nil
 }
 
-func generateProviderFile(destination, name string, config openapi.ProviderConfig) error {
-	caser := cases.Title(language.English)
-
-	funcMap := template.FuncMap{
-		"title":        caser.String,
-		"generateType": generateType,
-		"hasPrefix":    strings.HasPrefix,
-	}
-
-	tmpl := template.Must(template.New("provider").
-		Funcs(funcMap).
-		Parse(`package providers
-
-{{- if .Config.ExtraHeaders }}
-// Extra headers for {{title .Name}} provider
-var {{title .Name}}ExtraHeaders = map[string][]string{
-    {{- range $key, $header := .Config.ExtraHeaders}}
-    "{{$key}}": {"{{index $header.Values 0}}"},
-    {{- end}}
-}
-{{end}}
-
-{{- with .Config.Endpoints.list.Schema.Response }}
-type ListModelsResponse{{title $.Name}} struct {
-    {{- if eq .Type "object" }}
-    {{- range $key, $prop := .Properties }}
-	{{- if not (hasPrefix $key "x-") }}
-    {{title $key}} {{generateType $prop}} ` + "`json:\"{{$key}}\"`" + `
-    {{- end }}
-    {{- end }}
-}
-{{end}}
-
-// Transform converts provider-specific response to common format
-func (r *ListModelsResponse{{title $.Name}}) Transform() ListModelsResponse {
-    {{- with .XTransform }}
-    var models []map[string]interface{}
-    {{- range .Mapping.Models.Transform }}
-    for _, model := range r.Models {
-        models = append(models, map[string]interface{}{
-            {{- range . }}
-            "{{.Target}}": {{if .Source}}model.{{.Source}}{{else}}"{{.Constant}}"{{end}},
-            {{- end }}
-        })
-    }
-    return ListModelsResponse{
-        Provider: {{.Mapping.Provider}},
-        Models:   models,
-    }
-    {{- end }}
-}
-{{end}}
-
-{{- with .Config.Endpoints.generate.Schema }}
-{{- if .Request.Properties }}
-type GenerateRequest{{title $.Name}} struct {
-    {{- range $key, $prop := .Request.Properties }}
-    {{title $key}} {{generateType $prop}} ` + "`json:\"{{$key}}\"`" + `
-    {{- end }}
-}
-{{end}}
-
-{{- if .Response.Properties }}
-type GenerateResponse{{title $.Name}} struct {
-    {{- range $key, $prop := .Response.Properties }}
-    {{title $key}} {{generateType $prop}} ` + "`json:\"{{$key}}\"`" + `
-    {{- end }}
-}
-{{end}}
-{{end}}`))
-
-	data := struct {
-		Name   string
-		Config openapi.ProviderConfig
-	}{
-		Name:   name,
-		Config: config,
-	}
-
-	fileName := fmt.Sprintf("%s/%s.go", destination, strings.ToLower(name))
-	f, err := os.Create(fileName)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	if err := tmpl.Execute(f, data); err != nil {
-		return err
-	}
-
-	// Run go fmt on the generated file
-	cmd := exec.Command("go", "fmt", fileName)
-	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("failed to format %s: %w", fileName, err)
-	}
-
-	return nil
-}
-
 func generateType(prop openapi.Property) string {
 	// Handle references first
 	if prop.Ref != "" {
 		parts := strings.Split(prop.Ref, "/")
-		return parts[len(parts)-1]
+		return "*" + parts[len(parts)-1]
 	}
 
 	// Handle arrays
@@ -614,14 +566,44 @@ func generateType(prop openapi.Property) string {
 	// Map basic types
 	switch prop.Type {
 	case "string":
+		if len(prop.Enum) > 0 {
+			if prop.Name != "" {
+				parts := strings.Split(prop.Name, "_")
+				for i, part := range parts {
+					parts[i] = cases.Title(language.English).String(strings.ToLower(part))
+				}
+				return strings.Join(parts, "")
+			}
+		}
 		if prop.Format == "date-time" {
-			return "time.Duration"
+			return "time.Time"
+		}
+		if prop.Format == "binary" {
+			return "[]byte"
 		}
 		return "string"
 	case "number":
-		return "float64"
+		switch prop.Format {
+		case "float32":
+			return "float32"
+		case "double":
+			return "float64"
+		default:
+			return "float64"
+		}
 	case "integer":
-		return "int"
+		switch prop.Format {
+		case "int32":
+			return "int32"
+		case "int64":
+			return "int64"
+		case "uint32":
+			return "uint32"
+		case "uint64":
+			return "uint64"
+		default:
+			return "int"
+		}
 	case "boolean":
 		return "bool"
 	case "object":
@@ -632,4 +614,30 @@ func generateType(prop openapi.Property) string {
 	default:
 		return "interface{}"
 	}
+}
+
+func generateTag(field string, prop openapi.Property, requiredFields []string) template.HTML {
+	var tags []string
+
+	jsonTag := fmt.Sprintf(`json:"%s`, field)
+	isRequired := false
+	for _, rf := range requiredFields {
+		if rf == field {
+			isRequired = true
+			break
+		}
+	}
+
+	if !isRequired {
+		jsonTag += `,omitempty`
+	}
+	jsonTag += `"`
+
+	tags = append(tags, jsonTag)
+
+	if len(tags) > 0 {
+		return template.HTML("`" + strings.Join(tags, " ") + "`")
+	}
+
+	return template.HTML("")
 }

@@ -3,19 +3,69 @@ package openapi
 import (
 	"fmt"
 	"os"
+	"reflect"
 
 	"gopkg.in/yaml.v3"
 )
 
 func GetSchemas(schema *OpenAPISchema) map[string]SchemaProperty {
-	return map[string]SchemaProperty{
-		"AuthType":           schema.Components.Schemas.AuthType,
-		"Message":            schema.Components.Schemas.Message,
-		"Model":              schema.Components.Schemas.Model,
-		"ListModelsResponse": schema.Components.Schemas.ListResponse,
-		"GenerateRequest":    schema.Components.Schemas.GenerateRequest,
-		"GenerateResponse":   schema.Components.Schemas.GenerateResponse,
-		"ResponseTokens":     schema.Components.Schemas.ResponseToken,
+	result := make(map[string]SchemaProperty)
+
+	v := reflect.ValueOf(schema.Components.Schemas)
+	t := v.Type()
+
+	for i := 0; i < v.NumField(); i++ {
+		field := t.Field(i)
+
+		// Skip Config and Providers as they have special structures
+		if field.Name == "Config" || field.Name == "Providers" {
+			continue
+		}
+
+		yamlTag := field.Tag.Get("yaml")
+		if yamlTag == "" {
+			continue
+		}
+
+		fieldValue := v.Field(i)
+		if !fieldValue.IsValid() || fieldValue.IsZero() {
+			continue
+		}
+
+		schemaProp := fieldValue.Interface().(SchemaProperty)
+		if len(schemaProp.Properties) > 0 {
+			populatePropertyNames(schemaProp.Properties)
+		}
+
+		result[field.Name] = schemaProp
+	}
+
+	return result
+}
+
+// populatePropertyNames sets the Name field for all properties in a map
+func populatePropertyNames(properties map[string]Property) {
+	for name, prop := range properties {
+		newProp := prop
+		newProp.Name = name
+
+		if len(newProp.Properties) > 0 {
+			populatePropertyNames(newProp.Properties)
+		}
+
+		if newProp.Items != nil {
+			if newProp.Items.Name == "" {
+				itemProp := *newProp.Items
+				itemProp.Name = name + "Item"
+				newProp.Items = &itemProp
+			}
+
+			if len(newProp.Items.Properties) > 0 {
+				populatePropertyNames(newProp.Items.Properties)
+			}
+		}
+
+		properties[name] = newProp
 	}
 }
 
@@ -23,21 +73,44 @@ func GetSchemas(schema *OpenAPISchema) map[string]SchemaProperty {
 type OpenAPISchema struct {
 	Components struct {
 		Schemas struct {
-			Config struct {
-				XConfig ConfigSchema `yaml:"x-config"`
-			} `yaml:"Config"`
-			Providers struct {
-				XProviderConfigs map[string]ProviderConfig `yaml:"x-provider-configs"`
-			} `yaml:"Providers"`
-			AuthType         SchemaProperty `yaml:"AuthType"`
-			Message          SchemaProperty `yaml:"Message"`
-			Model            SchemaProperty `yaml:"Model"`
-			ListResponse     SchemaProperty `yaml:"ListModelsResponse"`
-			GenerateRequest  SchemaProperty `yaml:"GenerateRequest"`
-			GenerateResponse SchemaProperty `yaml:"GenerateResponse"`
-			ResponseToken    SchemaProperty `yaml:"ResponseTokens"`
+			Config    Config    `yaml:"Config"`
+			Providers Providers `yaml:"Providers"`
+
+			ProviderAuthType                      SchemaProperty `yaml:"ProviderAuthType"`
+			MessageRole                           SchemaProperty `yaml:"MessageRole"`
+			Message                               SchemaProperty `yaml:"Message"`
+			Model                                 SchemaProperty `yaml:"Model"`
+			ListModelsResponse                    SchemaProperty `yaml:"ListModelsResponse"`
+			Endpoints                             SchemaProperty `yaml:"Endpoints"`
+			Error                                 SchemaProperty `yaml:"Error"`
+			EventType                             SchemaProperty `yaml:"EventType"`
+			FunctionObject                        SchemaProperty `yaml:"FunctionObject"`
+			FunctionParameters                    SchemaProperty `yaml:"FunctionParameters"`
+			FinishReason                          SchemaProperty `yaml:"FinishReason"`
+			CompletionUsage                       SchemaProperty `yaml:"CompletionUsage"`
+			ChatCompletionToolType                SchemaProperty `yaml:"ChatCompletionToolType"`
+			ChatCompletionTool                    SchemaProperty `yaml:"ChatCompletionTool"`
+			ChatCompletionChoice                  SchemaProperty `yaml:"ChatCompletionChoice"`
+			ChatCompletionStreamChoice            SchemaProperty `yaml:"ChatCompletionStreamChoice"`
+			CreateChatCompletionRequest           SchemaProperty `yaml:"CreateChatCompletionRequest"`
+			CreateCompletionRequest               SchemaProperty `yaml:"CreateCompletionRequest"`
+			CreateChatCompletionResponse          SchemaProperty `yaml:"CreateChatCompletionResponse"`
+			ChatCompletionStreamOptions           SchemaProperty `yaml:"ChatCompletionStreamOptions"`
+			CreateChatCompletionStreamResponse    SchemaProperty `yaml:"CreateChatCompletionStreamResponse"`
+			ChatCompletionStreamResponseDelta     SchemaProperty `yaml:"ChatCompletionStreamResponseDelta"`
+			ChatCompletionMessageToolCallChunk    SchemaProperty `yaml:"ChatCompletionMessageToolCallChunk"`
+			ChatCompletionMessageToolCall         SchemaProperty `yaml:"ChatCompletionMessageToolCall"`
+			ChatCompletionMessageToolCallFunction SchemaProperty `yaml:"ChatCompletionMessageToolCallFunction"`
 		}
 	}
+}
+
+type Config struct {
+	XConfig ConfigSchema `yaml:"x-config"`
+}
+
+type Providers struct {
+	XProviderConfigs map[string]ProviderConfig `yaml:"x-provider-configs"`
 }
 
 type ConfigSchema struct {
@@ -79,11 +152,6 @@ func (h *ExtraHeader) UnmarshalYAML(value *yaml.Node) error {
 	return nil
 }
 
-type ProviderEndpoints struct {
-	List     string `yaml:"list"`
-	Generate string `yaml:"generate"`
-}
-
 type Transform struct {
 	Target  string       `yaml:"target"`
 	Mapping TransformMap `yaml:"mapping"`
@@ -106,6 +174,7 @@ type TransformRef struct {
 }
 
 type Property struct {
+	Name        string              `yaml:"name,omitempty"`
 	Type        string              `yaml:"type"`
 	Format      string              `yaml:"format,omitempty"`
 	Description string              `yaml:"description,omitempty"`
@@ -123,7 +192,6 @@ type SchemaProperty struct {
 	Required    []string            `yaml:"required,omitempty"`
 	Items       *Property           `yaml:"items,omitempty"`
 	Enum        []string            `yaml:"enum,omitempty"`
-	XTransform  *Transform          `yaml:"x-transform,omitempty"`
 }
 
 type SchemaField struct {
@@ -134,12 +202,9 @@ type SchemaField struct {
 }
 
 type EndpointSchema struct {
-	Endpoint string `yaml:"endpoint"`
+	Name     string `yaml:"name"`
 	Method   string `yaml:"method"`
-	Schema   struct {
-		Request  SchemaProperty `yaml:"request"`
-		Response SchemaProperty `yaml:"response"`
-	} `yaml:"schema"`
+	Endpoint string `yaml:"endpoint"`
 }
 
 type ProviderConfig struct {
