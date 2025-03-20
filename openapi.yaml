@@ -1051,10 +1051,6 @@ components:
           description: The object type, which is always `chat.completion.chunk`.
         usage:
           $ref: "#/components/schemas/CompletionUsage"
-          required:
-            - prompt_tokens
-            - completion_tokens
-            - total_tokens
       required:
         - choices
         - created
