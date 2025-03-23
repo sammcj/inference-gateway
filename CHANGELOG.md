@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.22](https://github.com/inference-gateway/inference-gateway/compare/v0.2.21...v0.2.22) (2025-03-23)
+
+### 📚 Documentation
+
+* **openapi:** Improve schema ([#50](https://github.com/inference-gateway/inference-gateway/issues/50)) ([f1c6129](https://github.com/inference-gateway/inference-gateway/commit/f1c6129dec2de67765aeebffb459ba288d026a37))
+* **openapi:** Remove nullable properties from schema definitions ([13530e2](https://github.com/inference-gateway/inference-gateway/commit/13530e2882c6f10f7987856994425e81b78f4de8))
+* **openapi:** Remove required properties from CompletionUsage schema ([0f74205](https://github.com/inference-gateway/inference-gateway/commit/0f742057157a01a2d9066fb3d1d7329fe84a23d5))
+
+### 🔧 Miscellaneous
+
+* **docker-compose:** Update inference-gateway service to use pre-built image and remove commented-out configurations ([#49](https://github.com/inference-gateway/inference-gateway/issues/49)) ([e662799](https://github.com/inference-gateway/inference-gateway/commit/e662799e0cc635eb793dd54faf0f719b80011930))
+
 ## [0.2.21](https://github.com/inference-gateway/inference-gateway/compare/v0.2.20...v0.2.21) (2025-03-19)
 
 ### ⚠ BREAKING CHANGES
