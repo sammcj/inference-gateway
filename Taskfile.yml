@@ -6,6 +6,8 @@ tasks:
     desc: "Generate the gateway from OpenAPI Spec"
     cmds:
       - go run cmd/generate/main.go -type ProvidersClientConfig -output providers/client.go
+      # TODO - migrate to an existing tool that generate the types from OpenAPI spec schemas
+      # - go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest --package=providers --generate types -o providers/common_types.go openapi.yaml
       - go run cmd/generate/main.go -type ProvidersCommonTypes -output providers/common_types.go
       # - go run cmd/generate/main.go -type Providers -output providers
       - go run cmd/generate/main.go -type Config -output config/config.go
@@ -45,6 +47,11 @@ tasks:
     cmds:
       - golangci-lint run
 
+  openapi-lint:
+    desc: "Lint OpenAPI spec"
+    cmds:
+      - spectral lint --verbose openapi.yaml
+
   test:
     desc: "Run tests"
     cmds:
@@ -53,7 +60,7 @@ tasks:
   benchmark:
     desc: "Run benchmarks"
     cmds:
-      - go test -bench=. -benchmem -benchtime=100x -count=3 ./providers/...
+      - go test -bench=. -run=^$ -benchmem -benchtime=100x -count=20 ./tests/...
 
   package:
     desc: "Package the gateway"

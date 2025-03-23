@@ -18,7 +18,7 @@ func GetSchemas(schema *OpenAPISchema) map[string]SchemaProperty {
 		field := t.Field(i)
 
 		// Skip Config and Providers as they have special structures
-		if field.Name == "Config" || field.Name == "Providers" {
+		if field.Name == "Config" || field.Name == "Provider" {
 			continue
 		}
 
@@ -73,8 +73,8 @@ func populatePropertyNames(properties map[string]Property) {
 type OpenAPISchema struct {
 	Components struct {
 		Schemas struct {
-			Config    Config    `yaml:"Config"`
-			Providers Providers `yaml:"Providers"`
+			Config   Config   `yaml:"Config"`
+			Provider Provider `yaml:"Provider"`
 
 			ProviderAuthType                      SchemaProperty `yaml:"ProviderAuthType"`
 			MessageRole                           SchemaProperty `yaml:"MessageRole"`
@@ -83,7 +83,6 @@ type OpenAPISchema struct {
 			ListModelsResponse                    SchemaProperty `yaml:"ListModelsResponse"`
 			Endpoints                             SchemaProperty `yaml:"Endpoints"`
 			Error                                 SchemaProperty `yaml:"Error"`
-			EventType                             SchemaProperty `yaml:"EventType"`
 			FunctionObject                        SchemaProperty `yaml:"FunctionObject"`
 			FunctionParameters                    SchemaProperty `yaml:"FunctionParameters"`
 			FinishReason                          SchemaProperty `yaml:"FinishReason"`
@@ -109,7 +108,7 @@ type Config struct {
 	XConfig ConfigSchema `yaml:"x-config"`
 }
 
-type Providers struct {
+type Provider struct {
 	XProviderConfigs map[string]ProviderConfig `yaml:"x-provider-configs"`
 }
 

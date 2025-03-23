@@ -65,7 +65,7 @@ type Config struct {
 	{{- end }}
 
 	// Providers map
-	Providers map[string]*providers.Config
+	Providers map[providers.Provider]*providers.Config
 }
 
 {{- range $section := .Sections }}
@@ -101,19 +101,19 @@ func (cfg *Config) Load(lookuper envconfig.Lookuper) (Config, error) {
 
 	// Initialize Providers map if nil
 	if cfg.Providers == nil {
-		cfg.Providers = make(map[string]*providers.Config)
+		cfg.Providers = make(map[providers.Provider]*providers.Config)
 	}
 
 	// Set defaults for each provider
 	for id, defaults := range providers.Registry {
 		if _, exists := cfg.Providers[id]; !exists {
 			providerCfg := defaults
-			url, ok := lookuper.Lookup(strings.ToUpper(id) + "_API_URL")
+			url, ok := lookuper.Lookup(strings.ToUpper(string(id)) + "_API_URL")
 			if ok {
 				providerCfg.URL = url
 			}
 
-			token, ok := lookuper.Lookup(strings.ToUpper(id) + "_API_KEY")
+			token, ok := lookuper.Lookup(strings.ToUpper(string(id)) + "_API_KEY")
 			if !ok {
 				println("Warn: provider " + id + " is not configured")
 			}
@@ -130,7 +130,7 @@ func (cfg *Config) Load(lookuper envconfig.Lookuper) (Config, error) {
 		Providers map[string]openapi.ProviderConfig
 	}{
 		Sections:  schema.Components.Schemas.Config.XConfig.Sections,
-		Providers: schema.Components.Schemas.Providers.XProviderConfigs,
+		Providers: schema.Components.Schemas.Provider.XProviderConfigs,
 	}
 
 	f, err := os.Create(destination)
@@ -144,87 +144,6 @@ func (cfg *Config) Load(lookuper envconfig.Lookuper) (Config, error) {
 	}
 
 	// Format generated code
-	cmd := exec.Command("go", "fmt", destination)
-	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("failed to format %s: %w", destination, err)
-	}
-
-	return nil
-}
-
-// GenerateProvidersRegistry generates a registry of all providers from OpenAPI Spec
-func GenerateProvidersRegistry(destination string, oas string) error {
-	schema, err := openapi.Read(oas)
-	if err != nil {
-		fmt.Printf("Error reading OpenAPI spec: %v\n", err)
-		os.Exit(1)
-	}
-
-	providers := schema.Components.Schemas.Providers.XProviderConfigs
-
-	caser := cases.Title(language.English)
-
-	funcMap := template.FuncMap{
-		"title": caser.String,
-	}
-
-	tmpl := template.Must(template.New("registry").
-		Funcs(funcMap).
-		Parse(`package providers
-
-// Endpoints exposed by each provider
-type Endpoints struct {
-	List     string
-	Generate string
-}
-
-// Base provider configuration
-type Config struct {
-	ID           string
-	Name         string
-	URL          string
-	Token        string
-	AuthType     string
-	ExtraHeaders map[string][]string
-	Endpoints    Endpoints
-}
-
-// The registry of all providers
-var Registry = map[string]Config{
-	{{- range $name, $config := .Providers}}
-	{{title $name}}ID: {
-		ID:       {{title $name}}ID,
-		Name:     {{title $name}}DisplayName,
-		URL:      {{title $name}}DefaultBaseURL,
-		AuthType: AuthType{{title $config.AuthType}},
-		{{- if $config.ExtraHeaders}}
-		ExtraHeaders: map[string][]string{
-			{{- range $key, $header := $config.ExtraHeaders}}
-			"{{$key}}": {"{{index $header.Values 0}}"},
-			{{- end}}
-		},
-		{{- end}}
-	},
-	{{- end}}
-}`))
-
-	data := struct {
-		Providers map[string]openapi.ProviderConfig
-	}{
-		Providers: providers,
-	}
-
-	f, err := os.Create(destination)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	if err := tmpl.Execute(f, data); err != nil {
-		return err
-	}
-
-	// Run go fmt on the generated file
 	cmd := exec.Command("go", "fmt", destination)
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("failed to format %s: %w", destination, err)
@@ -292,10 +211,12 @@ const (
 	{{- end }}
 )
 
+type Provider string
+
 // The ID's of each provider
 const (
     {{- range $name, $config := .Providers }}
-    {{title $name}}ID = "{{$config.ID}}"
+    {{title $name}}ID Provider = "{{$config.ID}}"
     {{- end }}
 )
 
@@ -370,7 +291,7 @@ func (p *CreateChatCompletionResponse) Transform() CreateChatCompletionResponse 
 		Providers map[string]openapi.ProviderConfig
 		Schemas   map[string]openapi.SchemaProperty
 	}{
-		Providers: schema.Components.Schemas.Providers.XProviderConfigs,
+		Providers: schema.Components.Schemas.Provider.XProviderConfigs,
 		Schemas:   openapi.GetSchemas(schema),
 	}
 
@@ -380,7 +301,7 @@ func (p *CreateChatCompletionResponse) Transform() CreateChatCompletionResponse 
 	}
 	defer f.Close()
 
-	if len(schema.Components.Schemas.Providers.XProviderConfigs) == 0 {
+	if len(schema.Components.Schemas.Provider.XProviderConfigs) == 0 {
 		return fmt.Errorf("no provider configurations found in OpenAPI spec")
 	}
 
