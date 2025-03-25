@@ -13,6 +13,7 @@ const (
 	AnthropicDefaultBaseURL  = "https://api.anthropic.com/v1"
 	CloudflareDefaultBaseURL = "https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}/ai"
 	CohereDefaultBaseURL     = "https://api.cohere.ai"
+	DeepseekDefaultBaseURL   = "https://api.deepseek.com"
 	GroqDefaultBaseURL       = "https://api.groq.com/openai/v1"
 	OllamaDefaultBaseURL     = "http://ollama:8080/v1"
 	OpenaiDefaultBaseURL     = "https://api.openai.com/v1"
@@ -26,6 +27,8 @@ const (
 	CloudflareChatEndpoint   = "/v1/chat/completions"
 	CohereModelsEndpoint     = "/v1/models"
 	CohereChatEndpoint       = "/compatibility/v1/chat/completions"
+	DeepseekModelsEndpoint   = "/models"
+	DeepseekChatEndpoint     = "/chat/completions"
 	GroqModelsEndpoint       = "/models"
 	GroqChatEndpoint         = "/chat/completions"
 	OllamaModelsEndpoint     = "/models"
@@ -41,6 +44,7 @@ const (
 	AnthropicID  Provider = "anthropic"
 	CloudflareID Provider = "cloudflare"
 	CohereID     Provider = "cohere"
+	DeepseekID   Provider = "deepseek"
 	GroqID       Provider = "groq"
 	OllamaID     Provider = "ollama"
 	OpenaiID     Provider = "openai"
@@ -51,6 +55,7 @@ const (
 	AnthropicDisplayName  = "Anthropic"
 	CloudflareDisplayName = "Cloudflare"
 	CohereDisplayName     = "Cohere"
+	DeepseekDisplayName   = "Deepseek"
 	GroqDisplayName       = "Groq"
 	OllamaDisplayName     = "Ollama"
 	OpenaiDisplayName     = "Openai"
@@ -219,11 +224,12 @@ type ListModelsResponse struct {
 
 // Message represents a Message in the API
 type Message struct {
-	Content    string                           `json:"content"`
-	Reasoning  string                           `json:"reasoning,omitempty"`
-	Role       *MessageRole                     `json:"role"`
-	ToolCallId string                           `json:"tool_call_id,omitempty"`
-	ToolCalls  []*ChatCompletionMessageToolCall `json:"tool_calls,omitempty"`
+	Content          string                           `json:"content"`
+	Reasoning        string                           `json:"reasoning,omitempty"`
+	ReasoningContent string                           `json:"reasoning_content,omitempty"`
+	Role             *MessageRole                     `json:"role"`
+	ToolCallId       string                           `json:"tool_call_id,omitempty"`
+	ToolCalls        []*ChatCompletionMessageToolCall `json:"tool_calls,omitempty"`
 }
 
 // Model represents a Model in the API
