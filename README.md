@@ -88,7 +88,7 @@ graph TD
     class A client;
     class Auth auth;
     class IG1,IG2,IG3,P gateway;
-    class C,D,E,G,H1,H2 provider;
+    class C,D,E,G,H1,H2,H3 provider;
 ```
 
 Client is sending:
