@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0](https://github.com/inference-gateway/inference-gateway/compare/v0.2.22...v0.3.0) (2025-03-25)
+
+### ✨ Features
+
+* Add DeepSeek Provider ([#52](https://github.com/inference-gateway/inference-gateway/issues/52)) ([2dbdbeb](https://github.com/inference-gateway/inference-gateway/commit/2dbdbeb975a75ec888280ffc3968c14da1c39c9d))
+
+### 📚 Documentation
+
+* **openapi:** Update server definitions and paths for improved API structure ([#53](https://github.com/inference-gateway/inference-gateway/issues/53)) ([7816c02](https://github.com/inference-gateway/inference-gateway/commit/7816c0244552d89c08b62b338869f972f66209db))
+* Update README to include H3 in provider class diagram ([082ede3](https://github.com/inference-gateway/inference-gateway/commit/082ede3a698bf7e7b410c3fc8136d534e7ed81ce))
+
 ## [0.2.22](https://github.com/inference-gateway/inference-gateway/compare/v0.2.21...v0.2.22) (2025-03-23)
 
 ### 📚 Documentation
