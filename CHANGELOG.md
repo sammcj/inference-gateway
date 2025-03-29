@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.1](https://github.com/inference-gateway/inference-gateway/compare/v0.3.0...v0.3.1) (2025-03-29)
+
+### ♻️ Improvements
+
+* Prefix model IDs with provider name for consistency across providers ([#56](https://github.com/inference-gateway/inference-gateway/issues/56)) ([5c2a752](https://github.com/inference-gateway/inference-gateway/commit/5c2a752ea920189de35110f45f37fcb373d95526))
+
 ## [0.3.0](https://github.com/inference-gateway/inference-gateway/compare/v0.2.22...v0.3.0) (2025-03-25)
 
 ### ✨ Features
