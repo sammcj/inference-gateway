@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.0](https://github.com/inference-gateway/inference-gateway/compare/v0.3.1...v0.4.0) (2025-03-31)
+
+### ✨ Features
+
+* Add reasoning_content field to chunk message in OpenAPI specification ([#57](https://github.com/inference-gateway/inference-gateway/issues/57)) ([ff1c270](https://github.com/inference-gateway/inference-gateway/commit/ff1c270d3874a4419242283e83e407fd678182dd))
+
+### 📚 Documentation
+
+* Simplify Docker Compose UI example README and update setup instructions ([e871103](https://github.com/inference-gateway/inference-gateway/commit/e871103dd58aa9d9e48b987abfa1916ed4d2fe7b))
+* Update API domain to api.inference-gateway.local and add Docker Compose UI example ([#55](https://github.com/inference-gateway/inference-gateway/issues/55)) ([7449a2d](https://github.com/inference-gateway/inference-gateway/commit/7449a2d8cc90ade416d8eb87b9d1a0d5f46c87c0))
+
 ## [0.3.1](https://github.com/inference-gateway/inference-gateway/compare/v0.3.0...v0.3.1) (2025-03-29)
 
 ### ♻️ Improvements
