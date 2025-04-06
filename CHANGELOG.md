@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.1](https://github.com/inference-gateway/inference-gateway/compare/v0.4.0...v0.4.1) (2025-04-06)
+
+### 🐛 Bug Fixes
+
+* Make the Inference-Gateway Clients Aware ([#58](https://github.com/inference-gateway/inference-gateway/issues/58)) ([4da9450](https://github.com/inference-gateway/inference-gateway/commit/4da94509e18ec823eb74a78f2d0b1e08088c6001))
+
 ## [0.4.0](https://github.com/inference-gateway/inference-gateway/compare/v0.3.1...v0.4.0) (2025-03-31)
 
 ### ✨ Features
