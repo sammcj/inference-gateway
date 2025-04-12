@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.1](https://github.com/inference-gateway/inference-gateway/compare/v0.5.0...v0.5.1) (2025-04-12)
+
+### 🐛 Bug Fixes
+
+* Add conditional versioning for Helm chart publishing ([543b95b](https://github.com/inference-gateway/inference-gateway/commit/543b95b5788b215cb23d8cf14f2e34d5c73d6e47))
+
 ## [0.5.0](https://github.com/inference-gateway/inference-gateway/compare/v0.4.1...v0.5.0) (2025-04-12)
 
 ### ✨ Features
