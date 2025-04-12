@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.3](https://github.com/inference-gateway/inference-gateway/compare/v0.5.2...v0.5.3) (2025-04-12)
+
+### 🐛 Bug Fixes
+
+* Update Helm chart references to version 0.5.0 in examples Taskfiles ([09c899e](https://github.com/inference-gateway/inference-gateway/commit/09c899ec3faf50cff1e52d0a26d582ae92b614ca))
+
+### 📚 Documentation
+
+* **fix:** Update Keycloak access URL in README and add Bitnami repo to Taskfile ([22597e4](https://github.com/inference-gateway/inference-gateway/commit/22597e4f9d6b8e18981be5c4a9299427c835a9c4))
+
 ## [0.5.2](https://github.com/inference-gateway/inference-gateway/compare/v0.5.1...v0.5.2) (2025-04-12)
 
 ### 🐛 Bug Fixes
