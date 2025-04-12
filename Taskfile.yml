@@ -12,18 +12,9 @@ tasks:
       # - go run cmd/generate/main.go -type Providers -output providers
       - go run cmd/generate/main.go -type Config -output config/config.go
       - go run cmd/generate/main.go -type MD -output Configurations.md
-      - go run cmd/generate/main.go -type Secret -output examples/kubernetes/basic/inference-gateway/secret.yaml
-      - go run cmd/generate/main.go -type ConfigMap -output examples/kubernetes/basic/inference-gateway/configmap.yaml
-      - go run cmd/generate/main.go -type Secret -output examples/kubernetes/agent/inference-gateway/secret.yaml
-      - go run cmd/generate/main.go -type ConfigMap -output examples/kubernetes/agent/inference-gateway/configmap.yaml
-      - go run cmd/generate/main.go -type Secret -output examples/kubernetes/authentication/inference-gateway/secret.yaml
-      - go run cmd/generate/main.go -type ConfigMap -output examples/kubernetes/authentication/inference-gateway/configmap.yaml
-      - go run cmd/generate/main.go -type Secret -output examples/kubernetes/hybrid/inference-gateway/secret.yaml
-      - go run cmd/generate/main.go -type ConfigMap -output examples/kubernetes/hybrid/inference-gateway/configmap.yaml
-      - go run cmd/generate/main.go -type Secret -output examples/kubernetes/monitoring/inference-gateway/secret.yaml
-      - go run cmd/generate/main.go -type ConfigMap -output examples/kubernetes/monitoring/inference-gateway/configmap.yaml
-      - go run cmd/generate/main.go -type Secret -output examples/kubernetes/tls/inference-gateway/secret.yaml
-      - go run cmd/generate/main.go -type ConfigMap -output examples/kubernetes/tls/inference-gateway/configmap.yaml
+      - go run cmd/generate/main.go -type HelmSecret -output charts/inference-gateway/templates/secrets-defaults.yaml
+      - go run cmd/generate/main.go -type HelmConfigMap -output charts/inference-gateway/templates/configmap-defaults.yaml
+      - go run cmd/generate/main.go -type HelmValues -output charts/inference-gateway/values.yaml
       - go run cmd/generate/main.go -type Env -output examples/docker-compose/basic/.env.example
       - go run cmd/generate/main.go -type Env -output examples/docker-compose/hybrid/.env.example
       - go run cmd/generate/main.go -type Env -output examples/docker-compose/tools/.env.example
@@ -44,7 +35,7 @@ tasks:
   run:
     desc: "Run the gateway"
     cmds:
-      - ENVIRONMENT=production go run cmd/gateway/main.go
+      - go run cmd/gateway/main.go
 
   lint:
     desc: "Run Go static analysis and linting"
@@ -72,6 +63,9 @@ tasks:
       - docker build -t inference-gateway .
 
   release-dry-run:
-    desc: "Run a dry-run of the release"
+    desc: "Run a dry-run of both semantic-release and goreleaser"
     cmds:
+      - echo "Running semantic-release dry run..."
+      - semantic-release --dry-run
+      - echo "Running goreleaser dry run..."
       - goreleaser release --config .goreleaser.yaml --clean --snapshot --verbose

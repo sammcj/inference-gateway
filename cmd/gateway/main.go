@@ -36,6 +36,9 @@ func main() {
 		return
 	}
 
+	// Log config in debug mode
+	logger.Debug("Loaded config", "config", cfg.String())
+
 	// Initialize OpenTelemetry Prometheus exporter Server
 	var telemetryImpl otel.OpenTelemetry
 	if cfg.EnableTelemetry {
@@ -124,6 +127,11 @@ func main() {
 
 	client := providers.NewHTTPClient(clientConfig, scheme, cfg.Server.Host, cfg.Server.Port)
 	providerRegistry := providers.NewProviderRegistry(cfg.Providers, logger)
+
+	// Set GIN mode based on environment
+	if cfg.Environment != "development" {
+		gin.SetMode(gin.ReleaseMode)
+	}
 
 	api := api.NewRouter(cfg, logger, providerRegistry, client)
 	r := gin.New()
