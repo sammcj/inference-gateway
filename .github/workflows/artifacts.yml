@@ -185,5 +185,6 @@ jobs:
           helm push inference-gateway-${VERSION}.tgz oci://ghcr.io/${{ github.repository_owner }}/charts
 
           if [[ ! "$TAG" =~ -rc ]]; then
-            helm push inference-gateway-${VERSION}.tgz oci://ghcr.io/${{ github.repository_owner }}/charts --version latest
+            cp inference-gateway-${VERSION}.tgz inference-gateway-latest.tgz
+            helm push inference-gateway-latest.tgz oci://ghcr.io/${{ github.repository_owner }}/charts
           fi
