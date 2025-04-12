@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.2](https://github.com/inference-gateway/inference-gateway/compare/v0.5.1...v0.5.2) (2025-04-12)
+
+### 🐛 Bug Fixes
+
+* Try something - update Helm chart publishing to use latest version for non-rc tags ([f53540d](https://github.com/inference-gateway/inference-gateway/commit/f53540d6cc4972adf5b69b43143edfa336a9f228))
+
 ## [0.5.1](https://github.com/inference-gateway/inference-gateway/compare/v0.5.0...v0.5.1) (2025-04-12)
 
 ### 🐛 Bug Fixes
