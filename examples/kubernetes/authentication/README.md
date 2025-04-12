@@ -50,7 +50,7 @@ task deploy-inference-gateway
 task keycloak-admin-password
 ```
 
-- Access Keycloak at `http://localhost:8080`
+- Access Keycloak at `https://keycloak.inference-gateway.local`
 
 - Login with `temp-admin` and the fetched password as credentials
 
