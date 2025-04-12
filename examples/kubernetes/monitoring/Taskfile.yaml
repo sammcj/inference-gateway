@@ -59,7 +59,7 @@ tasks:
           --set autoscaling.targetCPUUtilizationPercentage=80 \
           --set autoscaling.targetMemoryUtilizationPercentage=80 \
           --wait \
-          inference-gateway oci://ghcr.io/inference-gateway/charts/inference-gateway:latest
+          inference-gateway oci://ghcr.io/inference-gateway/charts/inference-gateway:0.5.0
       - kubectl label namespace inference-gateway monitoring="true" --overwrite
 
   deploy-ollama:

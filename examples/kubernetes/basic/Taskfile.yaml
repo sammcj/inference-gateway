@@ -24,7 +24,7 @@ tasks:
           --namespace inference-gateway \
           --set ingress.enabled=true \
           --wait \
-          inference-gateway oci://ghcr.io/inference-gateway/charts/inference-gateway:latest
+          inference-gateway oci://ghcr.io/inference-gateway/charts/inference-gateway:0.5.0
 
   clean:
     desc: "Clean up the cluster"

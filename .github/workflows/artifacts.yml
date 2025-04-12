@@ -183,8 +183,3 @@ jobs:
           helm dependency update
           helm package . --version ${VERSION} --app-version ${VERSION}
           helm push inference-gateway-${VERSION}.tgz oci://ghcr.io/${{ github.repository_owner }}/charts
-
-          if [[ ! "$TAG" =~ -rc ]]; then
-            cp inference-gateway-${VERSION}.tgz inference-gateway-latest.tgz
-            helm push inference-gateway-latest.tgz oci://ghcr.io/${{ github.repository_owner }}/charts
-          fi
