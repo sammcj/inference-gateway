@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.0](https://github.com/inference-gateway/inference-gateway/compare/v0.4.1...v0.5.0) (2025-04-12)
+
+### ✨ Features
+
+* Add inference-gateway Helm chart and monitoring support ([#59](https://github.com/inference-gateway/inference-gateway/issues/59)) ([5178355](https://github.com/inference-gateway/inference-gateway/commit/51783554832425df14826a188d44f39fd00bcc05)), closes [#60](https://github.com/inference-gateway/inference-gateway/issues/60)
+
 ## [0.5.0-rc.24](https://github.com/inference-gateway/inference-gateway/compare/v0.5.0-rc.23...v0.5.0-rc.24) (2025-04-11)
 
 ### 🐛 Bug Fixes
