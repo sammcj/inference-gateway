@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.4](https://github.com/inference-gateway/inference-gateway/compare/v0.5.3...v0.5.4) (2025-04-14)
+
+### 🐛 Bug Fixes
+
+* Ensure ListModelsResponse fields are required and initialize allModels if nil ([#61](https://github.com/inference-gateway/inference-gateway/issues/61)) ([0a0211a](https://github.com/inference-gateway/inference-gateway/commit/0a0211afa9b1aae6856aa6922d87f9f642c7faa4))
+
 ## [0.5.3](https://github.com/inference-gateway/inference-gateway/compare/v0.5.2...v0.5.3) (2025-04-12)
 
 ### 🐛 Bug Fixes
