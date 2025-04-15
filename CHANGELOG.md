@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.5](https://github.com/inference-gateway/inference-gateway/compare/v0.5.4...v0.5.5) (2025-04-15)
+
+### 📚 Documentation
+
+* Add Tools example to docker-compose ([#63](https://github.com/inference-gateway/inference-gateway/issues/63)) ([75bb135](https://github.com/inference-gateway/inference-gateway/commit/75bb135f8c795dfdcbe810c698419374b16e6149))
+* Add UI deployment example and Taskfile for Inference Gateway ([#64](https://github.com/inference-gateway/inference-gateway/issues/64)) ([1ce4d27](https://github.com/inference-gateway/inference-gateway/commit/1ce4d27a08688f4bed5afa66a45e16475129bf10))
+* **examples:** Docker compose examples ([#62](https://github.com/inference-gateway/inference-gateway/issues/62)) ([164e867](https://github.com/inference-gateway/inference-gateway/commit/164e8672cf55c7ba9b5e5ea2d0b07153225de790))
+* **fix:** Update Inference Gateway UI helm chart version to 0.5.0 ([98b4396](https://github.com/inference-gateway/inference-gateway/commit/98b4396994f830e8028624c603ed6b60f26ed7b9))
+
+### 🔒 Security
+
+* **deps:** Bump golang.org/x/crypto from 0.32.0 to 0.35.0 ([#65](https://github.com/inference-gateway/inference-gateway/issues/65)) ([92debd7](https://github.com/inference-gateway/inference-gateway/commit/92debd70799542ca25f36487ef95a9e42bf858f5))
+* **deps:** bump golang.org/x/net from 0.34.0 to 0.36.0 ([#66](https://github.com/inference-gateway/inference-gateway/issues/66)) ([d5da4db](https://github.com/inference-gateway/inference-gateway/commit/d5da4db9d12a4b991e5ae30d1dee84d3de1876e6))
+
 ## [0.5.4](https://github.com/inference-gateway/inference-gateway/compare/v0.5.3...v0.5.4) (2025-04-14)
 
 ### 🐛 Bug Fixes
