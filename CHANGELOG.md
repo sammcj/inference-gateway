@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.6](https://github.com/inference-gateway/inference-gateway/compare/v0.5.5...v0.5.6) (2025-04-15)
+
+### 🔒 Security
+
+* **fix:** Update golang.org/x/net to v0.39.0 to fix CVE-2023-45288 ([#68](https://github.com/inference-gateway/inference-gateway/issues/68)) ([ff90bed](https://github.com/inference-gateway/inference-gateway/commit/ff90bed3e6c385c1a5041e0c8c6f7c61c5bfd3e5))
+
 ## [0.5.5](https://github.com/inference-gateway/inference-gateway/compare/v0.5.4...v0.5.5) (2025-04-15)
 
 ### 📚 Documentation
