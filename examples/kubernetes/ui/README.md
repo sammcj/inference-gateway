@@ -134,7 +134,7 @@ Deploy UI with Gateway:
 ```bash
 helm upgrade --install inference-gateway-ui \
   oci://ghcr.io/inference-gateway/charts/inference-gateway-ui \
-  --version 0.5.0-rc.7 \
+  --version 0.5.0 \
   --create-namespace \
   --namespace inference-gateway \
   --set replicaCount=1 \
