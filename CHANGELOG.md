@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.7](https://github.com/inference-gateway/inference-gateway/compare/v0.5.6...v0.5.7) (2025-04-27)
+
+### 🔨 Miscellaneous
+
+* Streamline OpenAPI property Function Tools parameters and generate the types ([#70](https://github.com/inference-gateway/inference-gateway/issues/70)) ([1ff9a12](https://github.com/inference-gateway/inference-gateway/commit/1ff9a1284604f4a82f5c62d779deef6bbffc1663))
+
 ## [0.5.6](https://github.com/inference-gateway/inference-gateway/compare/v0.5.5...v0.5.6) (2025-04-15)
 
 ### 🔒 Security
