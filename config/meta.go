@@ -2,4 +2,4 @@ package config
 
 const APPLICATION_NAME = "inference-gateway"
 
-const VERSION = "v0.5.7"
+const VERSION = "v0.6.0"

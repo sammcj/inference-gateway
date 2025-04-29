@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.0](https://github.com/inference-gateway/inference-gateway/compare/v0.5.7...v0.6.0) (2025-04-29)
+
+### ✨ Features
+
+* Add reasoning_format attribute to support Groq reasoning models better response format ([#71](https://github.com/inference-gateway/inference-gateway/issues/71)) ([feea4d6](https://github.com/inference-gateway/inference-gateway/commit/feea4d622b8adb0509b0e5c7991d477102d482c9))
+
 ## [0.5.7](https://github.com/inference-gateway/inference-gateway/compare/v0.5.6...v0.5.7) (2025-04-27)
 
 ### 🔨 Miscellaneous
