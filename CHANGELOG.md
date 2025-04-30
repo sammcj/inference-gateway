@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.1](https://github.com/inference-gateway/inference-gateway/compare/v0.6.0...v0.6.1) (2025-04-30)
+
+### 🐛 Bug Fixes
+
+* Add reasoning also to delta stream messages ([5c4a172](https://github.com/inference-gateway/inference-gateway/commit/5c4a1721df0636b6534f42dce08e0931d7fe567c))
+
 ## [0.6.0](https://github.com/inference-gateway/inference-gateway/compare/v0.5.7...v0.6.0) (2025-04-29)
 
 ### ✨ Features
