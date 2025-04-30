@@ -58,7 +58,7 @@ curl -X GET http://localhost:8080/v1/models
 curl -X POST http://localhost:8080/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "gpt-3.5-turbo",
+    "model": "openai/gpt-3.5-turbo",
     "messages": [
       {
         "role": "user",
