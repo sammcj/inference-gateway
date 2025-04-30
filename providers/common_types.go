@@ -140,6 +140,7 @@ type ChatCompletionStreamOptions struct {
 // ChatCompletionStreamResponseDelta represents a ChatCompletionStreamResponseDelta in the API
 type ChatCompletionStreamResponseDelta struct {
 	Content          string                                `json:"content"`
+	Reasoning        *string                               `json:"reasoning,omitempty"`
 	ReasoningContent *string                               `json:"reasoning_content,omitempty"`
 	Refusal          *string                               `json:"refusal,omitempty"`
 	Role             MessageRole                           `json:"role"`
