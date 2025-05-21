@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.2](https://github.com/inference-gateway/inference-gateway/compare/v0.6.1...v0.6.2) (2025-05-21)
+
+### ♻️ Improvements
+
+* Improve development experience and CD ([#73](https://github.com/inference-gateway/inference-gateway/issues/73)) ([74e28d9](https://github.com/inference-gateway/inference-gateway/commit/74e28d9d4592e53c10594372b402ea03e9db4ac9)), closes [#74](https://github.com/inference-gateway/inference-gateway/issues/74)
+
+### 📚 Documentation
+
+* **examples:** Update model reference in README and ensure port mapping in docker-compose ([dd93a75](https://github.com/inference-gateway/inference-gateway/commit/dd93a755b1317e08bfb3e739c09a63389ad4df28))
+
 ## [0.6.2-rc.2](https://github.com/inference-gateway/inference-gateway/compare/v0.6.2-rc.1...v0.6.2-rc.2) (2025-05-21)
 
 ### 🐛 Bug Fixes
