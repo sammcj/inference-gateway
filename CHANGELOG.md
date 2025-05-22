@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.3](https://github.com/inference-gateway/inference-gateway/compare/v0.6.2...v0.6.3) (2025-05-22)
+
+### 🐛 Bug Fixes
+
+* Enhance error handling in ChatCompletions and ListModels methods ([#75](https://github.com/inference-gateway/inference-gateway/issues/75)) ([0c57534](https://github.com/inference-gateway/inference-gateway/commit/0c5753477fefa003970fa36f585bc53ffd618a72))
+
 ## [0.6.2](https://github.com/inference-gateway/inference-gateway/compare/v0.6.1...v0.6.2) (2025-05-21)
 
 ### ♻️ Improvements
