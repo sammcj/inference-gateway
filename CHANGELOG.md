@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.0](https://github.com/inference-gateway/inference-gateway/compare/v0.6.3...v0.7.0) (2025-05-25)
+
+### ✨ Features
+
+* Implement Comprehensive Model Context Protocol (MCP) Integration ([#72](https://github.com/inference-gateway/inference-gateway/issues/72)) ([0cf5752](https://github.com/inference-gateway/inference-gateway/commit/0cf5752416e9fc5d0c36602af362383fae6d4289)), closes [#78](https://github.com/inference-gateway/inference-gateway/issues/78)
+
+### 📚 Documentation
+
+* Improve docs - mention the UI project ([#77](https://github.com/inference-gateway/inference-gateway/issues/77)) ([be5cb70](https://github.com/inference-gateway/inference-gateway/commit/be5cb702b1265e44d41185c117f364758a93ac38))
+* Update the Examples ([#76](https://github.com/inference-gateway/inference-gateway/issues/76)) ([a35b7ac](https://github.com/inference-gateway/inference-gateway/commit/a35b7ac06efb45c1d10d5767e90dd46d32e1d070))
+
 ## [0.7.0-rc.2](https://github.com/inference-gateway/inference-gateway/compare/v0.7.0-rc.1...v0.7.0-rc.2) (2025-05-25)
 
 ### 🐛 Bug Fixes
