@@ -24,6 +24,17 @@ func TestLoad(t *testing.T) {
 				EnableTelemetry: false,
 				Environment:     "production",
 				EnableAuth:      false,
+				MCP: &config.MCPConfig{
+					Enable:                false,
+					Expose:                false,
+					Servers:               "",
+					ClientTimeout:         5 * time.Second,
+					DialTimeout:           3 * time.Second,
+					TlsHandshakeTimeout:   3 * time.Second,
+					ResponseHeaderTimeout: 3 * time.Second,
+					ExpectContinueTimeout: 1 * time.Second,
+					RequestTimeout:        5 * time.Second,
+				},
 				OIDC: &config.OIDC{
 					IssuerUrl:    "http://keycloak:8080/realms/inference-gateway-realm",
 					ClientId:     "inference-gateway-client",
@@ -35,6 +46,13 @@ func TestLoad(t *testing.T) {
 					ReadTimeout:  30 * time.Second,
 					WriteTimeout: 30 * time.Second,
 					IdleTimeout:  120 * time.Second,
+				},
+				Client: &config.ClientConfig{
+					Timeout:             30 * time.Second,
+					MaxIdleConns:        20,
+					MaxIdleConnsPerHost: 20,
+					IdleConnTimeout:     30 * time.Second,
+					TlsMinVersion:       "TLS12",
 				},
 				Providers: map[providers.Provider]*providers.Config{
 					providers.AnthropicID: {
@@ -131,6 +149,17 @@ func TestLoad(t *testing.T) {
 				EnableTelemetry: true,
 				Environment:     "development",
 				EnableAuth:      false,
+				MCP: &config.MCPConfig{
+					Enable:                false,
+					Expose:                false,
+					Servers:               "",
+					ClientTimeout:         5 * time.Second,
+					DialTimeout:           3 * time.Second,
+					TlsHandshakeTimeout:   3 * time.Second,
+					ResponseHeaderTimeout: 3 * time.Second,
+					ExpectContinueTimeout: 1 * time.Second,
+					RequestTimeout:        5 * time.Second,
+				},
 				OIDC: &config.OIDC{
 					IssuerUrl:    "http://keycloak:8080/realms/inference-gateway-realm",
 					ClientId:     "inference-gateway-client",
@@ -142,6 +171,13 @@ func TestLoad(t *testing.T) {
 					ReadTimeout:  60 * time.Second,
 					WriteTimeout: 60 * time.Second,
 					IdleTimeout:  180 * time.Second,
+				},
+				Client: &config.ClientConfig{
+					Timeout:             30 * time.Second,
+					MaxIdleConns:        20,
+					MaxIdleConnsPerHost: 20,
+					IdleConnTimeout:     30 * time.Second,
+					TlsMinVersion:       "TLS12",
 				},
 				Providers: map[providers.Provider]*providers.Config{
 					providers.OllamaID: {
@@ -254,6 +290,17 @@ func TestLoad(t *testing.T) {
 				EnableTelemetry: true,
 				Environment:     "development",
 				EnableAuth:      false,
+				MCP: &config.MCPConfig{
+					Enable:                false,
+					Expose:                false,
+					Servers:               "",
+					ClientTimeout:         5 * time.Second,
+					DialTimeout:           3 * time.Second,
+					TlsHandshakeTimeout:   3 * time.Second,
+					ResponseHeaderTimeout: 3 * time.Second,
+					ExpectContinueTimeout: 1 * time.Second,
+					RequestTimeout:        5 * time.Second,
+				},
 				OIDC: &config.OIDC{
 					IssuerUrl:    "http://keycloak:8080/realms/inference-gateway-realm",
 					ClientId:     "inference-gateway-client",
@@ -265,6 +312,13 @@ func TestLoad(t *testing.T) {
 					ReadTimeout:  30 * time.Second,
 					WriteTimeout: 30 * time.Second,
 					IdleTimeout:  120 * time.Second,
+				},
+				Client: &config.ClientConfig{
+					Timeout:             30 * time.Second,
+					MaxIdleConns:        20,
+					MaxIdleConnsPerHost: 20,
+					IdleConnTimeout:     30 * time.Second,
+					TlsMinVersion:       "TLS12",
 				},
 				Providers: map[providers.Provider]*providers.Config{
 					providers.OllamaID: {

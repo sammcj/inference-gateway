@@ -1,3 +1,4 @@
+// Code generated from OpenAPI schema. DO NOT EDIT.
 package config
 
 import (
@@ -16,13 +17,30 @@ type Config struct {
 	Environment     string `env:"ENVIRONMENT, default=production" description:"The environment"`
 	EnableTelemetry bool   `env:"ENABLE_TELEMETRY, default=false" description:"Enable telemetry"`
 	EnableAuth      bool   `env:"ENABLE_AUTH, default=false" description:"Enable authentication"`
+	// MCP settings
+	MCP *MCPConfig `env:", prefix=MCP_" description:"MCP configuration"`
 	// OIDC settings
 	OIDC *OIDC `env:", prefix=OIDC_" description:"OIDC configuration"`
 	// Server settings
 	Server *ServerConfig `env:", prefix=SERVER_" description:"Server configuration"`
+	// Client settings
+	Client *ClientConfig `env:", prefix=CLIENT_" description:"Client configuration"`
 
 	// Providers map
 	Providers map[providers.Provider]*providers.Config
+}
+
+// MCP configuration
+type MCPConfig struct {
+	Enable                bool          `env:"ENABLE, default=false" description:"Enable MCP"`
+	Expose                bool          `env:"EXPOSE, default=false" description:"Expose MCP tools endpoint"`
+	Servers               string        `env:"SERVERS" description:"List of MCP servers"`
+	ClientTimeout         time.Duration `env:"CLIENT_TIMEOUT, default=5s" description:"MCP client HTTP timeout"`
+	DialTimeout           time.Duration `env:"DIAL_TIMEOUT, default=3s" description:"MCP client dial timeout"`
+	TlsHandshakeTimeout   time.Duration `env:"TLS_HANDSHAKE_TIMEOUT, default=3s" description:"MCP client TLS handshake timeout"`
+	ResponseHeaderTimeout time.Duration `env:"RESPONSE_HEADER_TIMEOUT, default=3s" description:"MCP client response header timeout"`
+	ExpectContinueTimeout time.Duration `env:"EXPECT_CONTINUE_TIMEOUT, default=1s" description:"MCP client expect continue timeout"`
+	RequestTimeout        time.Duration `env:"REQUEST_TIMEOUT, default=5s" description:"MCP client request timeout for initialize and tool calls"`
 }
 
 // OIDC configuration
@@ -41,6 +59,15 @@ type ServerConfig struct {
 	IdleTimeout  time.Duration `env:"IDLE_TIMEOUT, default=120s" description:"Idle timeout"`
 	TlsCertPath  string        `env:"TLS_CERT_PATH" description:"TLS certificate path"`
 	TlsKeyPath   string        `env:"TLS_KEY_PATH" description:"TLS key path"`
+}
+
+// Client configuration
+type ClientConfig struct {
+	Timeout             time.Duration `env:"TIMEOUT, default=30s" description:"Client timeout"`
+	MaxIdleConns        int           `env:"MAX_IDLE_CONNS, default=20" description:"Maximum idle connections"`
+	MaxIdleConnsPerHost int           `env:"MAX_IDLE_CONNS_PER_HOST, default=20" description:"Maximum idle connections per host"`
+	IdleConnTimeout     time.Duration `env:"IDLE_CONN_TIMEOUT, default=30s" description:"Idle connection timeout"`
+	TlsMinVersion       string        `env:"TLS_MIN_VERSION, default=TLS12" description:"Minimum TLS version"`
 }
 
 // Load configuration
@@ -82,14 +109,16 @@ func (cfg *Config) Load(lookuper envconfig.Lookuper) (Config, error) {
 func (cfg *Config) String() string {
 	return fmt.Sprintf(
 		"Config{ApplicationName:%s, Version:%s Environment:%s, EnableTelemetry:%t, EnableAuth:%t, "+
-			"OIDC:%+v, Server:%+v, Providers:%+v}",
+			"MCP:%+v, OIDC:%+v, Server:%+v, Client:%+v, Providers:%+v}",
 		APPLICATION_NAME,
 		VERSION,
 		cfg.Environment,
 		cfg.EnableTelemetry,
 		cfg.EnableAuth,
+		cfg.MCP,
 		cfg.OIDC,
 		cfg.Server,
+		cfg.Client,
 		cfg.Providers,
 	)
 }
