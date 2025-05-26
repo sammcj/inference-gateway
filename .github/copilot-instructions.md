@@ -47,6 +47,7 @@ When adding new configuration fields:
   - [Go SDK](https://github.com/inference-gateway/go-sdk)
   - [Rust SDK](https://github.com/inference-gateway/rust-sdk)
   - [TypeScript SDK](https://github.com/inference-gateway/typescript-sdk)
+  - [Python SDK](https://github.com/inference-gateway/python-sdk)
   - [Documentation](https://github.com/inference-gateway/docs)
 
 ## MCP Useful links
@@ -57,44 +58,3 @@ When adding new configuration fields:
 - [Schema](https://raw.githubusercontent.com/modelcontextprotocol/modelcontextprotocol/refs/heads/main/schema/draft/schema.json)
 
 The MCP Golang types are being generated from the MCP official MCP schema using `task jrpc-mcp-schema-download` and `task generate`.
-
-## Recent Completed Tasks
-
-### MCP Client Timeout Configuration (May 25, 2025)
-
-Successfully made MCP client timeouts configurable:
-
-**What was accomplished:**
-
-- Added 6 new MCP timeout configuration fields to `openapi.yaml`:
-  - `MCP_CLIENT_TIMEOUT` (5s) - HTTP client timeout
-  - `MCP_DIAL_TIMEOUT` (3s) - Dial timeout
-  - `MCP_TLS_HANDSHAKE_TIMEOUT` (3s) - TLS handshake timeout
-  - `MCP_RESPONSE_HEADER_TIMEOUT` (3s) - Response header timeout
-  - `MCP_EXPECT_CONTINUE_TIMEOUT` (1s) - Expect continue timeout
-  - `MCP_REQUEST_TIMEOUT` (5s) - Request timeout for initialize and tool calls
-
-**Files modified:**
-
-- `openapi.yaml` - Added timeout configuration fields
-- `mcp/client.go` - Updated to use configurable timeouts instead of hardcoded values
-- `cmd/gateway/main.go` - Updated NewMCPClient call to pass config
-- `config/config_test.go` - Updated test cases to include new timeout fields
-
-**Generated files updated via `task generate`:**
-
-- `config/config.go` - Added new timeout fields
-- All `.env.example` files - Added new timeout environment variables
-- `Configurations.md` - Added documentation for new timeout fields
-- Helm templates and values - Added new timeout configurations
-
-**Commands run:**
-
-```bash
-task generate  # Regenerated configuration code
-task test      # Verified all tests pass
-task lint      # Ensured code quality
-task build     # Verified successful compilation
-```
-
-The MCP client now uses fully configurable timeouts instead of hardcoded values.
