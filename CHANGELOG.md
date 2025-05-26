@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.1](https://github.com/inference-gateway/inference-gateway/compare/v0.7.0...v0.7.1) (2025-05-26)
+
+### 🐛 Bug Fixes
+
+* MCP client initialization and better warning feedback ([#79](https://github.com/inference-gateway/inference-gateway/issues/79)) ([cf9868b](https://github.com/inference-gateway/inference-gateway/commit/cf9868bde08d3563bffbfc5189c9dd9df9d4256d))
+
 ## [0.7.0](https://github.com/inference-gateway/inference-gateway/compare/v0.6.3...v0.7.0) (2025-05-25)
 
 ### ✨ Features
