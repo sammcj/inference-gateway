@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.2](https://github.com/inference-gateway/inference-gateway/compare/v0.7.1...v0.7.2) (2025-05-27)
+
+### 🐛 Bug Fixes
+
+* When MCP is Enabled and there are no configured servers or the configured server is unavailable return an empty slice ([#82](https://github.com/inference-gateway/inference-gateway/issues/82)) ([36c122b](https://github.com/inference-gateway/inference-gateway/commit/36c122b4d1e6a813490f08e0ccbc293a5c867c32))
+
+### 📚 Documentation
+
+* **examples:** Update examples to use the latest pre built OCIs ([#80](https://github.com/inference-gateway/inference-gateway/issues/80)) ([92896af](https://github.com/inference-gateway/inference-gateway/commit/92896affea5ae1ae621fed522be2b727d38bd9e0))
+
+### 🔧 Miscellaneous
+
+* **cleanup:** Update copilot-instructions.md ([4089a13](https://github.com/inference-gateway/inference-gateway/commit/4089a13ed1ba02d54e023c3c8c2019969c4fa146))
+
 ## [0.7.1](https://github.com/inference-gateway/inference-gateway/compare/v0.7.0...v0.7.1) (2025-05-26)
 
 ### 🐛 Bug Fixes
