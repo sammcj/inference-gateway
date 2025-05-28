@@ -19,7 +19,7 @@ The Inference Gateway is a proxy server designed to facilitate access to various
 
 - [Key Features](#key-features)
 - [Overview](#overview)
-  - [Model Context Protocol (MCP) Integration](#model-context-protocol-mcp-integration)
+- [Model Context Protocol (MCP) Integration](#model-context-protocol-mcp-integration)
 - [Supported API's](#supported-apis)
 - [Configuration](#configuration)
 - [Examples](#examples)
@@ -154,7 +154,7 @@ Finally client receives:
 
 For streaming the tokens simply add to the request body `stream: true`.
 
-### Model Context Protocol (MCP) Integration
+## Model Context Protocol (MCP) Integration
 
 Enable MCP to automatically provide tools to LLMs without requiring clients to manage them:
 
