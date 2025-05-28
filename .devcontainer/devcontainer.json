@@ -67,6 +67,17 @@
                 "-y",
                 "@upstash/context7-mcp@latest"
               ]
+            },
+            "github": {
+              "command": "docker",
+              "args": [
+                "run",
+                "-i",
+                "--rm",
+                "-e",
+                "GITHUB_TOKEN=${localEnv:GITHUB_TOKEN}",
+                "mcp/github"
+              ]
             }
           }
         }
