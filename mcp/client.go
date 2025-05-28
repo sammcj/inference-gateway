@@ -114,6 +114,10 @@ func parseSSEResponse(responseBody string) (string, error) {
 func (c *customRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
 	req = req.Clone(req.Context())
 
+	req.Header.Del("Authorization")
+	req.Header.Del("Cookie")
+	req.Header.Del("X-API-Key")
+
 	switch c.mode {
 	case TransportModeStreamableHTTP:
 		req.Header.Set("Accept", "application/json, text/event-stream")
