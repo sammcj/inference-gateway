@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.4](https://github.com/inference-gateway/inference-gateway/compare/v0.7.3...v0.7.4) (2025-05-28)
+
+### 📚 Documentation
+
+* Fix formatting in README for MCP Integration section ([e4ca17e](https://github.com/inference-gateway/inference-gateway/commit/e4ca17e6223bf4c0c39b92f362e43e5bbd06bc4d))
+* **kubernetes-mcp-example:** Split MCP servers into their own directories with multiple files so it's easier to understand what's going on ([#88](https://github.com/inference-gateway/inference-gateway/issues/88)) ([1b5f469](https://github.com/inference-gateway/inference-gateway/commit/1b5f469badc121895da6d9aefdf1d4d9b798ed01))
+
+### 🔧 Miscellaneous
+
+* Add GitHub command configuration to MCP settings ([18ea534](https://github.com/inference-gateway/inference-gateway/commit/18ea534f1d928ae5889c6c197b54b88376df7685))
+* **examples:** Update .gitignore for filesystem-data directory ([2117066](https://github.com/inference-gateway/inference-gateway/commit/2117066bec5ffca2615a54d557536066a0d8ba8b))
+* Update .gitattributes to include examples directory as vendored ([4fd9a07](https://github.com/inference-gateway/inference-gateway/commit/4fd9a07bd3cfc25d3cded09644cc84600e001db6))
+
+### 🔨 Miscellaneous
+
+* **deps:** bump golang.org/x/net ([#89](https://github.com/inference-gateway/inference-gateway/issues/89)) ([809634a](https://github.com/inference-gateway/inference-gateway/commit/809634acba74d9e3dea39ace112e3e842c9387aa))
+
+### 🔒 Security
+
+* Address a potential Identity Token leakage to MCP servers ([22db3c0](https://github.com/inference-gateway/inference-gateway/commit/22db3c0358fa0db24998c0a7178b0a620bbf2f6b))
+* **deps:** Bump github.com/gin-gonic/gin ([#102](https://github.com/inference-gateway/inference-gateway/issues/102)) ([cb49859](https://github.com/inference-gateway/inference-gateway/commit/cb4985951b2b2eda8c5ac0d597eeb5cf60a76747))
+* **deps:** Bump github.com/gin-gonic/gin ([#91](https://github.com/inference-gateway/inference-gateway/issues/91)) ([45933cf](https://github.com/inference-gateway/inference-gateway/commit/45933cfe6e3af7ce6d50ff10b6d6e860f1cd71e0))
+* **deps:** Bump github.com/gin-gonic/gin ([#95](https://github.com/inference-gateway/inference-gateway/issues/95)) ([8289ffd](https://github.com/inference-gateway/inference-gateway/commit/8289ffdb5810417a1d2a84fcfa06d6f96246501a))
+* **deps:** Bump github.com/gin-gonic/gin ([#98](https://github.com/inference-gateway/inference-gateway/issues/98)) ([b25e563](https://github.com/inference-gateway/inference-gateway/commit/b25e5634e5d9dedc7a5a8f8dca69b8c736f7cc63))
+* **deps:** Bump golang.org/x/net ([#100](https://github.com/inference-gateway/inference-gateway/issues/100)) ([cfbebd0](https://github.com/inference-gateway/inference-gateway/commit/cfbebd0997a1a71292a9e217fd45728065ec5bdb))
+* **deps:** Bump golang.org/x/net ([#92](https://github.com/inference-gateway/inference-gateway/issues/92)) ([ae0439e](https://github.com/inference-gateway/inference-gateway/commit/ae0439eac7239a6d5160748dfb315069316f6a8a))
+* **deps:** Bump golang.org/x/net ([#93](https://github.com/inference-gateway/inference-gateway/issues/93)) ([fa92f31](https://github.com/inference-gateway/inference-gateway/commit/fa92f3163f343adde762ac7a5dd9ef8e551daa0c))
+* **deps:** Bump golang.org/x/net ([#96](https://github.com/inference-gateway/inference-gateway/issues/96)) ([43d84d4](https://github.com/inference-gateway/inference-gateway/commit/43d84d48bbc1fba41cef8146e112a391813107d2))
+* **deps:** Bump golang.org/x/net ([#99](https://github.com/inference-gateway/inference-gateway/issues/99)) ([3281ffd](https://github.com/inference-gateway/inference-gateway/commit/3281ffd716b21d9e05f6b2a95d96a42234580b9a))
+* **deps:** Bump google.golang.org/protobuf ([#101](https://github.com/inference-gateway/inference-gateway/issues/101)) ([0e311df](https://github.com/inference-gateway/inference-gateway/commit/0e311dfae62629a9816f29fac6dc947c706fbe63))
+* **deps:** Bump google.golang.org/protobuf ([#90](https://github.com/inference-gateway/inference-gateway/issues/90)) ([37808d6](https://github.com/inference-gateway/inference-gateway/commit/37808d6bdc39d886edb90ca12cc29d26bbb67a4f))
+* **deps:** Bump google.golang.org/protobuf ([#94](https://github.com/inference-gateway/inference-gateway/issues/94)) ([521e869](https://github.com/inference-gateway/inference-gateway/commit/521e869aba73a28e5fb065b80915fe8dd035d1c6))
+* **deps:** Bump google.golang.org/protobuf ([#97](https://github.com/inference-gateway/inference-gateway/issues/97)) ([d521a7c](https://github.com/inference-gateway/inference-gateway/commit/d521a7c0c16307299ab784df6d2d8dc59cab12b3))
+* **docs:** Update dependencies for crypto, sys, and text packages to latest versions ([ae7b0b9](https://github.com/inference-gateway/inference-gateway/commit/ae7b0b9d2aea3337f29ce94e1a5673d6a5182318))
+
 ## [0.7.3](https://github.com/inference-gateway/inference-gateway/compare/v0.7.2...v0.7.3) (2025-05-28)
 
 ### ♻️ Improvements
