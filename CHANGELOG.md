@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.3](https://github.com/inference-gateway/inference-gateway/compare/v0.7.2...v0.7.3) (2025-05-28)
+
+### ♻️ Improvements
+
+* MCP Handling it should be compatible with the official MCP Typescript SDK ([#87](https://github.com/inference-gateway/inference-gateway/issues/87)) ([4e97133](https://github.com/inference-gateway/inference-gateway/commit/4e971332ce3c7a00873a001ae4202b6d6ce7a716))
+
+### 🐛 Bug Fixes
+
+* Allow additional properties in MCPTool input schema ([8a4739c](https://github.com/inference-gateway/inference-gateway/commit/8a4739c3c4bba91744f02f5f84ece0407b5f409b))
+
+### 🔧 Miscellaneous
+
+* Add node_modules to .gitignore globally for the examples ([7b2f58c](https://github.com/inference-gateway/inference-gateway/commit/7b2f58cde3f42408469d44ccd632b37e9378ff03))
+
 ## [0.7.2](https://github.com/inference-gateway/inference-gateway/compare/v0.7.1...v0.7.2) (2025-05-27)
 
 ### 🐛 Bug Fixes
