@@ -2,6 +2,7 @@ package middleware_test
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -13,6 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 
+	"github.com/inference-gateway/inference-gateway/agent"
 	"github.com/inference-gateway/inference-gateway/api/middlewares"
 	"github.com/inference-gateway/inference-gateway/config"
 	"github.com/inference-gateway/inference-gateway/mcp"
@@ -100,13 +102,20 @@ func TestMCPMiddleware_SkipConditions(t *testing.T) {
 		name           string
 		path           string
 		internalHeader string
+		setupMocks     func(*mocks.MockProviderRegistry, *mocks.MockClient, *mocks.MockMCPClientInterface, *mocks.MockLogger, *mocks.MockIProvider)
 		shouldSkip     bool
 	}{
 		{
 			name:           "Skip with internal header",
 			path:           "/v1/chat/completions",
 			internalHeader: "true",
-			shouldSkip:     true,
+			setupMocks: func(mockRegistry *mocks.MockProviderRegistry, mockClient *mocks.MockClient, mockMCPClient *mocks.MockMCPClientInterface, mockLogger *mocks.MockLogger, mockProvider *mocks.MockIProvider) {
+				mockLogger.EXPECT().Debug("MCP Middleware: Not an internal MCP call").AnyTimes()
+				mockLogger.EXPECT().Debug(gomock.Any(), gomock.Any()).AnyTimes()
+				mockLogger.EXPECT().Debug(gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
+				mockLogger.EXPECT().Debug(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
+			},
+			shouldSkip: true,
 		},
 		{
 			name:       "Skip non-chat endpoint",
@@ -114,8 +123,15 @@ func TestMCPMiddleware_SkipConditions(t *testing.T) {
 			shouldSkip: true,
 		},
 		{
-			name:       "Process chat completions without internal header",
-			path:       "/v1/chat/completions",
+			name: "Process chat completions without internal header",
+			path: "/v1/chat/completions",
+			setupMocks: func(mockRegistry *mocks.MockProviderRegistry, mockClient *mocks.MockClient, mockMCPClient *mocks.MockMCPClientInterface, mockLogger *mocks.MockLogger, mockProvider *mocks.MockIProvider) {
+				mockMCPClient.EXPECT().IsInitialized().Return(true).AnyTimes()
+				mockMCPClient.EXPECT().GetAllChatCompletionTools().Return([]providers.ChatCompletionTool{}).AnyTimes()
+				mockLogger.EXPECT().Debug(gomock.Any(), gomock.Any()).AnyTimes()
+				mockLogger.EXPECT().Debug(gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
+				mockLogger.EXPECT().Debug(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
+			},
 			shouldSkip: false,
 		},
 	}
@@ -127,11 +143,8 @@ func TestMCPMiddleware_SkipConditions(t *testing.T) {
 
 			cfg := createTestConfig()
 
-			if !tt.shouldSkip && tt.path == "/v1/chat/completions" {
-				mockMCPClient.EXPECT().IsInitialized().Return(true).AnyTimes()
-				mockMCPClient.EXPECT().GetAllChatCompletionTools().Return([]providers.ChatCompletionTool{}).AnyTimes()
-				mockLogger.EXPECT().Debug(gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
-				mockRegistry.EXPECT().BuildProvider(providers.OpenaiID, mockClient).Return(mockProvider, nil).AnyTimes()
+			if tt.setupMocks != nil {
+				tt.setupMocks(mockRegistry, mockClient, mockMCPClient, mockLogger, mockProvider)
 			}
 
 			middleware, err := middlewares.NewMCPMiddleware(mockRegistry, mockClient, mockMCPClient, mockLogger, cfg)
@@ -231,11 +244,13 @@ func TestMCPMiddleware_AddToolsToRequest(t *testing.T) {
 			mockMCPClient.EXPECT().IsInitialized().Return(tt.isInitialized).AnyTimes()
 			if tt.isInitialized {
 				mockMCPClient.EXPECT().GetAllChatCompletionTools().Return(tt.mcpTools).AnyTimes()
-				if len(tt.mcpTools) > 0 {
-					mockLogger.EXPECT().Debug("Added MCP tools to request", "toolCount", len(tt.mcpTools)).AnyTimes()
-				}
 			}
-			mockLogger.EXPECT().Debug("MCP middleware invoked", "path", "/v1/chat/completions").AnyTimes()
+			mockLogger.EXPECT().Debug(gomock.Any(), gomock.Any()).AnyTimes()
+			mockLogger.EXPECT().Debug(gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
+			mockLogger.EXPECT().Debug(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
+			mockLogger.EXPECT().Error(gomock.Any(), gomock.Any()).AnyTimes()
+			mockLogger.EXPECT().Error(gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
+			mockLogger.EXPECT().Error(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
 
 			mockRegistry.EXPECT().BuildProvider(providers.OpenaiID, mockClient).Return(mockProvider, nil).AnyTimes()
 
@@ -575,8 +590,8 @@ func TestMCPMiddleware_ErrorHandling(t *testing.T) {
 			name:        "Invalid JSON request body",
 			requestBody: `invalid json`,
 			setupMocks: func(mockRegistry *mocks.MockProviderRegistry, mockClient *mocks.MockClient, mockMCPClient *mocks.MockMCPClientInterface, mockLogger *mocks.MockLogger, mockProvider *mocks.MockIProvider) {
-				mockLogger.EXPECT().Debug("MCP middleware invoked", "path", "/v1/chat/completions").AnyTimes()
-				mockLogger.EXPECT().Error("Failed to parse request body", gomock.Any()).AnyTimes()
+				mockLogger.EXPECT().Debug("MCP Middleware: MCP middleware invoked", "path", "/v1/chat/completions").AnyTimes()
+				mockLogger.EXPECT().Error("MCP Middleware: Failed to parse request body", gomock.Any()).AnyTimes()
 			},
 			expectedStatus: http.StatusBadRequest,
 			expectedError:  "Invalid request body",
@@ -586,9 +601,17 @@ func TestMCPMiddleware_ErrorHandling(t *testing.T) {
 			requestBody: `{"model":"unsupported/model","messages":[]}`,
 			setupMocks: func(mockRegistry *mocks.MockProviderRegistry, mockClient *mocks.MockClient, mockMCPClient *mocks.MockMCPClientInterface, mockLogger *mocks.MockLogger, mockProvider *mocks.MockIProvider) {
 				mockMCPClient.EXPECT().IsInitialized().Return(true).AnyTimes()
-				mockMCPClient.EXPECT().GetAllChatCompletionTools().Return([]providers.ChatCompletionTool{}).AnyTimes()
-				mockLogger.EXPECT().Debug("MCP middleware invoked", "path", "/v1/chat/completions").AnyTimes()
-				mockLogger.EXPECT().Error("Failed to determine provider", gomock.Any(), "model", "unsupported/model").AnyTimes()
+				mockMCPClient.EXPECT().GetAllChatCompletionTools().Return([]providers.ChatCompletionTool{
+					{
+						Type: providers.ChatCompletionToolTypeFunction,
+						Function: providers.FunctionObject{
+							Name: "test_tool",
+						},
+					},
+				}).AnyTimes()
+				mockLogger.EXPECT().Debug("MCP Middleware: MCP middleware invoked", "path", "/v1/chat/completions").AnyTimes()
+				mockLogger.EXPECT().Debug("MCP Middleware: Added MCP tools to request", "toolCount", 1).AnyTimes()
+				mockLogger.EXPECT().Error("MCP Middleware: Failed to determine provider", gomock.Any(), "model", "unsupported/model").AnyTimes()
 			},
 			expectedStatus: http.StatusBadRequest,
 			expectedError:  "Unsupported model: unsupported/model",
@@ -598,10 +621,18 @@ func TestMCPMiddleware_ErrorHandling(t *testing.T) {
 			requestBody: `{"model":"openai/gpt-3.5-turbo","messages":[]}`,
 			setupMocks: func(mockRegistry *mocks.MockProviderRegistry, mockClient *mocks.MockClient, mockMCPClient *mocks.MockMCPClientInterface, mockLogger *mocks.MockLogger, mockProvider *mocks.MockIProvider) {
 				mockMCPClient.EXPECT().IsInitialized().Return(true).AnyTimes()
-				mockMCPClient.EXPECT().GetAllChatCompletionTools().Return([]providers.ChatCompletionTool{}).AnyTimes()
-				mockLogger.EXPECT().Debug("MCP middleware invoked", "path", "/v1/chat/completions").AnyTimes()
+				mockMCPClient.EXPECT().GetAllChatCompletionTools().Return([]providers.ChatCompletionTool{
+					{
+						Type: providers.ChatCompletionToolTypeFunction,
+						Function: providers.FunctionObject{
+							Name: "test_tool",
+						},
+					},
+				}).AnyTimes()
+				mockLogger.EXPECT().Debug("MCP Middleware: MCP middleware invoked", "path", "/v1/chat/completions").AnyTimes()
+				mockLogger.EXPECT().Debug("MCP Middleware: Added MCP tools to request", "toolCount", 1).AnyTimes()
 				mockRegistry.EXPECT().BuildProvider(providers.OpenaiID, mockClient).Return(nil, fmt.Errorf("provider build failed")).AnyTimes()
-				mockLogger.EXPECT().Error("Failed to get provider", gomock.Any(), "provider", providers.OpenaiID).AnyTimes()
+				mockLogger.EXPECT().Error("MCP Middleware: Failed to get provider", gomock.Any(), "provider", providers.OpenaiID).AnyTimes()
 			},
 			expectedStatus: http.StatusInternalServerError,
 			expectedError:  "Provider not available",
@@ -644,7 +675,9 @@ func TestMCPMiddleware_ErrorHandling(t *testing.T) {
 				}
 			}
 
-			if tt.expectedStatus < 400 {
+			if tt.expectedStatus >= 400 {
+				assert.False(t, handlerCalled, "Handler should not be called for error responses")
+			} else {
 				assert.True(t, handlerCalled, "Handler should be called for successful responses")
 			}
 		})
@@ -728,4 +761,148 @@ data: [DONE]`,
 			}
 		})
 	}
+}
+
+func TestMCPMiddleware_StreamingWithMultipleToolCallIterations(t *testing.T) {
+	t.Run("Multiple tool call iterations should only send one final [DONE]", func(t *testing.T) {
+		ctrl, mockRegistry, mockClient, mockMCPClient, mockLogger, mockProvider := createMockDependencies(t)
+		defer ctrl.Finish()
+
+		mockMCPClient.EXPECT().IsInitialized().Return(true).AnyTimes()
+		mockMCPClient.EXPECT().GetAllChatCompletionTools().Return([]providers.ChatCompletionTool{
+			{
+				Type: providers.ChatCompletionToolTypeFunction,
+				Function: providers.FunctionObject{
+					Name: "get-pizza-info",
+				},
+			},
+		}).AnyTimes()
+
+		mockLogger.EXPECT().Debug(gomock.Any(), gomock.Any()).AnyTimes()
+		mockLogger.EXPECT().Debug(gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
+		mockLogger.EXPECT().Debug(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
+		mockLogger.EXPECT().Debug(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
+		mockLogger.EXPECT().Debug(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
+		mockLogger.EXPECT().Info(gomock.Any(), gomock.Any()).AnyTimes()
+		mockLogger.EXPECT().Info(gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
+		mockLogger.EXPECT().Error(gomock.Any(), gomock.Any()).AnyTimes()
+
+		mockRegistry.EXPECT().BuildProvider(providers.GroqID, mockClient).Return(mockProvider, nil).AnyTimes()
+
+		mockMCPClient.EXPECT().ExecuteTool(gomock.Any(), gomock.Any(), "http://mcp-pizza-server:8084/mcp").Return(&mcp.CallToolResult{
+			Content: []interface{}{
+				map[string]interface{}{
+					"type": "text",
+					"text": "Top pizzas: Margherita, Pepperoni, Hawaiian",
+				},
+			},
+		}, nil).AnyTimes()
+
+		agentImpl := agent.NewAgent(mockLogger, mockMCPClient, mockProvider, "meta-llama/llama-4-scout-17b-instruct")
+
+		firstStreamCh := make(chan []byte, 10)
+		go func() {
+			defer close(firstStreamCh)
+			chunks := []string{
+				`{"id":"chatcmpl-1","object":"chat.completion.chunk","created":1748534842,"model":"meta-llama/llama-4-scout-17b-instruct","choices":[{"index":0,"delta":{"role":"assistant","content":null},"finish_reason":null}]}`,
+				`{"id":"chatcmpl-1","object":"chat.completion.chunk","created":1748534842,"model":"meta-llama/llama-4-scout-17b-instruct","choices":[{"index":0,"delta":{"content":"I'll"},"finish_reason":null}]}`,
+				`{"id":"chatcmpl-1","object":"chat.completion.chunk","created":1748534842,"model":"meta-llama/llama-4-scout-17b-instruct","choices":[{"index":0,"delta":{"content":" get"},"finish_reason":null}]}`,
+				`{"id":"chatcmpl-1","object":"chat.completion.chunk","created":1748534842,"model":"meta-llama/llama-4-scout-17b-instruct","choices":[{"index":0,"delta":{"content":" pizza"},"finish_reason":null}]}`,
+				`{"id":"chatcmpl-1","object":"chat.completion.chunk","created":1748534842,"model":"meta-llama/llama-4-scout-17b-instruct","choices":[{"index":0,"delta":{"content":" info"},"finish_reason":null}]}`,
+				`{"id":"chatcmpl-1","object":"chat.completion.chunk","created":1748534842,"model":"meta-llama/llama-4-scout-17b-instruct","choices":[{"index":0,"delta":{"tool_calls":[{"id":"call_vxw1","type":"function","function":{"name":"get-pizza-info","arguments":"{\"mcpServer\":\"http://mcp-pizza-server:8084/mcp\"}"},"index":0}]},"finish_reason":null}]}`,
+				`{"id":"chatcmpl-1","object":"chat.completion.chunk","created":1748534842,"model":"meta-llama/llama-4-scout-17b-instruct","choices":[{"index":0,"delta":{},"finish_reason":"tool_calls"}]}`,
+			}
+			for _, chunk := range chunks {
+				firstStreamCh <- []byte(chunk)
+			}
+			firstStreamCh <- []byte("[DONE]")
+		}()
+
+		secondStreamCh := make(chan []byte, 10)
+		go func() {
+			defer close(secondStreamCh)
+			chunks := []string{
+				`{"id":"chatcmpl-2","object":"chat.completion.chunk","created":1748534842,"model":"meta-llama/llama-4-scout-17b-instruct","choices":[{"index":0,"delta":{"role":"assistant","content":null},"finish_reason":null}]}`,
+				`{"id":"chatcmpl-2","object":"chat.completion.chunk","created":1748534842,"model":"meta-llama/llama-4-scout-17b-instruct","choices":[{"index":0,"delta":{"content":"Let"},"finish_reason":null}]}`,
+				`{"id":"chatcmpl-2","object":"chat.completion.chunk","created":1748534842,"model":"meta-llama/llama-4-scout-17b-instruct","choices":[{"index":0,"delta":{"content":" me"},"finish_reason":null}]}`,
+				`{"id":"chatcmpl-2","object":"chat.completion.chunk","created":1748534842,"model":"meta-llama/llama-4-scout-17b-instruct","choices":[{"index":0,"delta":{"content":" get"},"finish_reason":null}]}`,
+				`{"id":"chatcmpl-2","object":"chat.completion.chunk","created":1748534842,"model":"meta-llama/llama-4-scout-17b-instruct","choices":[{"index":0,"delta":{"content":" more"},"finish_reason":null}]}`,
+				`{"id":"chatcmpl-2","object":"chat.completion.chunk","created":1748534842,"model":"meta-llama/llama-4-scout-17b-instruct","choices":[{"index":0,"delta":{"tool_calls":[{"id":"call_vxw2","type":"function","function":{"name":"get-pizza-info","arguments":"{\"mcpServer\":\"http://mcp-pizza-server:8084/mcp\"}"},"index":0}]},"finish_reason":null}]}`,
+				`{"id":"chatcmpl-2","object":"chat.completion.chunk","created":1748534842,"model":"meta-llama/llama-4-scout-17b-instruct","choices":[{"index":0,"delta":{},"finish_reason":"tool_calls"}]}`,
+			}
+			for _, chunk := range chunks {
+				secondStreamCh <- []byte(chunk)
+			}
+			secondStreamCh <- []byte("[DONE]")
+		}()
+
+		thirdStreamCh := make(chan []byte, 10)
+		go func() {
+			defer close(thirdStreamCh)
+			chunks := []string{
+				`{"id":"chatcmpl-3","object":"chat.completion.chunk","created":1748534842,"model":"meta-llama/llama-4-scout-17b-instruct","choices":[{"index":0,"delta":{"role":"assistant","content":null},"finish_reason":null}]}`,
+				`{"id":"chatcmpl-3","object":"chat.completion.chunk","created":1748534842,"model":"meta-llama/llama-4-scout-17b-instruct","choices":[{"index":0,"delta":{"content":"Based"},"finish_reason":null}]}`,
+				`{"id":"chatcmpl-3","object":"chat.completion.chunk","created":1748534842,"model":"meta-llama/llama-4-scout-17b-instruct","choices":[{"index":0,"delta":{"content":" on"},"finish_reason":null}]}`,
+				`{"id":"chatcmpl-3","object":"chat.completion.chunk","created":1748534842,"model":"meta-llama/llama-4-scout-17b-instruct","choices":[{"index":0,"delta":{"content":" pizza"},"finish_reason":null}]}`,
+				`{"id":"chatcmpl-3","object":"chat.completion.chunk","created":1748534842,"model":"meta-llama/llama-4-scout-17b-instruct","choices":[{"index":0,"delta":{"content":" info"},"finish_reason":null}]}`,
+				`{"id":"chatcmpl-3","object":"chat.completion.chunk","created":1748534842,"model":"meta-llama/llama-4-scout-17b-instruct","choices":[{"index":0,"delta":{"content":","},"finish_reason":null}]}`,
+				`{"id":"chatcmpl-3","object":"chat.completion.chunk","created":1748534842,"model":"meta-llama/llama-4-scout-17b-instruct","choices":[{"index":0,"delta":{"content":" Margherita"},"finish_reason":null}]}`,
+				`{"id":"chatcmpl-3","object":"chat.completion.chunk","created":1748534842,"model":"meta-llama/llama-4-scout-17b-instruct","choices":[{"index":0,"delta":{"content":","},"finish_reason":null}]}`,
+				`{"id":"chatcmpl-3","object":"chat.completion.chunk","created":1748534842,"model":"meta-llama/llama-4-scout-17b-instruct","choices":[{"index":0,"delta":{"content":" Pepperoni"},"finish_reason":null}]}`,
+				`{"id":"chatcmpl-3","object":"chat.completion.chunk","created":1748534842,"model":"meta-llama/llama-4-scout-17b-instruct","choices":[{"index":0,"delta":{"content":" Hawaiian"},"finish_reason":null}]}`,
+				`{"id":"chatcmpl-3","object":"chat.completion.chunk","created":1748534842,"model":"meta-llama/llama-4-scout-17b-instruct","choices":[{"index":0,"delta":{},"finish_reason":"stop"}]}`,
+			}
+			for _, chunk := range chunks {
+				thirdStreamCh <- []byte(chunk)
+			}
+
+			thirdStreamCh <- []byte("[DONE]")
+		}()
+
+		call1 := mockProvider.EXPECT().StreamChatCompletions(gomock.Any(), gomock.Any()).Return(firstStreamCh, nil).Times(1)
+		call2 := mockProvider.EXPECT().StreamChatCompletions(gomock.Any(), gomock.Any()).Return(secondStreamCh, nil).Times(1)
+		call3 := mockProvider.EXPECT().StreamChatCompletions(gomock.Any(), gomock.Any()).Return(thirdStreamCh, nil).Times(1)
+
+		gomock.InOrder(call1, call2, call3)
+
+		requestData := providers.CreateChatCompletionRequest{
+			Model: "groq/meta-llama/llama-4-scout-17b-instruct",
+			Messages: []providers.Message{
+				{Role: providers.MessageRoleUser, Content: "What are the top pizzas?"},
+			},
+			Stream: &[]bool{true}[0],
+		}
+
+		middlewareStreamCh := make(chan []byte, 100)
+		ctx := context.Background()
+
+		go func() {
+			defer close(middlewareStreamCh)
+			err := agentImpl.RunWithStream(ctx, middlewareStreamCh, nil, &requestData)
+			if err != nil {
+				t.Errorf("Agent streaming failed: %v", err)
+			}
+		}()
+
+		var collectedChunks []string
+		var doneCount int
+		for chunk := range middlewareStreamCh {
+			chunkStr := string(chunk)
+			collectedChunks = append(collectedChunks, chunkStr)
+
+			if strings.Contains(chunkStr, "[DONE]") {
+				doneCount++
+			}
+		}
+
+		allChunks := strings.Join(collectedChunks, "")
+
+		assert.Equal(t, 1, doneCount, "Agent should send exactly one final [DONE] marker, but found %d", doneCount)
+		assert.Contains(t, allChunks, "pizza", "Response should contain content from first iteration")
+		assert.Contains(t, allChunks, "get-pizza-info", "Response should contain tool call")
+		assert.Contains(t, allChunks, "Margherita", "Response should contain content from final iteration")
+		assert.Contains(t, allChunks, "Pepperoni", "Response should contain content from final iteration")
+		assert.Contains(t, allChunks, "Hawaiian", "Response should contain content from final iteration")
+		assert.True(t, len(collectedChunks) > 10, "Should have collected multiple chunks from all iterations")
+	})
 }
