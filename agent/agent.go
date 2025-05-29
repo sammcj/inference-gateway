@@ -137,7 +137,7 @@ func (a *agentImpl) RunWithStream(ctx context.Context, middlewareStreamCh chan [
 				}
 
 				// Filter out [DONE] markers from provider - only agent should send completion signals
-				// TODO - I need find a better way of handling this
+				// TODO - I need to find a better way of handling this
 				lineStr := string(line)
 				trimmedLine := strings.TrimSpace(lineStr)
 
