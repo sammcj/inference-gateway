@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.5](https://github.com/inference-gateway/inference-gateway/compare/v0.7.4...v0.7.5) (2025-05-29)
+
+### ♻️ Improvements
+
+* **mcp:** Extract MCP middleware functionality to a dedicated agent ([#103](https://github.com/inference-gateway/inference-gateway/issues/103)) ([b7be164](https://github.com/inference-gateway/inference-gateway/commit/b7be16414bb55dff04604afa71e5831cabc89b6d))
+
 ## [0.7.4](https://github.com/inference-gateway/inference-gateway/compare/v0.7.3...v0.7.4) (2025-05-28)
 
 ### 📚 Documentation
