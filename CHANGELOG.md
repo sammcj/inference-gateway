@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.6](https://github.com/inference-gateway/inference-gateway/compare/v0.7.5...v0.7.6) (2025-05-29)
+
+### 🐛 Bug Fixes
+
+* Enhance provider determination logic and update error messages ([#104](https://github.com/inference-gateway/inference-gateway/issues/104)) ([535ca09](https://github.com/inference-gateway/inference-gateway/commit/535ca09be3d8cb4e71673681f6f1119d5153a004))
+
+### 🔧 Miscellaneous
+
+* Fix typo ([6f7a882](https://github.com/inference-gateway/inference-gateway/commit/6f7a882c3624c6b61196d8167792f1689009864e))
+
 ## [0.7.5](https://github.com/inference-gateway/inference-gateway/compare/v0.7.4...v0.7.5) (2025-05-29)
 
 ### ♻️ Improvements
