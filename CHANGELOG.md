@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.8.0](https://github.com/inference-gateway/inference-gateway/compare/v0.7.6...v0.8.0) (2025-05-31)
+
+### ✨ Features
+
+* Add client configuration options for compression and timeouts ([#105](https://github.com/inference-gateway/inference-gateway/issues/105)) ([6f32205](https://github.com/inference-gateway/inference-gateway/commit/6f322053030485fba9a860f217561bcc342c171d)), closes [#106](https://github.com/inference-gateway/inference-gateway/issues/106)
+
 ## [0.8.0-rc.1](https://github.com/inference-gateway/inference-gateway/compare/v0.7.6...v0.8.0-rc.1) (2025-05-30)
 
 ### ✨ Features
