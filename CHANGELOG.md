@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.8.1](https://github.com/inference-gateway/inference-gateway/compare/v0.8.0...v0.8.1) (2025-05-31)
+
+### ♻️ Improvements
+
+* Standardize Structured Logging ([#107](https://github.com/inference-gateway/inference-gateway/issues/107)) ([d0dfcc9](https://github.com/inference-gateway/inference-gateway/commit/d0dfcc9d09de947dc61f251bd29aa0806915364b))
+
 ## [0.8.0](https://github.com/inference-gateway/inference-gateway/compare/v0.7.6...v0.8.0) (2025-05-31)
 
 ### ✨ Features
