@@ -187,10 +187,24 @@ func handleStreamingRequest(c *gin.Context, provider providers.IProvider, router
 			return true
 		}
 
-		router.logger.Debug("stream chunk",
-			"provider", c.Param("provider"),
-			"bytes", len(line),
-			"data", string(bytes.TrimSpace(line)))
+		if router.cfg.Environment == "development" {
+			shouldLog := len(line) > 512 ||
+				(c.Param("provider") != "" && len(line) > 0 && (len(line)%10 == 0))
+
+			if shouldLog {
+				router.logger.Debug("stream chunk",
+					"provider", c.Param("provider"),
+					"bytes", len(line),
+					"data_preview", func() string {
+						preview := string(bytes.TrimSpace(line))
+						if len(preview) > 200 {
+							return preview[:200] + "... (truncated)"
+						}
+						return preview
+					}(),
+				)
+			}
+		}
 
 		if _, err := w.Write(line); err != nil {
 			router.logger.Error("failed to write response", err,
@@ -504,6 +518,7 @@ func (router *RouterImpl) ChatCompletionsHandler(c *gin.Context) {
 		c.Header("Cache-Control", "no-cache")
 		c.Header("Connection", "keep-alive")
 		c.Header("Transfer-Encoding", "chunked")
+		c.Header("X-Accel-Buffering", "no")
 
 		streamCh, err := provider.StreamChatCompletions(ctx, req)
 		if err != nil {
@@ -525,11 +540,14 @@ func (router *RouterImpl) ChatCompletionsHandler(c *gin.Context) {
 					"bytes", len(line),
 					"line", string(line))
 
-				if _, err := c.Writer.Write(line); err != nil {
+				if _, err := w.Write(line); err != nil {
 					router.logger.Error("Router: failed to write chunk", err)
 					return false
 				}
-				c.Writer.Flush()
+
+				if flusher, ok := w.(http.Flusher); ok {
+					flusher.Flush()
+				}
 				return true
 			case <-ctx.Done():
 				return false
