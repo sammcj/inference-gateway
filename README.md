@@ -108,7 +108,7 @@ Client is sending:
 ```bash
 curl -X POST http://localhost:8080/v1/chat/completions
   -d '{
-    "model": "gpt-3.5-turbo",
+    "model": "openai/gpt-3.5-turbo",
     "messages": [
       {
         "role": "system",
@@ -166,7 +166,7 @@ export MCP_SERVERS="http://filesystem-server:3001,http://search-server:3002"
 # LLMs will automatically discover and use available tools
 curl -X POST http://localhost:8080/v1/chat/completions \
   -d '{
-    "model": "gpt-4",
+    "model": "openai/gpt-4",
     "messages": [{"role": "user", "content": "List files in the current directory"}]
   }'
 ```
