@@ -24,7 +24,7 @@ type LoggerZapImpl struct {
 	logger *zap.Logger
 }
 
-// NoOpLogger is a logger implementation that discards all logs
+// NoopLogger is a logger implementation that discards all logs
 // This is useful for testing to prevent logs from cluttering test output
 type NoopLogger struct{}
 
