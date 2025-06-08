@@ -294,7 +294,7 @@ func (m *MCPMiddlewareImpl) handleMCPStreamingRequest(c *gin.Context, request *p
 					Error string `json:"error"`
 				}
 				if err := json.Unmarshal(line[6:], &errMsg); err == nil {
-					m.logger.Error("upstream provider error", fmt.Errorf(errMsg.Error))
+					m.logger.Error("upstream provider error", fmt.Errorf("%s", errMsg.Error))
 					c.Writer.WriteHeader(http.StatusServiceUnavailable)
 				}
 			}

@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/devcontainers/go:1-1.23-bookworm
+FROM mcr.microsoft.com/devcontainers/go:1-1.24-bookworm
 
 ENV TASK_VERSION=v3.42.1 \
     CTLPTL_VERSION=0.8.39 \

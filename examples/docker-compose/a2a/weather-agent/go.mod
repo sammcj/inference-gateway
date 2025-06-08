@@ -1,8 +1,6 @@
 module weather-agent
 
-go 1.23.4
-
-toolchain go1.23.9
+go 1.24
 
 require (
 	github.com/gin-gonic/gin v1.10.0

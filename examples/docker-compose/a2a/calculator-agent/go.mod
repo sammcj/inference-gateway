@@ -1,6 +1,6 @@
 module calculator-agent
 
-go 1.23.9
+go 1.24
 
 require (
 	github.com/gin-gonic/gin v1.10.1
