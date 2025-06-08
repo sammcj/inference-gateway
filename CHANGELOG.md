@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.10.0](https://github.com/inference-gateway/inference-gateway/compare/v0.9.0...v0.10.0) (2025-06-08)
+
+### ✨ Features
+
+* Implement Google's A2A Client ([#110](https://github.com/inference-gateway/inference-gateway/issues/110)) ([bae9711](https://github.com/inference-gateway/inference-gateway/commit/bae9711d03a683884717d886659363158aeedd1e)), closes [#115](https://github.com/inference-gateway/inference-gateway/issues/115)
+
+### 📚 Documentation
+
+* Update MCP server endpoints to use streamableHttp servers ([9959238](https://github.com/inference-gateway/inference-gateway/commit/9959238401e84800e77fc3a523e375e4ec6409cc))
+
 ## [0.10.0-rc.2](https://github.com/inference-gateway/inference-gateway/compare/v0.10.0-rc.1...v0.10.0-rc.2) (2025-06-08)
 
 ### 🐛 Bug Fixes
