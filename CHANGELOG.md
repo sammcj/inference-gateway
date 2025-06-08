@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.10.1](https://github.com/inference-gateway/inference-gateway/compare/v0.10.0...v0.10.1) (2025-06-08)
+
+### 🔧 Miscellaneous
+
+* Update dependencies and improve Taskfile commands ([#116](https://github.com/inference-gateway/inference-gateway/issues/116)) ([886ba61](https://github.com/inference-gateway/inference-gateway/commit/886ba6198cd63e42326d7c86a55dc02343249ecb))
+* Upgrade Go version to 1.24 across all Dockerfiles and go.mod files ([e019b18](https://github.com/inference-gateway/inference-gateway/commit/e019b189e89d6a1d8ce03266ea07e6eb056b8791))
+
+### ✅ Miscellaneous
+
+* **fix:** Update model IDs in benchmark tests to include namespace ([c71c127](https://github.com/inference-gateway/inference-gateway/commit/c71c127d9f17a04094c6420c3945d318c9f724a6))
+
 ## [0.10.0](https://github.com/inference-gateway/inference-gateway/compare/v0.9.0...v0.10.0) (2025-06-08)
 
 ### ✨ Features
