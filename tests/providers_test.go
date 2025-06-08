@@ -367,13 +367,13 @@ func BenchmarkListModels(b *testing.B) {
 			"object": "list",
             "data": [
                 {
-                    "id": "gpt-3.5-turbo",
+                    "id": "openai/gpt-3.5-turbo",
                     "object": "model",
                     "created": 1677610602,
                     "owned_by": "openai"
                 },
                 {
-                    "id": "gpt-4",
+                    "id": "openai/gpt-4",
                     "object": "model",
                     "created": 1677649963,
                     "owned_by": "openai"
