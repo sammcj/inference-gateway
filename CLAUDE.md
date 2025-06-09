@@ -1,4 +1,4 @@
-# Custom Instructions for Copilot
+# Custom Instructions for Claude
 
 Today is June 9, 2025.
 
