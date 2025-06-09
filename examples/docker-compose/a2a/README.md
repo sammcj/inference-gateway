@@ -31,8 +31,13 @@ This example demonstrates integrating the Agent-to-Agent (A2A) protocol with Inf
 ### Setup
 
 ```bash
-export DEEPSEEK_API_KEY=your_deepseek_api_key
-docker-compose up
+cp .env.example .env
+# Edit .env to add your DeepSeek API key and other configurations
+
+cp .env.google.example .env.google
+# Edit .env.google to add your Google Calendar credentials
+
+docker-compose up -d --build
 ```
 
 ### Test and Troubleshoot
