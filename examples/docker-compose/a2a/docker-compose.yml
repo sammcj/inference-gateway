@@ -6,11 +6,13 @@ services:
       - "8080:8080"
     env_file:
       - .env
+    environment:
+      A2A_ENABLE: "true"
+      A2A_EXPOSE: "true"
+      A2A_AGENTS: "http://helloworld-agent:8081,http://calculator-agent:8082,http://weather-agent:8083,http://google-calendar-agent:8080"
     depends_on:
-      - helloworld-agent
-      - calculator-agent
-      - weather-agent
-      - google-calendar-agent
+      healthchecker:
+        condition: service_healthy
     networks:
       - a2a-network
 
@@ -18,16 +20,6 @@ services:
     build:
       context: ./helloworld-agent
       dockerfile: Dockerfile
-    healthcheck:
-      test:
-        - CMD
-        - curl
-        - -f
-        - http://localhost:8081/health
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 20s
     networks:
       - a2a-network
 
@@ -35,16 +27,6 @@ services:
     build:
       context: ./calculator-agent
       dockerfile: Dockerfile
-    healthcheck:
-      test:
-        - CMD
-        - curl
-        - -f
-        - http://localhost:8082/health
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 20s
     networks:
       - a2a-network
 
@@ -52,16 +34,6 @@ services:
     build:
       context: ./weather-agent
       dockerfile: Dockerfile
-    healthcheck:
-      test:
-        - CMD
-        - curl
-        - -f
-        - http://localhost:8083/health
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 20s
     networks:
       - a2a-network
 
@@ -70,16 +42,30 @@ services:
     pull_policy: always
     env_file:
       - .env.google
+    networks:
+      - a2a-network
+
+  healthchecker:
+    build:
+      context: .
+      dockerfile: Dockerfile.healthchecker
+    depends_on:
+      helloworld-agent:
+        condition: service_started
+      calculator-agent:
+        condition: service_started
+      weather-agent:
+        condition: service_started
+      google-calendar-agent:
+        condition: service_started
     healthcheck:
       test:
         - CMD
-        - curl
-        - -f
-        - http://localhost:8084/health
+        - "/healthcheck.sh"
       interval: 30s
-      timeout: 10s
+      timeout: 15s
       retries: 3
-      start_period: 20s
+      start_period: 60s
     networks:
       - a2a-network
 
