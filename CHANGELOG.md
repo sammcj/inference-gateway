@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.10.2](https://github.com/inference-gateway/inference-gateway/compare/v0.10.1...v0.10.2) (2025-06-10)
+
+### ♻️ Improvements
+
+* **docker:** Add healthchecker service and healthcheck script for A2A agents ([2ae49e5](https://github.com/inference-gateway/inference-gateway/commit/2ae49e5e03e3f8acb30c8dab4d33416fc9026cdb))
+* Use internal shared tools repository for code generation ([#125](https://github.com/inference-gateway/inference-gateway/issues/125)) ([65dc0e5](https://github.com/inference-gateway/inference-gateway/commit/65dc0e52fe6436d829b36658b3e4643f06cbcaa3))
+
+### 📚 Documentation
+
+* **examples:** Update example environment files and docker-compose configuration for Google Calendar integration ([d1cdc4d](https://github.com/inference-gateway/inference-gateway/commit/d1cdc4dd82b51a9f64b3f955af55116958c1ed65))
+* Improve Copilot custom instructions - remove duplicated and copy custom instructions to a CLAUDE.md should someone want to use Claude code ([8c4b66a](https://github.com/inference-gateway/inference-gateway/commit/8c4b66ae3e5feb50565ccae60246d9613c4c3065))
+
 ## [0.10.1](https://github.com/inference-gateway/inference-gateway/compare/v0.10.0...v0.10.1) (2025-06-08)
 
 ### 🔧 Miscellaneous
