@@ -29,7 +29,7 @@ tags:
     description: List and describe the various models available in the API.
   - name: Completions
     description: Generate completions from the models.
-  - name: Tools
+  - name: MCP
     description: List and manage MCP tools.
   - name: A2A
     description: List and manage A2A agents.
@@ -160,7 +160,7 @@ paths:
     get:
       operationId: listTools
       tags:
-        - Tools
+        - MCP
       description: |
         Lists the currently available MCP tools. Only accessible when EXPOSE_MCP is enabled.
       summary: Lists the currently available MCP tools
@@ -183,7 +183,7 @@ paths:
     get:
       operationId: listAgents
       tags:
-        - Agents
+        - A2A
       description: |
         Lists the currently available A2A agents. Only accessible when EXPOSE_A2A is enabled.
       summary: Lists the currently available A2A agents
@@ -1321,6 +1321,26 @@ components:
                   type: time.Duration
                   default: "30s"
                   description: "A2A client timeout"
+                - name: a2a_polling_enable
+                  env: "A2A_POLLING_ENABLE"
+                  type: bool
+                  default: "true"
+                  description: "Enable task status polling"
+                - name: a2a_polling_interval
+                  env: "A2A_POLLING_INTERVAL"
+                  type: time.Duration
+                  default: "1s"
+                  description: "Interval between polling requests"
+                - name: a2a_polling_timeout
+                  env: "A2A_POLLING_TIMEOUT"
+                  type: time.Duration
+                  default: "30s"
+                  description: "Maximum time to wait for task completion"
+                - name: a2a_max_poll_attempts
+                  env: "A2A_MAX_POLL_ATTEMPTS"
+                  type: int
+                  default: "30"
+                  description: "Maximum number of polling attempts"
           - oidc:
               title: "OpenID Connect"
               settings:
