@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.11.0](https://github.com/inference-gateway/inference-gateway/compare/v0.10.2...v0.11.0) (2025-06-12)
+
+### ✨ Features
+
+* **a2a:** Implement A2A streaming mode and response handling ([#124](https://github.com/inference-gateway/inference-gateway/issues/124)) ([269c74f](https://github.com/inference-gateway/inference-gateway/commit/269c74f38ceeb8bbab89c516df2a7810a29d534d))
+
 ## [0.10.2](https://github.com/inference-gateway/inference-gateway/compare/v0.10.1...v0.10.2) (2025-06-10)
 
 ### ♻️ Improvements
