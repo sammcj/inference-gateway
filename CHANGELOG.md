@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.11.2](https://github.com/inference-gateway/inference-gateway/compare/v0.11.1...v0.11.2) (2025-06-15)
+
+### ♻️ Improvements
+
+* Move all MCP related logic to the Middleware ([#127](https://github.com/inference-gateway/inference-gateway/issues/127)) ([6e4375e](https://github.com/inference-gateway/inference-gateway/commit/6e4375eb0e890ce770958023b4fca0cf3e7294e2))
+
 ## [0.11.1](https://github.com/inference-gateway/inference-gateway/compare/v0.11.0...v0.11.1) (2025-06-15)
 
 ### ♻️ Improvements
