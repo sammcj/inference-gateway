@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.11.1](https://github.com/inference-gateway/inference-gateway/compare/v0.11.0...v0.11.1) (2025-06-15)
+
+### ♻️ Improvements
+
+* Rename internal headers to use 'Bypass' terminology ([#126](https://github.com/inference-gateway/inference-gateway/issues/126)) ([c93c75c](https://github.com/inference-gateway/inference-gateway/commit/c93c75c975565e0190f0ff0ee00763a31a582dd7))
+
 ## [0.11.0](https://github.com/inference-gateway/inference-gateway/compare/v0.10.2...v0.11.0) (2025-06-12)
 
 ### ✨ Features
