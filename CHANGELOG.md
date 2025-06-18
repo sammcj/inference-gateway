@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.12.0](https://github.com/inference-gateway/inference-gateway/compare/v0.11.2...v0.12.0) (2025-06-18)
+
+### ✨ Features
+
+* A2A - Add ListAgentsHandler and GetAgentHandler endpoint to retrieve specific agent details by ID ([#129](https://github.com/inference-gateway/inference-gateway/issues/129)) ([2250fba](https://github.com/inference-gateway/inference-gateway/commit/2250fbabb15746a21a508806f73d5941d7588091))
+
+### 📚 Documentation
+
+* Update README with new A2A integration examples for Docker and Kubernetes ([#128](https://github.com/inference-gateway/inference-gateway/issues/128)) ([cd7a12a](https://github.com/inference-gateway/inference-gateway/commit/cd7a12a0c8f111a53b0bdbf47094e947cdb9716e))
+
 ## [0.11.2](https://github.com/inference-gateway/inference-gateway/compare/v0.11.1...v0.11.2) (2025-06-15)
 
 ### ♻️ Improvements
