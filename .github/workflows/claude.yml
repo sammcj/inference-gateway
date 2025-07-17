@@ -43,6 +43,16 @@ jobs:
           additional_permissions: |
             actions: read
           use_commit_signing: true
+          base_branch: main
+          branch_prefix: "claude/"
+          custom_instructions: |
+            IMPORTANT: You must NEVER push directly to the main branch. Always:
+            1. Create a new feature branch (claude/feature-name)
+            2. Make your changes on the feature branch
+            3. Open a pull request to main
+            4. Wait for review and approval before merging
+
+            Follow the development workflow specified in the coding instructions.
           mcp_config: |
             {
               "mcpServers": {

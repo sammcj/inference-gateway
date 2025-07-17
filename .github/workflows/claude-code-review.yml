@@ -30,6 +30,8 @@ jobs:
           additional_permissions: |
             actions: read
           use_commit_signing: true
+          base_branch: main
+          branch_prefix: "claude/"
           mcp_config: |
             {
               "mcpServers": {
