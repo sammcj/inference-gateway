@@ -181,9 +181,6 @@ func main() {
 				return
 			}
 			logger.Info("a2a client initialized successfully")
-			
-			// Start status polling after successful initialization
-			a2aClient.StartStatusPolling(context.Background())
 		} else {
 			logger.Info("a2a is enabled but no agents configured")
 		}
@@ -228,8 +225,6 @@ func main() {
 		v1.GET("/models", api.ListModelsHandler)
 		v1.GET("/a2a/agents", api.ListAgentsHandler)
 		v1.GET("/a2a/agents/:id", api.GetAgentHandler)
-		v1.GET("/a2a/agents/status", api.ListAgentStatusesHandler)
-		v1.GET("/a2a/agents/:id/status", api.GetAgentStatusHandler)
 		v1.GET("/mcp/tools", api.ListToolsHandler)
 		v1.POST("/chat/completions", api.ChatCompletionsHandler)
 	}
@@ -265,12 +260,6 @@ func main() {
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 	<-quit
 	logger.Info("shutting down server...")
-
-	// Stop A2A status polling if it's running
-	if cfg.A2A.Enable && a2aClient != nil {
-		logger.Info("stopping a2a status polling...")
-		a2aClient.StopStatusPolling()
-	}
 
 	ctxShutdown, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
