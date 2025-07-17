@@ -63,3 +63,7 @@ jobs:
                 }
               }
             }
+          allowed_tools: |
+            Bash(task:*)
+            Bash(go:*)
+            Bash(gh:*)
