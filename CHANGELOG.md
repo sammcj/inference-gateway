@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.14.1](https://github.com/inference-gateway/inference-gateway/compare/v0.14.0...v0.14.1) (2025-07-25)
+
+### ♻️ Improvements
+
+* **config:** Refactor authentication config to use AUTH_ prefix ([#159](https://github.com/inference-gateway/inference-gateway/issues/159)) ([c97bdd1](https://github.com/inference-gateway/inference-gateway/commit/c97bdd15a14f067a5d46eb501dabc22e3f816cb6))
+* **docs:** Remove outdated section on function/tool call metrics from README ([9ec242c](https://github.com/inference-gateway/inference-gateway/commit/9ec242c4a26c016a1a694654729375bfec74c5bc))
+
+### 🔧 Miscellaneous
+
+* Update inference-gateway version to 0.14.0 in Taskfiles and README ([ea4c25e](https://github.com/inference-gateway/inference-gateway/commit/ea4c25e7a382ac0f0d1d2410dfb569ea7bafadef))
+
 ## [0.14.0](https://github.com/inference-gateway/inference-gateway/compare/v0.13.0...v0.14.0) (2025-07-25)
 
 ### ✨ Features
