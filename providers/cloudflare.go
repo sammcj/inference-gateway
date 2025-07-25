@@ -1,6 +1,8 @@
 package providers
 
-import "time"
+import (
+	"time"
+)
 
 type ModelCloudflare struct {
 	ID          string `json:"id,omitempty"`
@@ -28,8 +30,9 @@ func (l *ListModelsResponseCloudflare) Transform() ListModelsResponse {
 				created = createdAt.Unix()
 			}
 		}
+
 		models[i] = Model{
-			ID:       string(provider) + "/" + model.Name,
+			ID:       string(provider) + "/" + model.ID,
 			Object:   "model",
 			Created:  created,
 			OwnedBy:  string(provider),

@@ -163,20 +163,19 @@ func TestProviderListModels(t *testing.T) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		_, err := w.Write([]byte(`{
+            "object": "list",
             "data": [
                 {
-                    "id": "openai/gpt-3.5-turbo",
+                    "id": "gpt-3.5-turbo",
                     "object": "model",
                     "created": 1677610602,
-                    "owned_by": "openai",
-                    "served_by": "openai"
+                    "owned_by": "openai"
                 },
                 {
-                    "id": "openai/gpt-4",
+                    "id": "gpt-4",
                     "object": "model",
                     "created": 1677649963,
-                    "owned_by": "openai",
-                    "served_by": "openai"
+                    "owned_by": "openai"
                 }
             ]
         }`))
@@ -343,7 +342,7 @@ func BenchmarkChatCompletions(b *testing.B) {
 
 	roleUser := providers.MessageRoleUser
 	req := providers.CreateChatCompletionRequest{
-		Model: "gpt-3.5-turbo",
+		Model: "openai/gpt-3.5-turbo",
 		Messages: []providers.Message{
 			{
 				Role:    roleUser,
@@ -422,15 +421,15 @@ func BenchmarkListModels(b *testing.B) {
 func BenchmarkProviderTransformations(b *testing.B) {
 	ollamaData := &providers.ListModelsResponseOllama{
 		Data: []providers.Model{
-			{ID: "gpt-3.5-turbo"},
-			{ID: "gpt-4"},
+			{ID: "openai/gpt-3.5-turbo"},
+			{ID: "openai/gpt-4"},
 		},
 	}
 
 	openaiData := &providers.ListModelsResponseOpenai{
 		Data: []providers.Model{
-			{ID: "gpt-4"},
-			{ID: "gpt-3.5-turbo"},
+			{ID: "openai/gpt-4"},
+			{ID: "openai/gpt-3.5-turbo"},
 		},
 	}
 

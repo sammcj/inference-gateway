@@ -637,3 +637,287 @@ func generateTag(field string, prop openapi.Property, requiredFields []string) t
 
 	return template.HTML("")
 }
+
+// readIgnoreFile reads the .openapi-ignore file and returns a set of ignored files
+func readIgnoreFile(ignoreFilePath string) (map[string]bool, error) {
+	ignored := make(map[string]bool)
+
+	data, err := os.ReadFile(ignoreFilePath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return ignored, nil
+		}
+		return nil, fmt.Errorf("failed to read ignore file: %w", err)
+	}
+
+	lines := strings.Split(string(data), "\n")
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if line != "" && !strings.HasPrefix(line, "#") {
+			ignored[line] = true
+		}
+	}
+
+	return ignored, nil
+}
+
+// GenerateProviders generates individual provider files based on their configuration
+// Only generates files not listed in .openapi-ignore and uses only the OpenAI template
+func GenerateProviders(outputDir string, oas string) error {
+	schema, err := openapi.Read(oas)
+	if err != nil {
+		return fmt.Errorf("failed to read OpenAPI spec: %w", err)
+	}
+
+	if len(schema.Components.Schemas.Provider.XProviderConfigs) == 0 {
+		return fmt.Errorf("no provider configurations found in OpenAPI spec")
+	}
+
+	ignoreFilePath := ".openapi-ignore"
+	ignored, err := readIgnoreFile(ignoreFilePath)
+	if err != nil {
+		return fmt.Errorf("failed to read ignore file: %w", err)
+	}
+
+	caser := cases.Title(language.English)
+
+	funcMap := template.FuncMap{
+		"title": caser.String,
+		"pascalCase": func(s string) string {
+			if strings.ToLower(s) == "id" {
+				return "ID"
+			}
+			parts := strings.Split(s, "_")
+			for i, part := range parts {
+				parts[i] = cases.Title(language.English).String(strings.ToLower(part))
+			}
+			return strings.Join(parts, "")
+		},
+	}
+
+	openaiCompatibleTemplate := `package providers
+
+type ListModelsResponse{{.ProviderName}} struct {
+	Object string  ` + "`json:\"object\"`" + `
+	Data   []Model ` + "`json:\"data\"`" + `
+}
+
+func (l *ListModelsResponse{{.ProviderName}}) Transform() ListModelsResponse {
+	provider := {{.ProviderName}}ID
+	models := make([]Model, len(l.Data))
+	for i, model := range l.Data {
+		model.ServedBy = provider
+		model.ID = string(provider) + "/" + model.ID
+		models[i] = model
+	}
+
+	return ListModelsResponse{
+		Provider: &provider,
+		Object:   l.Object,
+		Data:     models,
+	}
+}
+`
+
+	for providerName, config := range schema.Components.Schemas.Provider.XProviderConfigs {
+		filename := fmt.Sprintf("%s.go", strings.ToLower(providerName))
+		fullPath := fmt.Sprintf("%s/%s", outputDir, filename)
+
+		relativePath := fmt.Sprintf("%s/%s", strings.TrimPrefix(outputDir, "./"), filename)
+
+		if ignored[relativePath] {
+			fmt.Printf("Skipping %s (found in .openapi-ignore)\n", relativePath)
+			continue
+		}
+
+		tmpl, err := template.New(providerName).Funcs(funcMap).Parse(openaiCompatibleTemplate)
+		if err != nil {
+			return fmt.Errorf("failed to parse template for %s: %w", providerName, err)
+		}
+
+		data := struct {
+			ProviderName string
+			Config       openapi.ProviderConfig
+		}{
+			ProviderName: caser.String(providerName),
+			Config:       config,
+		}
+
+		f, err := os.Create(fullPath)
+		if err != nil {
+			return fmt.Errorf("failed to create %s: %w", fullPath, err)
+		}
+		defer f.Close()
+
+		if err := tmpl.Execute(f, data); err != nil {
+			return fmt.Errorf("failed to execute template for %s: %w", providerName, err)
+		}
+
+		cmd := exec.Command("go", "fmt", fullPath)
+		if err := cmd.Run(); err != nil {
+			fmt.Printf("Warning: Failed to format %s: %v\n", fullPath, err)
+		}
+
+		fmt.Printf("Generated %s\n", fullPath)
+	}
+
+	return nil
+}
+
+// GenerateProviderRegistry generates the provider registry based on provider configurations
+func GenerateProviderRegistry(destination string, oas string) error {
+	schema, err := openapi.Read(oas)
+	if err != nil {
+		return fmt.Errorf("failed to read OpenAPI spec: %w", err)
+	}
+
+	if len(schema.Components.Schemas.Provider.XProviderConfigs) == 0 {
+		return fmt.Errorf("no provider configurations found in OpenAPI spec")
+	}
+
+	caser := cases.Title(language.English)
+
+	funcMap := template.FuncMap{
+		"title": caser.String,
+		"pascalCase": func(s string) string {
+			if strings.ToLower(s) == "id" {
+				return "ID"
+			}
+			parts := strings.Split(s, "_")
+			for i, part := range parts {
+				parts[i] = cases.Title(language.English).String(strings.ToLower(part))
+			}
+			return strings.Join(parts, "")
+		},
+		"getAuthType": func(authType string) string {
+			switch authType {
+			case "bearer":
+				return "AuthTypeBearer"
+			case "xheader":
+				return "AuthTypeXheader"
+			case "query":
+				return "AuthTypeQuery"
+			case "none":
+				return "AuthTypeNone"
+			default:
+				return "AuthTypeBearer"
+			}
+		},
+	}
+
+	registryTemplate := `// Code generated from OpenAPI schema. DO NOT EDIT.
+package providers
+
+import (
+	"fmt"
+
+	"github.com/inference-gateway/inference-gateway/logger"
+)
+
+// Base provider configuration
+type Config struct {
+	ID           Provider
+	Name         string
+	URL          string
+	Token        string
+	AuthType     string
+	ExtraHeaders map[string][]string
+	Endpoints    Endpoints
+}
+
+//go:generate mockgen -source=registry.go -destination=../tests/mocks/providers/registry.go -package=providersmocks
+type ProviderRegistry interface {
+	GetProviders() map[Provider]*Config
+	BuildProvider(providerID Provider, client Client) (IProvider, error)
+}
+
+type ProviderRegistryImpl struct {
+	cfg    map[Provider]*Config
+	logger logger.Logger
+}
+
+func NewProviderRegistry(cfg map[Provider]*Config, logger logger.Logger) ProviderRegistry {
+	return &ProviderRegistryImpl{
+		cfg:    cfg,
+		logger: logger,
+	}
+}
+
+func (p *ProviderRegistryImpl) GetProviders() map[Provider]*Config {
+	return p.cfg
+}
+
+func (p *ProviderRegistryImpl) BuildProvider(providerID Provider, client Client) (IProvider, error) {
+	provider, ok := p.cfg[providerID]
+	if !ok {
+		return nil, fmt.Errorf("provider %s not found", providerID)
+	}
+
+	if provider.AuthType != AuthTypeNone && provider.Token == "" {
+		return nil, fmt.Errorf("provider %s token not configured", providerID)
+	}
+
+	return &ProviderImpl{
+		id:           &provider.ID,
+		name:         provider.Name,
+		url:          provider.URL,
+		token:        provider.Token,
+		authType:     provider.AuthType,
+		extraHeaders: provider.ExtraHeaders,
+		endpoints:    provider.Endpoints,
+		logger:       p.logger,
+		client:       client,
+	}, nil
+}
+
+// The registry of all providers
+var Registry = map[Provider]*Config{
+	{{- range $name, $config := .Providers }}
+	{{title $name}}ID: {
+		ID:       {{title $name}}ID,
+		Name:     {{title $name}}DisplayName,
+		URL:      {{title $name}}DefaultBaseURL,
+		AuthType: {{getAuthType $config.AuthType}},
+		{{- if eq $name "anthropic" }}
+		ExtraHeaders: map[string][]string{
+			"anthropic-version": {"2023-06-01"},
+		},
+		{{- end }}
+		Endpoints: Endpoints{
+			Models: {{title $name}}ModelsEndpoint,
+			Chat:   {{title $name}}ChatEndpoint,
+		},
+	},
+	{{- end }}
+}
+`
+
+	tmpl, err := template.New("registry").Funcs(funcMap).Parse(registryTemplate)
+	if err != nil {
+		return fmt.Errorf("failed to parse registry template: %w", err)
+	}
+
+	data := struct {
+		Providers map[string]openapi.ProviderConfig
+	}{
+		Providers: schema.Components.Schemas.Provider.XProviderConfigs,
+	}
+
+	f, err := os.Create(destination)
+	if err != nil {
+		return fmt.Errorf("failed to create registry file: %w", err)
+	}
+	defer f.Close()
+
+	if err := tmpl.Execute(f, data); err != nil {
+		return fmt.Errorf("failed to execute registry template: %w", err)
+	}
+
+	cmd := exec.Command("go", "fmt", destination)
+	if err := cmd.Run(); err != nil {
+		fmt.Printf("Warning: Failed to format %s: %v\n", destination, err)
+	}
+
+	fmt.Printf("Generated provider registry: %s\n", destination)
+	return nil
+}
