@@ -7,20 +7,9 @@ This example demonstrates monitoring integration with the Inference Gateway usin
 - **Helm chart** for gateway deployment with monitoring enabled
 - **Function/Tool Call Metrics** tracking MCP and A2A tool executions
 
-## 🎯 What's New
-
-This monitoring setup now includes comprehensive function/tool call metrics added in [PR #148](https://github.com/inference-gateway/inference-gateway/pull/148):
-
-- `llm_tool_calls_total` - Counter for total function/tool calls
-- `llm_tool_calls_success_total` - Counter for successful tool calls
-- `llm_tool_calls_failure_total` - Counter for failed tool calls
-- `llm_tool_call_duration` - Histogram for tool call execution duration
-
-The enhanced Grafana dashboard provides 8 new panels for comprehensive tool call monitoring.
-
 ## Table of Contents
 
-- [Monitoring Example](#monitoring-example)
+- [Monitoring Example with Enhanced Function/Tool Call Metrics](#monitoring-example-with-enhanced-functiontool-call-metrics)
   - [Table of Contents](#table-of-contents)
   - [Architecture](#architecture)
   - [Prerequisites](#prerequisites)
