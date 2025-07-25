@@ -76,7 +76,7 @@ tasks:
           labels:
             app.kubernetes.io/managed-by: Helm
         data:
-          ENABLE_AUTH: "false"
+          AUTH_ENABLE: "false"
         EOF
       - |
         kubectl apply --server-side -f - <<EOF
@@ -91,7 +91,7 @@ tasks:
           labels:
             app.kubernetes.io/managed-by: Helm
         data:
-          ENABLE_AUTH: "false"
+          AUTH_ENABLE: "false"
         EOF
       - echo "🗂️ ConfigMap configured successfully!"
 

@@ -20,10 +20,10 @@ cp .env.frontend.example .env.frontend
 2. Configure backend environment (.env.backend):
 
 ```ini
-AUTH_ENABLED=true
-OIDC_ISSUER_URL=http://localhost:8080/realms/app-realm
-OIDC_CLIENT_ID=app-client
-OIDC_CLIENT_SECRET=very-secret
+AUTH_ENABLE=true
+AUTH_OIDC_ISSUER_URL=http://localhost:8080/realms/app-realm
+AUTH_OIDC_CLIENT_ID=app-client
+AUTH_OIDC_CLIENT_SECRET=very-secret
 ```
 
 3. Configure frontend environment (.env.frontend):

@@ -75,7 +75,7 @@ You can configure additional options in the `.env` file:
 - `SERVER_PORT` - The port the gateway listens on
 - `LOG_LEVEL` - Logging level (debug, info, warn, error)
 - `TELEMETRY_ENABLE` - Enable/disable telemetry (true/false)
-- `ENABLE_AUTH` - Enable/disable authentication (true/false)
+- `AUTH_ENABLE` - Enable/disable authentication (true/false)
 - `*_API_URL` - Custom API URL for the provider (if needed)
 - `*_API_KEY` - API key for the provider
 

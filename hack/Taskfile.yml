@@ -305,8 +305,8 @@ tasks:
         type: Opaque
         stringData:
           # OpenID Connect
-          OIDC_CLIENT_ID: inference-gateway-client
-          OIDC_CLIENT_SECRET: very-secret
+          AUTH_OIDC_CLIENT_ID: inference-gateway-client
+          AUTH_OIDC_CLIENT_SECRET: very-secret
           # Providers
           ANTHROPIC_API_KEY: ""
           CLOUDFLARE_API_KEY: ""
@@ -326,10 +326,10 @@ tasks:
         data:
           # General settings
           ENVIRONMENT: "development"
-          ENABLE_AUTH: "true"
-          # OpenID Connect
-          OIDC_ISSUER_URL: https://keycloak.inference-gateway.local/realms/inference-gateway-realm
           SSL_CERT_FILE: /usr/local/share/ca-certificates/keycloak-ca.crt
+          # OpenID Connect
+          AUTH_ENABLE: "true"
+          AUTH_OIDC_ISSUER_URL: https://keycloak.inference-gateway.local/realms/inference-gateway-realm
           # Server settings
           SERVER_HOST: "0.0.0.0"
           SERVER_PORT: "8080"

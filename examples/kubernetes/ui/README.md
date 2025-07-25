@@ -177,7 +177,7 @@ metadata:
   labels:
     app.kubernetes.io/managed-by: Helm
 data:
-  ENABLE_AUTH: "false"
+  AUTH_ENABLE: "false"
 EOF
 ```
 
@@ -194,7 +194,7 @@ metadata:
   labels:
     app.kubernetes.io/managed-by: Helm
 data:
-  ENABLE_AUTH: "false"
+  AUTH_ENABLE: "false"
 EOF
 ```
 

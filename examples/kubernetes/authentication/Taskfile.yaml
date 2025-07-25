@@ -96,8 +96,8 @@ tasks:
           name: inference-gateway
           namespace: inference-gateway
         data:
-          ENABLE_AUTH: "true"
-          OIDC_ISSUER_URL: https://keycloak.inference-gateway.local/realms/inference-gateway-realm
+          AUTH_ENABLE: "true"
+          AUTH_OIDC_ISSUER_URL: https://keycloak.inference-gateway.local/realms/inference-gateway-realm
         EOF
       - |
         kubectl apply -f - <<EOF
@@ -112,8 +112,8 @@ tasks:
           name: inference-gateway
           namespace: inference-gateway
         stringData:
-          OIDC_CLIENT_ID: inference-gateway-client
-          OIDC_CLIENT_SECRET: very-secret
+          AUTH_OIDC_CLIENT_ID: inference-gateway-client
+          AUTH_OIDC_CLIENT_SECRET: very-secret
         type: Opaque
         EOF
       - |

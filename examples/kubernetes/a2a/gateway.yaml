@@ -49,7 +49,7 @@ spec:
       clientId: "inference-gateway-client"
       clientSecretRef:
         name: inference-gateway-secrets
-        key: OIDC_CLIENT_SECRET
+        key: AUTH_OIDC_CLIENT_SECRET
   providers:
     - name: openai
       type: openai
@@ -125,7 +125,7 @@ metadata:
     app.kubernetes.io/version: "0.12.0"
 type: Opaque
 stringData:
-  OIDC_CLIENT_SECRET: ""
+  AUTH_OIDC_CLIENT_SECRET: ""
 
   OPENAI_API_KEY: ""
   ANTHROPIC_API_KEY: ""
