@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.13.0](https://github.com/inference-gateway/inference-gateway/compare/v0.12.0...v0.13.0) (2025-07-25)
+
+### ✨ Features
+
+* **a2a:** Implement retry mechanism for agent connections ([#140](https://github.com/inference-gateway/inference-gateway/issues/140)) ([54033e8](https://github.com/inference-gateway/inference-gateway/commit/54033e8ef4a5489bb6212b715e7f34a7e1d3931a)), closes [#139](https://github.com/inference-gateway/inference-gateway/issues/139)
+* Implement A2A agent status polling with background health checks ([#136](https://github.com/inference-gateway/inference-gateway/issues/136)) ([1b49a06](https://github.com/inference-gateway/inference-gateway/commit/1b49a06bc10f54f7d91cefe1a6643643c9e5d402)), closes [#135](https://github.com/inference-gateway/inference-gateway/issues/135)
+
+### ♻️ Improvements
+
+* **codegen:** Refactor code generation to automate provider onboarding ([#144](https://github.com/inference-gateway/inference-gateway/issues/144)) ([3a97396](https://github.com/inference-gateway/inference-gateway/commit/3a9739672ab8da1702cbfcaadebe1082b1b39d1f))
+* Replace custom A2A code with ADK client implementation ([#138](https://github.com/inference-gateway/inference-gateway/issues/138)) ([34d8cf6](https://github.com/inference-gateway/inference-gateway/commit/34d8cf633446b30bdbb2cf232b9ac10e5c6c08e3))
+
+### 👷 CI
+
+* Add Claude GitHub Actions workflows ([#134](https://github.com/inference-gateway/inference-gateway/issues/134)) ([a6a1f8f](https://github.com/inference-gateway/inference-gateway/commit/a6a1f8fa3a51b9c6470b49cd3e83545ebab74b37))
+* Add MCP configuration for context7 in Claude workflows ([4ce0139](https://github.com/inference-gateway/inference-gateway/commit/4ce01391b957d9e20e282effff9e3f6c7fb705ed))
+* **fix:** Add allowed tools configuration for Bash tasks in Claude workflow ([ccf76c8](https://github.com/inference-gateway/inference-gateway/commit/ccf76c88752fe4c9e21f0c5a26bdf42ed6fe9e70))
+* **fix:** Add base branch and branch prefix configuration with custom instructions for workflow ([8d3a56e](https://github.com/inference-gateway/inference-gateway/commit/8d3a56e09ddf6ea2e97af50654d7113d79fac0c5))
+* **fix:** Add installation steps for golangci-lint and task in Claude workflow ([e2a718f](https://github.com/inference-gateway/inference-gateway/commit/e2a718f23bb7eb91be099c25370b2f0aaa9d17d6))
+* **fix:** Reduce amounts of claude runs and costs - update workflow trigger to respond to issue comments for code review ([189313b](https://github.com/inference-gateway/inference-gateway/commit/189313bf93dd41c24aabe9cd053258ef6cb4a62c))
+* **fix:** Update Claude workflow conditions to exclude review commands from triggering ([5e3d75d](https://github.com/inference-gateway/inference-gateway/commit/5e3d75d8908ccb7184c43c52374bfc92dc6df09a))
+* Update Claude workflows to require write permissions for contents, pull requests, and issues ([ba6477e](https://github.com/inference-gateway/inference-gateway/commit/ba6477e71785eb71c557911d87a9e2d60f675a54))
+
+### 📚 Documentation
+
+* **examples:** Update kubernetes examples to use the inference gateway operator ([#131](https://github.com/inference-gateway/inference-gateway/issues/131)) ([3ab617a](https://github.com/inference-gateway/inference-gateway/commit/3ab617abd75414fb25a9bcff438f98c637de005c))
+
 ## [0.12.0](https://github.com/inference-gateway/inference-gateway/compare/v0.11.2...v0.12.0) (2025-06-18)
 
 ### ✨ Features
