@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.14.0](https://github.com/inference-gateway/inference-gateway/compare/v0.13.0...v0.14.0) (2025-07-25)
+
+### ✨ Features
+
+* **config:** Add configurable TELEMETRY_METRICS_PORT setting ([#152](https://github.com/inference-gateway/inference-gateway/issues/152)) ([daa066e](https://github.com/inference-gateway/inference-gateway/commit/daa066e08e45c5e17a61319e0fcf3724ddf79259)), closes [#151](https://github.com/inference-gateway/inference-gateway/issues/151)
+* **mcp:** Add "mcp_" prefix to MCP tools for better classification ([#157](https://github.com/inference-gateway/inference-gateway/issues/157)) ([1bbab6d](https://github.com/inference-gateway/inference-gateway/commit/1bbab6d310005532cb2744eb8b61f54c281d47ff)), closes [#155](https://github.com/inference-gateway/inference-gateway/issues/155)
+* **metrics:** Add more function/tool call metrics ([#148](https://github.com/inference-gateway/inference-gateway/issues/148)) ([98ea636](https://github.com/inference-gateway/inference-gateway/commit/98ea6369c96f982e60fd9c8c18cdb0b1dc946dd3))
+
+### ♻️ Improvements
+
+* **A2A:** Refactor tool names to use consistent a2a_ prefix ([#150](https://github.com/inference-gateway/inference-gateway/issues/150)) ([bb0738e](https://github.com/inference-gateway/inference-gateway/commit/bb0738e13c2b90d41f57445a16392b925b006b23)), closes [#147](https://github.com/inference-gateway/inference-gateway/issues/147)
+* **config:** Rename ENABLE_TELEMETRY to TELEMETRY_ENABLE ([#154](https://github.com/inference-gateway/inference-gateway/issues/154)) ([92c27f8](https://github.com/inference-gateway/inference-gateway/commit/92c27f898372199df5d3651eca32dc0dea99f535)), closes [#153](https://github.com/inference-gateway/inference-gateway/issues/153)
+
+### 📚 Documentation
+
+* Update README to clarify middleware toggling and enhance flow diagram ([#145](https://github.com/inference-gateway/inference-gateway/issues/145)) ([9479086](https://github.com/inference-gateway/inference-gateway/commit/947908654913f55eb871f0d07365f03bf934547f))
+
 ## [0.13.0](https://github.com/inference-gateway/inference-gateway/compare/v0.12.0...v0.13.0) (2025-07-25)
 
 ### ✨ Features
