@@ -61,7 +61,7 @@ tasks:
           --set autoscaling.maxReplicas=10 \
           --set autoscaling.targetCPUUtilizationPercentage=80 \
           --set autoscaling.targetMemoryUtilizationPercentage=80 \
-          --version 0.7.1 \
+          --version 0.14.0 \
           --wait \
           inference-gateway oci://ghcr.io/inference-gateway/charts/inference-gateway
       - kubectl label namespace inference-gateway monitoring="true" --overwrite
@@ -76,6 +76,16 @@ tasks:
       - kubectl -n ollama rollout status deployment ollama
       - echo "🤖 Ollama provider deployed successfully!"
 
+  pull-models:
+    desc: "Pull required models for testing"
+    cmds:
+      - echo "📥 Pulling required models..."
+      - |
+        kubectl exec -n ollama deployment/ollama -- ollama pull deepseek-r1:1.5b
+      - |
+        kubectl exec -n ollama deployment/ollama -- ollama pull llama3.2:1b
+      - echo "✅ Models pulled successfully!"
+
   simulate-requests:
     desc: "Generate test requests to simulate monitoring"
     cmds:
@@ -89,6 +99,48 @@ tasks:
           sleep 1
         done
       - echo "🧪 Test requests completed successfully!"
+
+  simulate-tool-call-requests:
+    desc: "Generate test requests with tool/function calls to simulate advanced monitoring"
+    cmds:
+      - |
+        for i in $(seq 1 10); do
+          curl -s -X POST http://api.inference-gateway.local/v1/chat/completions \
+            -H "Content-Type: application/json" \
+            -d '{
+              "model": "ollama/llama3.2:1b",
+              "messages": [
+                {
+                  "role": "user",
+                  "content": "What is the weather like in New York? Use the weather tool to check."
+                }
+              ],
+              "tools": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "get_weather",
+                    "description": "Get the current weather for a location",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "location": {
+                          "type": "string",
+                          "description": "The city and state, e.g. San Francisco, CA"
+                        }
+                      },
+                      "required": ["location"]
+                    }
+                  }
+                }
+              ],
+              "tool_choice": "auto"
+            }' \
+            --max-time 15
+          echo
+          sleep 2
+        done
+      - echo "🛠️ Tool call test requests completed successfully!"
 
   clean:
     desc: "Clean up the cluster"

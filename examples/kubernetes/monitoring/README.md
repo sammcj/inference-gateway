@@ -66,8 +66,22 @@ Password: admin
 task deploy-ollama
 ```
 
+5. Pull required models (needed for tool calling tests):
+
+```
+task pull-models
+```
+
+6. Simulate basic requests:
+
 ```
 task simulate-requests
+```
+
+7. Simulate tool/function calling requests:
+
+```
+task simulate-tool-call-requests
 ```
 
 ## Configuration
