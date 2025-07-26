@@ -243,7 +243,6 @@ app.post('/messages', async (req: Request, res: Response) => {
   }
 });
 
-
 // Info endpoint
 app.get('/', (req: Request, res: Response) => {
   res.json({

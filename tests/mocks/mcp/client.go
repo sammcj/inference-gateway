@@ -99,6 +99,20 @@ func (mr *MockMCPClientInterfaceMockRecorder) GetAllChatCompletionTools() *gomoc
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllChatCompletionTools", reflect.TypeOf((*MockMCPClientInterface)(nil).GetAllChatCompletionTools))
 }
 
+// GetAllServerStatuses mocks base method.
+func (m *MockMCPClientInterface) GetAllServerStatuses() map[string]mcp.ServerStatus {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllServerStatuses")
+	ret0, _ := ret[0].(map[string]mcp.ServerStatus)
+	return ret0
+}
+
+// GetAllServerStatuses indicates an expected call of GetAllServerStatuses.
+func (mr *MockMCPClientInterfaceMockRecorder) GetAllServerStatuses() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllServerStatuses", reflect.TypeOf((*MockMCPClientInterface)(nil).GetAllServerStatuses))
+}
+
 // GetServerCapabilities mocks base method.
 func (m *MockMCPClientInterface) GetServerCapabilities() map[string]mcp.ServerCapabilities {
 	m.ctrl.T.Helper()
@@ -126,6 +140,20 @@ func (m *MockMCPClientInterface) GetServerForTool(toolName string) (string, erro
 func (mr *MockMCPClientInterfaceMockRecorder) GetServerForTool(toolName any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetServerForTool", reflect.TypeOf((*MockMCPClientInterface)(nil).GetServerForTool), toolName)
+}
+
+// GetServerStatus mocks base method.
+func (m *MockMCPClientInterface) GetServerStatus(serverURL string) mcp.ServerStatus {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetServerStatus", serverURL)
+	ret0, _ := ret[0].(mcp.ServerStatus)
+	return ret0
+}
+
+// GetServerStatus indicates an expected call of GetServerStatus.
+func (mr *MockMCPClientInterfaceMockRecorder) GetServerStatus(serverURL any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetServerStatus", reflect.TypeOf((*MockMCPClientInterface)(nil).GetServerStatus), serverURL)
 }
 
 // GetServerTools mocks base method.
@@ -185,34 +213,6 @@ func (mr *MockMCPClientInterfaceMockRecorder) IsInitialized() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsInitialized", reflect.TypeOf((*MockMCPClientInterface)(nil).IsInitialized))
 }
 
-// GetServerStatus mocks base method.
-func (m *MockMCPClientInterface) GetServerStatus(serverURL string) mcp.ServerStatus {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetServerStatus", serverURL)
-	ret0, _ := ret[0].(mcp.ServerStatus)
-	return ret0
-}
-
-// GetServerStatus indicates an expected call of GetServerStatus.
-func (mr *MockMCPClientInterfaceMockRecorder) GetServerStatus(serverURL interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetServerStatus", reflect.TypeOf((*MockMCPClientInterface)(nil).GetServerStatus), serverURL)
-}
-
-// GetAllServerStatuses mocks base method.
-func (m *MockMCPClientInterface) GetAllServerStatuses() map[string]mcp.ServerStatus {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAllServerStatuses")
-	ret0, _ := ret[0].(map[string]mcp.ServerStatus)
-	return ret0
-}
-
-// GetAllServerStatuses indicates an expected call of GetAllServerStatuses.
-func (mr *MockMCPClientInterfaceMockRecorder) GetAllServerStatuses() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllServerStatuses", reflect.TypeOf((*MockMCPClientInterface)(nil).GetAllServerStatuses))
-}
-
 // StartStatusPolling mocks base method.
 func (m *MockMCPClientInterface) StartStatusPolling(ctx context.Context) {
 	m.ctrl.T.Helper()
@@ -220,7 +220,7 @@ func (m *MockMCPClientInterface) StartStatusPolling(ctx context.Context) {
 }
 
 // StartStatusPolling indicates an expected call of StartStatusPolling.
-func (mr *MockMCPClientInterfaceMockRecorder) StartStatusPolling(ctx interface{}) *gomock.Call {
+func (mr *MockMCPClientInterfaceMockRecorder) StartStatusPolling(ctx any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StartStatusPolling", reflect.TypeOf((*MockMCPClientInterface)(nil).StartStatusPolling), ctx)
 }

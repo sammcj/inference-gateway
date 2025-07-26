@@ -21,6 +21,15 @@ data:
   MCP_RESPONSE_HEADER_TIMEOUT: {{ .Values.config.MCP_RESPONSE_HEADER_TIMEOUT | quote }}
   MCP_EXPECT_CONTINUE_TIMEOUT: {{ .Values.config.MCP_EXPECT_CONTINUE_TIMEOUT | quote }}
   MCP_REQUEST_TIMEOUT: {{ .Values.config.MCP_REQUEST_TIMEOUT | quote }}
+  MCP_MAX_RETRIES: {{ .Values.config.MCP_MAX_RETRIES | quote }}
+  MCP_RETRY_INTERVAL: {{ .Values.config.MCP_RETRY_INTERVAL | quote }}
+  MCP_INITIAL_BACKOFF: {{ .Values.config.MCP_INITIAL_BACKOFF | quote }}
+  MCP_ENABLE_RECONNECT: {{ .Values.config.MCP_ENABLE_RECONNECT | quote }}
+  MCP_RECONNECT_INTERVAL: {{ .Values.config.MCP_RECONNECT_INTERVAL | quote }}
+  MCP_POLLING_ENABLE: {{ .Values.config.MCP_POLLING_ENABLE | quote }}
+  MCP_POLLING_INTERVAL: {{ .Values.config.MCP_POLLING_INTERVAL | quote }}
+  MCP_POLLING_TIMEOUT: {{ .Values.config.MCP_POLLING_TIMEOUT | quote }}
+  MCP_DISABLE_HEALTHCHECK_LOGS: {{ .Values.config.MCP_DISABLE_HEALTHCHECK_LOGS | quote }}
   # Agent-to-Agent (A2A) Protocol
   A2A_ENABLE: {{ .Values.config.A2A_ENABLE | quote }}
   A2A_EXPOSE: {{ .Values.config.A2A_EXPOSE | quote }}
