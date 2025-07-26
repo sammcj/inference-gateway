@@ -450,9 +450,9 @@ The gateway exposes metrics compatible with Prometheus scraping:
 
 ```yaml
 scrape_configs:
-  - job_name: "inference-gateway"
+  - job_name: 'inference-gateway'
     static_configs:
-      - targets: ["localhost:9464"]
+      - targets: ['localhost:9464']
     scrape_interval: 5s
     scrape_timeout: 4s
 ```
