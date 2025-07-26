@@ -29,7 +29,7 @@ echo "📝 Running Go linting..."
 task lint
 
 echo "🔧 Running OpenAPI linting..."
-task openapi-lint
+task openapi:lint
 
 echo "🏗️  Building application..."
 task build

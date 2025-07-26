@@ -56,7 +56,7 @@ task pre-commit:install
 This will install a pre-commit hook that automatically runs:
 
 - Code generation (`task generate`)
-- Linting (`task lint` and `task openapi-lint`)
+- Linting (`task lint` and `task openapi:lint`)
 - Building (`task build`)
 - Testing (`task test`)
 

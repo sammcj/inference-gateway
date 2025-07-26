@@ -91,10 +91,15 @@ tasks:
     cmds:
       - golangci-lint run
 
-  openapi-lint:
+  openapi:lint:
     desc: "Lint OpenAPI spec"
     cmds:
       - spectral lint --verbose openapi.yaml
+  
+  openapi:download:
+    desc: "Download the latest OpenAPI Spec"
+    cmds:
+      - curl -o openapi.yaml https://raw.githubusercontent.com/inference-gateway/schemas/refs/heads/main/openapi.yaml
 
   test:
     desc: "Run tests"
