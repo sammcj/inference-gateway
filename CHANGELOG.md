@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.15.1](https://github.com/inference-gateway/inference-gateway/compare/v0.15.0...v0.15.1) (2025-07-26)
+
+### ♻️ Improvements
+
+* Download the latest A2A schema and generate new Go types ([#163](https://github.com/inference-gateway/inference-gateway/issues/163)) ([3c88346](https://github.com/inference-gateway/inference-gateway/commit/3c88346610b625f0858babf5e30bbde533aea7a6))
+* Run mcp:schema:download to fetch the latest schema changes and update the code ([#162](https://github.com/inference-gateway/inference-gateway/issues/162)) ([7082068](https://github.com/inference-gateway/inference-gateway/commit/70820683371f7a91860143a116da8d62e2856f41))
+
+### 📚 Documentation
+
+* Add Google to the list of supported providers ([9bc07ba](https://github.com/inference-gateway/inference-gateway/commit/9bc07ba9d0b6ffdef149c82b7682d0a18ebe1787))
+* Improve TOC ([13161e2](https://github.com/inference-gateway/inference-gateway/commit/13161e277c4f8880850dc6a360d3a298c67892d7))
+
+### 🔧 Miscellaneous
+
+* Add .prettierrc for consistent single quote style ([8c7dd57](https://github.com/inference-gateway/inference-gateway/commit/8c7dd57eddd1cc3330df36b13a66d990d0a74a8e))
+* Update OpenAPI related styling ([be2ce52](https://github.com/inference-gateway/inference-gateway/commit/be2ce52061f8c6649c5ded65d46441257e39cbdb))
+* Update task commands for MCP and A2A schema downloads to use new format ([f3ebcb9](https://github.com/inference-gateway/inference-gateway/commit/f3ebcb995de0d04392ae089128a6b4db5261a527))
+* Update YAML example in README for consistent single quote style ([d61b18b](https://github.com/inference-gateway/inference-gateway/commit/d61b18be95934e9fa29816547588c219e4b00d68))
+
+### 🎨 Miscellaneous
+
+* Add code formatting step to pre-commit checks ([17964be](https://github.com/inference-gateway/inference-gateway/commit/17964be3daab6c1f9e071353beb7586b90a27cad))
+
 ## [0.15.0](https://github.com/inference-gateway/inference-gateway/compare/v0.14.1...v0.15.0) (2025-07-26)
 
 ### ✨ Features
