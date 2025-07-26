@@ -15,7 +15,7 @@ The A2A types are automatically generated from Google's official A2A schema repo
 
 ```bash
 # Download the latest A2A schema
-task a2a-schema-download
+task a2a:schema:download
 
 # Generate Go types from the schema
 task generate

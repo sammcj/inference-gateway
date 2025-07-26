@@ -8,7 +8,7 @@ Today is July 26, 2025.
 - Always use Early Returns: Favor early returns to simplify logic and avoid deep nesting with if-else structures.
 - Always prefer switch statements over if-else chains: Use switch statements for cleaner and more readable code when checking multiple conditions.
 - Always run `task lint` before committing code to ensure it adheres to the project's linting rules.
-- When working on MCP (Model Context Protocol) related tasks, always refer to the official MCP documentation and examples for guidance and ensure you run `task mcp-schema-download` and `task generate` to keep the MCP Golang types up to date.
+- When working on MCP (Model Context Protocol) related tasks, always refer to the official MCP documentation and examples for guidance and ensure you run `task mcp:schema:download` and `task generate` to keep the MCP Golang types up to date.
 - Always run `task build` to verify compilation after making changes.
 - Always run `task test` before committing code to ensure all tests pass.
 - Always search for the simplest solution first before considering more complex alternatives.
@@ -20,8 +20,8 @@ Today is July 26, 2025.
 ## Development Workflow
 
 0. Run `task pre-commit:install` to install pre-commit hooks for automatic code quality checks.
-1. Run `task mcp-schema-download` to download the latest MCP schema - when working on MCP.
-2. Run `task a2a-schema-download` to download the latest A2A schema - when working on A2A.
+1. Run `task mcp:schema:download` to download the latest MCP schema - when working on MCP.
+2. Run `task a2a:schema:download` to download the latest A2A schema - when working on A2A.
 3. Update `openapi.yaml` with the new configuration fields in the appropriate section.
 4. Run `task generate` If added new Schemas to openapi.yaml, update internal/openapi/schemas.go to include the new schemas.
 5. Run `task lint` to ensure code quality.

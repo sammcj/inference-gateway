@@ -22,8 +22,8 @@ The Inference Gateway is a multi-provider LLM proxy server written in Go that su
 ### Schema and Code Generation
 
 - `task generate` - Generate all code from OpenAPI spec and schemas
-- `task mcp-schema-download` - Download latest MCP schema when working on MCP features
-- `task a2a-schema-download` - Download latest A2A schema when working on A2A features
+- `task mcp:schema:download` - Download latest MCP schema when working on MCP features
+- `task a2a:schema:download` - Download latest A2A schema when working on A2A features
 
 ### Running Single Tests
 
@@ -121,8 +121,8 @@ Configuration is environment-based using structured config types:
 - Always run `task pre-commit:install` before starting development to set up automatic code quality checks
 - Always run `task lint` before committing code
 - Always run `task build` and `task test` to verify changes
-- When working on MCP: run `task mcp-schema-download` and `task generate` to update types
-- When working on A2A: run `task a2a-schema-download` and `task generate` to update types
+- When working on MCP: run `task mcp:schema:download` and `task generate` to update types
+- When working on A2A: run `task a2a:schema:download` and `task generate` to update types
 - The gateway serves on port 8080 by default with metrics on port 9464
 
 ## Related Repositories

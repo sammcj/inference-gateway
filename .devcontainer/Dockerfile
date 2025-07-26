@@ -54,8 +54,8 @@ RUN apt-get update && \
                    @semantic-release/exec \
                    conventional-changelog-cli \
                    conventional-changelog-conventionalcommits && \
-    # Install js-yaml for converting JSON RPC schema to YAML
-    npm i -g js-yaml@4.1.0 prettier@3.6.2 && \
+    # Install prettier for yaml and md files formatting
+    npm i -g prettier@3.6.2 && \
     # Clean up
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
