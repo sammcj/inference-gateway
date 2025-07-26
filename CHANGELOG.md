@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.15.0](https://github.com/inference-gateway/inference-gateway/compare/v0.14.1...v0.15.0) (2025-07-26)
+
+### ✨ Features
+
+* **providers:** Add Google OpenAI-compatible API provider ([#161](https://github.com/inference-gateway/inference-gateway/issues/161)) ([d367fe9](https://github.com/inference-gateway/inference-gateway/commit/d367fe924091291a62013bbe5e1cd3d83a4a6082)), closes [#146](https://github.com/inference-gateway/inference-gateway/issues/146)
+
+### ♻️ Improvements
+
+* **auth:** Rename authentication configuration variables to use AUTH_ prefix ([b960377](https://github.com/inference-gateway/inference-gateway/commit/b9603775bed5f478db783a73638260daba07c46d))
+
+### 🔨 Miscellaneous
+
+* **pre-commit:** Add pre-commit hooks for code quality checks ([#160](https://github.com/inference-gateway/inference-gateway/issues/160)) ([bf011af](https://github.com/inference-gateway/inference-gateway/commit/bf011af2eeec602c1c0a7c0f05fb20ee2480215b))
+
 ## [0.14.1](https://github.com/inference-gateway/inference-gateway/compare/v0.14.0...v0.14.1) (2025-07-25)
 
 ### ♻️ Improvements
