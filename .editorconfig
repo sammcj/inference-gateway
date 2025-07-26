@@ -10,3 +10,5 @@ trim_trailing_whitespace = true
 [*.{md,yml,yaml}]
 indent_style = space
 indent_size = 2
+single_quote = true
+
