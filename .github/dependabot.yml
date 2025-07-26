@@ -1,0 +1,90 @@
+version: 2
+updates:
+  - package-ecosystem: 'gomod'
+    directory: '/'
+    schedule:
+      interval: 'daily'
+    open-pull-requests-limit: 0
+    reviewers:
+      - '@inference-gateway/maintainers'
+    assignees:
+      - '@inference-gateway/maintainers'
+    commit-message:
+      prefix: 'chore(deps)'
+      include: 'scope'
+    labels:
+      - 'dependencies'
+      - 'go'
+    groups:
+      opentelemetry:
+        patterns:
+          - 'go.opentelemetry.io/*'
+      testing:
+        patterns:
+          - 'github.com/stretchr/testify'
+          - 'go.uber.org/mock'
+      uber:
+        patterns:
+          - 'go.uber.org/*'
+  - package-ecosystem: 'docker'
+    directory: '/'
+    schedule:
+      interval: 'daily'
+    open-pull-requests-limit: 0
+    reviewers:
+      - '@inference-gateway/maintainers'
+    assignees:
+      - '@inference-gateway/maintainers'
+    commit-message:
+      prefix: 'chore(deps)'
+      include: 'scope'
+    labels:
+      - 'dependencies'
+      - 'docker'
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'daily'
+    open-pull-requests-limit: 0
+    reviewers:
+      - '@inference-gateway/maintainers'
+    assignees:
+      - '@inference-gateway/maintainers'
+    commit-message:
+      prefix: 'chore(deps)'
+      include: 'scope'
+    labels:
+      - 'dependencies'
+      - 'github-actions'
+  - package-ecosystem: 'docker'
+    directory: '/.devcontainer'
+    schedule:
+      interval: 'daily'
+    open-pull-requests-limit: 0
+    reviewers:
+      - '@inference-gateway/maintainers'
+    assignees:
+      - '@inference-gateway/maintainers'
+    commit-message:
+      prefix: 'chore(deps)'
+      include: 'scope'
+    labels:
+      - 'dependencies'
+      - 'docker'
+      - 'devcontainer'
+  - package-ecosystem: 'docker'
+    directory: '/examples'
+    schedule:
+      interval: 'daily'
+    open-pull-requests-limit: 0
+    reviewers:
+      - '@inference-gateway/maintainers'
+    assignees:
+      - '@inference-gateway/maintainers'
+    commit-message:
+      prefix: 'chore(deps)'
+      include: 'scope'
+    labels:
+      - 'dependencies'
+      - 'docker'
+      - 'examples'
