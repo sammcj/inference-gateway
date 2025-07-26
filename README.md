@@ -27,6 +27,18 @@ The Inference Gateway is a proxy server designed to facilitate access to various
 - [Model Context Protocol (MCP) Integration](#model-context-protocol-mcp-integration)
 - [Agent-to-Agent (A2A) Integration](#agent-to-agent-a2a-integration)
 - [Metrics and Observability](#metrics-and-observability)
+  - [Enabling Metrics](#enabling-metrics)
+  - [Available Metrics](#available-metrics)
+    - [Token Usage Metrics](#token-usage-metrics)
+    - [Request/Response Metrics](#requestresponse-metrics)
+    - [Function/Tool Call Metrics](#functiontool-call-metrics)
+  - [Monitoring Setup](#monitoring-setup)
+    - [Docker Compose Example](#docker-compose-example)
+    - [Kubernetes Example](#kubernetes-example)
+  - [Histogram Boundaries](#histogram-boundaries)
+  - [Grafana Dashboard](#grafana-dashboard)
+  - [Prometheus Configuration](#prometheus-configuration)
+  - [Provider Detection](#provider-detection)
 - [Supported API's](#supported-apis)
 - [Configuration](#configuration)
 - [Examples](#examples)
@@ -326,12 +338,12 @@ curl http://localhost:9464/metrics
 
 ### Available Metrics
 
-#### **Token Usage Metrics**
+#### Token Usage Metrics
 
 Track token consumption across different providers and models:
 
 - **`llm_usage_prompt_tokens_total`** - Counter for prompt tokens consumed
-- **`llm_usage_completion_tokens_total`** - Counter for completion tokens generated  
+- **`llm_usage_completion_tokens_total`** - Counter for completion tokens generated
 - **`llm_usage_total_tokens_total`** - Counter for total token usage
 
 **Labels**: `provider`, `model`
@@ -341,7 +353,7 @@ Track token consumption across different providers and models:
 sum(increase(llm_usage_total_tokens_total{provider="openai"}[1h])) by (model)
 ```
 
-#### **Request/Response Metrics**
+#### Request/Response Metrics
 
 Monitor API performance and reliability:
 
@@ -359,7 +371,7 @@ histogram_quantile(0.95, sum(rate(llm_request_duration_bucket{provider=~"openai|
 100 * sum(rate(llm_responses_total{status_code!~"2.."}[5m])) by (provider) / sum(rate(llm_responses_total[5m])) by (provider)
 ```
 
-#### **Function/Tool Call Metrics**
+#### Function/Tool Call Metrics
 
 Comprehensive tracking of tool executions for MCP, A2A, and standard function calls:
 
@@ -371,8 +383,9 @@ Comprehensive tracking of tool executions for MCP, A2A, and standard function ca
 **Labels**: `provider`, `model`, `tool_type`, `tool_name`, `error_type` (failures only)
 
 **Tool Types**:
+
 - `mcp` - Model Context Protocol tools (prefix: `mcp_`)
-- `a2a` - Agent-to-Agent tools (prefix: `a2a_`)  
+- `a2a` - Agent-to-Agent tools (prefix: `a2a_`)
 - `standard_tool_use` - Other function calls
 
 ```promql
@@ -388,7 +401,7 @@ topk(10, sum(increase(llm_tool_calls_total[1h])) by (tool_name))
 
 ### Monitoring Setup
 
-#### **Docker Compose Example**
+#### Docker Compose Example
 
 Complete monitoring stack with Grafana dashboards:
 
@@ -400,7 +413,7 @@ docker compose up -d
 # Access Grafana at http://localhost:3000 (admin/admin)
 ```
 
-#### **Kubernetes Example**
+#### Kubernetes Example
 
 Production-ready monitoring with Prometheus Operator:
 
@@ -427,7 +440,7 @@ The included Grafana dashboard provides:
 
 - **Real-time Metrics**: 5-second refresh rate for immediate feedback
 - **Tool Call Analytics**: Success rates, duration analysis, and failure tracking
-- **Provider Comparison**: Performance metrics across all supported providers  
+- **Provider Comparison**: Performance metrics across all supported providers
 - **Usage Insights**: Token consumption patterns and cost analysis
 - **Error Monitoring**: Failed requests and tool call error classification
 
@@ -437,9 +450,9 @@ The gateway exposes metrics compatible with Prometheus scraping:
 
 ```yaml
 scrape_configs:
-  - job_name: 'inference-gateway'
+  - job_name: "inference-gateway"
     static_configs:
-      - targets: ['localhost:9464']
+      - targets: ["localhost:9464"]
     scrape_interval: 5s
     scrape_timeout: 4s
 ```
@@ -447,6 +460,7 @@ scrape_configs:
 ### Provider Detection
 
 Metrics automatically detect providers from:
+
 - **Model prefixes**: `openai/gpt-4`, `anthropic/claude-3-haiku`, `groq/llama-3-8b`
 - **URL parameters**: `?provider=openai`
 
