@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.16.0](https://github.com/inference-gateway/inference-gateway/compare/v0.15.1...v0.16.0) (2025-07-26)
+
+### ✨ Features
+
+* **mcp:** Add health checks and retry mechanisms ([#165](https://github.com/inference-gateway/inference-gateway/issues/165)) ([f1ce6af](https://github.com/inference-gateway/inference-gateway/commit/f1ce6af42a04cb6cc450702873862db17e509b3d)), closes [#164](https://github.com/inference-gateway/inference-gateway/issues/164)
+
+### 👷 CI
+
+* Change permissions for Claude Code Review workflow to read-only for contents ([88a9822](https://github.com/inference-gateway/inference-gateway/commit/88a9822206343c8f91c19520f28e0f4723b54dfe))
+
 ## [0.15.1](https://github.com/inference-gateway/inference-gateway/compare/v0.15.0...v0.15.1) (2025-07-26)
 
 ### ♻️ Improvements
