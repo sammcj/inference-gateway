@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.16.1](https://github.com/inference-gateway/inference-gateway/compare/v0.16.0...v0.16.1) (2025-07-26)
+
+### ♻️ Improvements
+
+* **workflow:** Remove security-events permission and scan_containers job ([ff0f482](https://github.com/inference-gateway/inference-gateway/commit/ff0f482feaf143ebfe8da036acdde9f948f3e5e2))
+
+### 🔧 Miscellaneous
+
+* **deps:** Add Dependabot configuration for gomod, docker, and GitHub Actions ([48d368a](https://github.com/inference-gateway/inference-gateway/commit/48d368a3292f97234cf34af72eee7f4aa2649ee0))
+* **mcp:** Enhance MCP configuration with retry and health check options ([dedb7fd](https://github.com/inference-gateway/inference-gateway/commit/dedb7fd186045d08e62088dc66d585079fb801fb))
+
 ## [0.16.0](https://github.com/inference-gateway/inference-gateway/compare/v0.15.1...v0.16.0) (2025-07-26)
 
 ### ✨ Features
