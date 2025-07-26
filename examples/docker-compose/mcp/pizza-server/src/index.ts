@@ -1,21 +1,21 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
-import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
-import express, { Request, Response } from "express";
-import { randomUUID } from "node:crypto";
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
+import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
+import express, { Request, Response } from 'express';
+import { randomUUID } from 'node:crypto';
 
 const app = express();
 app.use(express.json());
 
 // CORS middleware
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header(
-    "Access-Control-Allow-Headers",
-    "Content-Type, Authorization, mcp-session-id"
+    'Access-Control-Allow-Headers',
+    'Content-Type, Authorization, mcp-session-id',
   );
-  if (req.method === "OPTIONS") {
+  if (req.method === 'OPTIONS') {
     res.sendStatus(200);
     return;
   }
@@ -32,104 +32,104 @@ const transports = {
 const TOP_PIZZAS = [
   {
     rank: 1,
-    name: "Margherita",
-    origin: "Naples, Italy",
+    name: 'Margherita',
+    origin: 'Naples, Italy',
     description:
-      "A classic pizza with tomato sauce, fresh mozzarella, and basil",
+      'A classic pizza with tomato sauce, fresh mozzarella, and basil',
     yearCreated: 1889,
     keyIngredients: [
-      "San Marzano tomatoes",
-      "Mozzarella di Bufala",
-      "Fresh basil",
-      "Olive oil",
+      'San Marzano tomatoes',
+      'Mozzarella di Bufala',
+      'Fresh basil',
+      'Olive oil',
     ],
   },
   {
     rank: 2,
-    name: "Neapolitan",
-    origin: "Naples, Italy",
+    name: 'Neapolitan',
+    origin: 'Naples, Italy',
     description:
-      "The original pizza with a thin, soft crust and minimal toppings",
+      'The original pizza with a thin, soft crust and minimal toppings',
     yearCreated: 1750,
-    keyIngredients: ["Tomato sauce", "Olive oil", "Garlic", "Oregano"],
+    keyIngredients: ['Tomato sauce', 'Olive oil', 'Garlic', 'Oregano'],
   },
   {
     rank: 3,
-    name: "Pepperoni",
-    origin: "United States",
-    description: "An American classic with pepperoni sausage and cheese",
+    name: 'Pepperoni',
+    origin: 'United States',
+    description: 'An American classic with pepperoni sausage and cheese',
     yearCreated: 1950,
     keyIngredients: [
-      "Pepperoni",
-      "Mozzarella cheese",
-      "Tomato sauce",
-      "Italian herbs",
+      'Pepperoni',
+      'Mozzarella cheese',
+      'Tomato sauce',
+      'Italian herbs',
     ],
   },
   {
     rank: 4,
-    name: "Four Cheese (Quattro Formaggi)",
-    origin: "Italy",
-    description: "A rich pizza featuring four different types of cheese",
+    name: 'Four Cheese (Quattro Formaggi)',
+    origin: 'Italy',
+    description: 'A rich pizza featuring four different types of cheese',
     yearCreated: 1960,
     keyIngredients: [
-      "Mozzarella",
-      "Gorgonzola",
-      "Parmigiano-Reggiano",
-      "Ricotta",
+      'Mozzarella',
+      'Gorgonzola',
+      'Parmigiano-Reggiano',
+      'Ricotta',
     ],
   },
   {
     rank: 5,
-    name: "Hawaiian",
-    origin: "Canada",
-    description: "A controversial but popular pizza with ham and pineapple",
+    name: 'Hawaiian',
+    origin: 'Canada',
+    description: 'A controversial but popular pizza with ham and pineapple',
     yearCreated: 1962,
-    keyIngredients: ["Ham", "Pineapple", "Mozzarella cheese", "Tomato sauce"],
+    keyIngredients: ['Ham', 'Pineapple', 'Mozzarella cheese', 'Tomato sauce'],
   },
 ];
 
 // Create and configure the MCP server
 function createMcpServer(): McpServer {
   const server = new McpServer({
-    name: "Pizza Demo MCP Server",
-    version: "1.0.0",
+    name: 'Pizza Demo MCP Server',
+    version: '1.0.0',
   });
 
   // Single tool: get top pizzas
   server.tool(
-    "get_top_pizzas",
-    "Get information about the top 5 pizzas in the world",
+    'get_top_pizzas',
+    'Get information about the top 5 pizzas in the world',
     async () => {
-      console.log("🍕 get_top_pizzas tool called!");
+      console.log('🍕 get_top_pizzas tool called!');
 
       const result = {
         content: [
           {
-            type: "text" as const,
+            type: 'text' as const,
             text: `Top 5 Pizzas in the World:\n\n${TOP_PIZZAS.map(
               (pizza) =>
                 `${pizza.rank}. ${pizza.name} (${pizza.origin})\n` +
                 `   Description: ${pizza.description}\n` +
                 `   Year Created: ${pizza.yearCreated}\n` +
-                `   Key Ingredients: ${pizza.keyIngredients.join(", ")}\n`
-            ).join("\n")}`,
+                `   Key Ingredients: ${pizza.keyIngredients.join(', ')}\n`,
+            ).join('\n')}`,
           },
         ],
       };
 
-      console.log("🍕 Returning pizza data");
+      console.log('🍕 Returning pizza data');
       return result;
-    }
+    },
   );
 
   return server;
 }
 
 // Modern Streamable HTTP endpoint (supports both session-based and stateless)
-app.all("/mcp", async (req: Request, res: Response) => {
+app.all('/mcp', async (req: Request, res: Response) => {
   try {
-    const sessionId = req.headers["mcp-session-id"] as string | undefined;
+    const sessionId = req.headers['mcp-session-id'] as string | undefined;
     let transport: StreamableHTTPServerTransport;
 
     if (sessionId && transports.streamable[sessionId]) {
@@ -144,7 +144,7 @@ app.all("/mcp", async (req: Request, res: Response) => {
         onsessioninitialized: (newSessionId) => {
           transports.streamable[newSessionId] = transport;
           console.log(
-            `New Streamable HTTP session initialized: ${newSessionId}`
+            `New Streamable HTTP session initialized: ${newSessionId}`,
           );
         },
       });
@@ -162,13 +162,13 @@ app.all("/mcp", async (req: Request, res: Response) => {
 
     await transport.handleRequest(req, res, req.body);
   } catch (error) {
-    console.error("Error handling Streamable HTTP request:", error);
+    console.error('Error handling Streamable HTTP request:', error);
     if (!res.headersSent) {
       res.status(500).json({
-        jsonrpc: "2.0",
+        jsonrpc: '2.0',
         error: {
           code: -32603,
-          message: "Internal server error",
+          message: 'Internal server error',
         },
         id: null,
       });
@@ -177,33 +177,33 @@ app.all("/mcp", async (req: Request, res: Response) => {
 });
 
 // Legacy SSE endpoint for backward compatibility
-app.get("/sse", async (req: Request, res: Response) => {
+app.get('/sse', async (req: Request, res: Response) => {
   try {
-    console.log("New SSE connection request");
+    console.log('New SSE connection request');
 
     const server = createMcpServer();
-    const transport = new SSEServerTransport("/messages", res);
+    const transport = new SSEServerTransport('/messages', res);
     const sessionId = randomUUID();
 
     transports.sse[sessionId] = transport;
     console.log(`New SSE session initialized: ${sessionId}`);
 
-    res.on("close", () => {
+    res.on('close', () => {
       delete transports.sse[sessionId];
       console.log(`SSE session closed: ${sessionId}`);
     });
 
     await server.connect(transport);
   } catch (error) {
-    console.error("Error handling SSE connection:", error);
+    console.error('Error handling SSE connection:', error);
     if (!res.headersSent) {
-      res.status(500).send("Internal server error");
+      res.status(500).send('Internal server error');
     }
   }
 });
 
 // Legacy message endpoint for SSE clients
-app.post("/messages", async (req: Request, res: Response) => {
+app.post('/messages', async (req: Request, res: Response) => {
   try {
     const sessionId = req.query.sessionId as string;
     const transport = transports.sse[sessionId];
@@ -213,29 +213,29 @@ app.post("/messages", async (req: Request, res: Response) => {
 
     if (transport) {
       console.log(
-        `✅ Transport found for session ${sessionId}, handling message...`
+        `✅ Transport found for session ${sessionId}, handling message...`,
       );
       await transport.handlePostMessage(req, res, req.body);
       console.log(`✅ Message handled for session ${sessionId}`);
     } else {
       console.log(`❌ No transport found for sessionId: ${sessionId}`);
       res.status(400).json({
-        jsonrpc: "2.0",
+        jsonrpc: '2.0',
         error: {
           code: -32000,
-          message: "No transport found for sessionId",
+          message: 'No transport found for sessionId',
         },
         id: null,
       });
     }
   } catch (error) {
-    console.error("❌ Error handling SSE message:", error);
+    console.error('❌ Error handling SSE message:', error);
     if (!res.headersSent) {
       res.status(500).json({
-        jsonrpc: "2.0",
+        jsonrpc: '2.0',
         error: {
           code: -32603,
-          message: "Internal server error",
+          message: 'Internal server error',
         },
         id: null,
       });
@@ -244,11 +244,11 @@ app.post("/messages", async (req: Request, res: Response) => {
 });
 
 // Health check endpoint
-app.get("/health", (req: Request, res: Response) => {
+app.get('/health', (req: Request, res: Response) => {
   res.json({
-    status: "healthy",
-    server: "Pizza Demo MCP Server",
-    version: "1.0.0",
+    status: 'healthy',
+    server: 'Pizza Demo MCP Server',
+    version: '1.0.0',
     timestamp: new Date().toISOString(),
     activeConnections: {
       streamable: Object.keys(transports.streamable).length,
@@ -258,23 +258,23 @@ app.get("/health", (req: Request, res: Response) => {
 });
 
 // Info endpoint
-app.get("/", (req: Request, res: Response) => {
+app.get('/', (req: Request, res: Response) => {
   res.json({
-    name: "Pizza Demo MCP Server",
-    version: "1.0.0",
-    description: "Simple demo server showcasing top 5 pizzas in the world",
+    name: 'Pizza Demo MCP Server',
+    version: '1.0.0',
+    description: 'Simple demo server showcasing top 5 pizzas in the world',
     endpoints: {
-      mcp: "/mcp (Streamable HTTP - GET/POST/DELETE)",
-      sse: "/sse (Legacy SSE - GET)",
-      messages: "/messages (Legacy SSE Messages - POST)",
-      health: "/health",
-      info: "/",
+      mcp: '/mcp (Streamable HTTP - GET/POST/DELETE)',
+      sse: '/sse (Legacy SSE - GET)',
+      messages: '/messages (Legacy SSE Messages - POST)',
+      health: '/health',
+      info: '/',
     },
     capabilities: {
       tools: [
         {
-          name: "get-top-pizzas",
-          description: "Get the top 5 pizzas in the world with details",
+          name: 'get-top-pizzas',
+          description: 'Get the top 5 pizzas in the world with details',
         },
       ],
     },
@@ -294,12 +294,12 @@ app.listen(PORT, () => {
 });
 
 // Graceful shutdown
-process.on("SIGINT", () => {
-  console.log("\n🛑 Shutting down server...");
+process.on('SIGINT', () => {
+  console.log('\n🛑 Shutting down server...');
 
   // Close all active transports
   Object.values(transports.streamable).forEach((transport) =>
-    transport.close()
+    transport.close(),
   );
   Object.values(transports.sse).forEach((transport) => transport.close());
 

@@ -4,6 +4,6 @@ kind: ClusterRole
 metadata:
   name: logs-analyzer-role
 rules:
-  - apiGroups: [""]
-    resources: ["namespaces", "pods", "pods/log"]
-    verbs: ["list", "get"]
+  - apiGroups: ['']
+    resources: ['namespaces', 'pods', 'pods/log']
+    verbs: ['list', 'get']

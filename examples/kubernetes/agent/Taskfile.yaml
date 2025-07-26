@@ -1,9 +1,9 @@
 ---
-version: "3"
+version: '3'
 
 tasks:
   deploy-infrastructure:
-    desc: "Deploy cluster and registry"
+    desc: 'Deploy cluster and registry'
     cmds:
       - ctlptl apply -f Cluster.yaml
       - helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
@@ -18,28 +18,28 @@ tasks:
       - echo "🚀 Infrastructure with registry deployed successfully!"
 
   build-logs-analyzer-agent:
-    desc: "Build and push logs analyzer image"
+    desc: 'Build and push logs analyzer image'
     cmds:
       - docker build -t localhost:5000/dummyrepo/logs-analyzer:latest ./logs-analyzer
       - docker push localhost:5000/dummyrepo/logs-analyzer:latest
       - echo "🏗️ Logs analyzer image built and pushed successfully!"
 
   deploy-logs-analyzer-agent:
-    desc: "Deploy logs analyzer and test deployment"
+    desc: 'Deploy logs analyzer and test deployment'
     cmds:
       - kubectl apply -f logs-analyzer/
       - kubectl apply -f failing-deployment/
       - echo "🔍 Logs analyzer and test deployment deployed successfully!"
 
   delete-logs-analyzer-agent:
-    desc: "Delete logs analyzer and test deployment"
+    desc: 'Delete logs analyzer and test deployment'
     cmds:
       - kubectl delete -f logs-analyzer/
       - kubectl delete -f failing-deployment/
       - echo "🧹 Logs analyzer and test deployment deleted successfully!"
 
   deploy-inference-gateway:
-    desc: "Deploy inference-gateway with monitoring"
+    desc: 'Deploy inference-gateway with monitoring'
     cmds:
       - |
         helm upgrade --install \
@@ -53,7 +53,7 @@ tasks:
       - echo "🚪 Inference Gateway deployed successfully!"
 
   clean:
-    desc: "Clean up the cluster"
+    desc: 'Clean up the cluster'
     cmds:
       - ctlptl delete -f Cluster.yaml
       - echo "🧹 Cluster cleaned up successfully!"

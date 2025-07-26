@@ -46,7 +46,6 @@ The enhanced Grafana dashboard provides:
    ```
 
 3. **Access services:**
-
    - **Inference Gateway**: http://localhost:8080
    - **Prometheus**: http://localhost:9090
    - **Grafana**: http://localhost:3000 (admin/admin)
@@ -72,9 +71,9 @@ environment:
 Scrapes gateway metrics every 5 seconds:
 
 ```yaml
-- job_name: "inference-gateway"
+- job_name: 'inference-gateway'
   static_configs:
-    - targets: ["inference-gateway:9464"]
+    - targets: ['inference-gateway:9464']
   scrape_interval: 5s
 ```
 

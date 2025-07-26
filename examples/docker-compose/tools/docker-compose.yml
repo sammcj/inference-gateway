@@ -7,15 +7,15 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.2"
+          cpus: '0.2'
           memory: 256M
         reservations:
-          cpus: "0.1"
+          cpus: '0.1'
           memory: 100M
     pull_policy: always
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - '8080:8080'
 
   agent:
     image: alpine:latest
@@ -27,10 +27,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.2"
+          cpus: '0.2'
           memory: 256M
         reservations:
-          cpus: "0.1"
+          cpus: '0.1'
           memory: 100M
     volumes:
       - ./mocks:/app/mocks

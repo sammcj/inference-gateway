@@ -1,9 +1,9 @@
 ---
-version: "3"
+version: '3'
 
 tasks:
   deploy-infrastructure:
-    desc: "Deploy basic infrastructure"
+    desc: 'Deploy basic infrastructure'
     cmds:
       - task: create-cluster
       - task: deploy-cert-manager
@@ -12,13 +12,13 @@ tasks:
       - echo "🚀 Basic infrastructure deployed successfully!"
 
   create-cluster:
-    desc: "Create a Kubernetes cluster using ctlptl"
+    desc: 'Create a Kubernetes cluster using ctlptl'
     cmds:
       - ctlptl apply -f Cluster.yaml
       - echo "🛠️ Cluster created successfully!"
 
   deploy-cert-manager:
-    desc: "Deploy cert-manager with helm"
+    desc: 'Deploy cert-manager with helm'
     cmds:
       - helm repo add jetstack https://charts.jetstack.io
       - |
@@ -31,7 +31,7 @@ tasks:
       - echo "🔐 Cert-manager deployed successfully!"
 
   deploy-nginx-ingress:
-    desc: "Deploy NGINX Ingress Controller with helm"
+    desc: 'Deploy NGINX Ingress Controller with helm'
     cmds:
       - |
         helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
@@ -42,19 +42,19 @@ tasks:
       - echo "🌐 NGINX Ingress Controller deployed successfully!"
 
   deploy-inference-gateway-operator:
-    desc: "Deploy inference-gateway operator with helm"
+    desc: 'Deploy inference-gateway operator with helm'
     cmds:
       - kubectl apply -f https://github.com/inference-gateway/operator/releases/download/v0.5.2/install.yaml
       - echo "🛠️ Inference Gateway operator deployed successfully!"
 
   deploy-inference-gateway:
-    desc: "Deploy inference-gateway with helm"
+    desc: 'Deploy inference-gateway with helm'
     cmds:
       - kubectl apply -f gateway.yaml
       - echo "🚪 Inference Gateway deployed successfully!"
 
   clean:
-    desc: "Clean up the cluster"
+    desc: 'Clean up the cluster'
     cmds:
       - ctlptl delete -f Cluster.yaml
       - echo "🧹 Cluster cleaned up successfully!"

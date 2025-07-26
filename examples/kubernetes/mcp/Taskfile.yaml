@@ -1,4 +1,4 @@
-version: "3"
+version: '3'
 
 vars:
   NAMESPACE: inference-gateway
@@ -9,7 +9,7 @@ vars:
 
 tasks:
   default:
-    desc: "Show available options for MCP Kubernetes deployment"
+    desc: 'Show available options for MCP Kubernetes deployment'
     silent: true
     cmds:
       - echo "🚀 MCP Kubernetes Deployment"
@@ -25,7 +25,7 @@ tasks:
       - echo "📖 Check README.md for detailed usage examples"
 
   check-cluster:
-    desc: "Check cluster and Helm status"
+    desc: 'Check cluster and Helm status'
     cmds:
       - echo "🔍 Checking cluster status..."
       - kubectl cluster-info || echo "❌ No cluster connection"
@@ -40,7 +40,7 @@ tasks:
       - kubectl get pods -n {{.NAMESPACE}} || echo "❌ Namespace {{.NAMESPACE}} not found"
 
   validate-requirements:
-    desc: "Validate that all required tools are installed"
+    desc: 'Validate that all required tools are installed'
     silent: true
     cmds:
       - |
@@ -63,7 +63,7 @@ tasks:
         fi
 
   quick-start:
-    desc: "Quick start: deploy everything and run tests"
+    desc: 'Quick start: deploy everything and run tests'
     cmds:
       - task: deploy
       - echo "🚀 Quick start deployment completed!"
@@ -85,7 +85,7 @@ tasks:
       - echo "   4. Check the README.md for usage examples"
 
   deploy-infrastructure:
-    desc: "Deploy infrastructure components (k3d cluster, NGINX ingress)"
+    desc: 'Deploy infrastructure components (k3d cluster, NGINX ingress)'
     deps:
       - validate-requirements
     cmds:
@@ -114,7 +114,7 @@ tasks:
       - echo "🚀 Infrastructure deployed successfully!"
 
   setup-secrets:
-    desc: "Set up the necessary secrets for the Inference Gateway"
+    desc: 'Set up the necessary secrets for the Inference Gateway'
     cmds:
       - kubectl create namespace {{.NAMESPACE}} --dry-run=client -o yaml | kubectl apply --server-side -f -
       - |
@@ -151,7 +151,7 @@ tasks:
         echo "✅ Secrets configured successfully!"
 
   build-mcp-servers:
-    desc: "Build MCP servers (time, search, filesystem)"
+    desc: 'Build MCP servers (time, search, filesystem)'
     cmds:
       - echo "🔍 Building MCP servers..."
       - echo "Building time server..."
@@ -170,7 +170,7 @@ tasks:
           --cluster {{.CLUSTER_NAME}} || echo "⚠️ Failed to load images into k3d cluster, continuing..."
 
   deploy-mcp-servers:
-    desc: "Deploy MCP servers (time, search, filesystem)"
+    desc: 'Deploy MCP servers (time, search, filesystem)'
     cmds:
       - task: build-mcp-servers
       - echo "🔍 Deploying MCP servers..."
@@ -181,7 +181,7 @@ tasks:
       - echo "🔧 MCP servers deployed successfully!"
 
   deploy-inference-gateway:
-    desc: "Deploy Inference Gateway with MCP configuration using Helm"
+    desc: 'Deploy Inference Gateway with MCP configuration using Helm'
     cmds:
       - task: setup-secrets
       - task: deploy-mcp-servers
@@ -227,7 +227,7 @@ tasks:
       - echo "🚪 Inference Gateway with MCP deployed successfully!"
 
   deploy:
-    desc: "Deploy complete MCP setup"
+    desc: 'Deploy complete MCP setup'
     cmds:
       - task: deploy-infrastructure
       - task: deploy-mcp-servers
@@ -246,7 +246,7 @@ tasks:
       - echo "   4. Check the README.md for usage examples"
 
   setup-hosts:
-    desc: "Help setup /etc/hosts for local access"
+    desc: 'Help setup /etc/hosts for local access'
     cmds:
       - |
         echo "🌐 Setting up local access..."
@@ -265,7 +265,7 @@ tasks:
         echo "  🔍 MCP Inspector: http://localhost:6274 (after running 'task port-forward')"
 
   port-forward:
-    desc: "Forward ports for local access"
+    desc: 'Forward ports for local access'
     cmds:
       - |
         echo "Starting port forwarding..."
@@ -275,7 +275,7 @@ tasks:
         kubectl port-forward -n {{.NAMESPACE}} service/mcp-inspector 6274:6274
 
   test:
-    desc: "Run comprehensive MCP integration tests"
+    desc: 'Run comprehensive MCP integration tests'
     deps:
       - test:health
       - test:mcp-tools
@@ -289,7 +289,7 @@ tasks:
       - echo "🚀 MCP integration is working correctly in Kubernetes!"
 
   test:health:
-    desc: "Test Gateway and MCP servers health"
+    desc: 'Test Gateway and MCP servers health'
     cmds:
       - echo "🔍 Testing Inference Gateway health..."
       - |
@@ -315,7 +315,7 @@ tasks:
       - echo "✅ All MCP servers are healthy"
 
   test:mcp-tools:
-    desc: "Test MCP tools discovery endpoint"
+    desc: 'Test MCP tools discovery endpoint'
     cmds:
       - echo "🔍 Testing MCP tools discovery..."
       - |
@@ -325,7 +325,7 @@ tasks:
       - echo "✅ MCP tools endpoint working correctly"
 
   test:interactive:
-    desc: "Run interactive MCP test with external access"
+    desc: 'Run interactive MCP test with external access'
     cmds:
       - echo "🧪 Running interactive MCP test..."
       - echo "This test requires external access to api.inference-gateway.local"
@@ -335,14 +335,14 @@ tasks:
       - task: test:interactive:tools
 
   test:interactive:health:
-    desc: "Test health endpoint externally"
+    desc: 'Test health endpoint externally'
     cmds:
       - echo "1️⃣ Testing Gateway Health..."
       - curl -s -f "http://api.inference-gateway.local/health" | jq . || (echo "❌ Gateway health check failed"; exit 1)
       - echo "✅ Gateway is healthy"
 
   test:interactive:tools:
-    desc: "Test MCP tools endpoint externally"
+    desc: 'Test MCP tools endpoint externally'
     cmds:
       - echo "2️⃣ Testing MCP Tools Endpoint..."
       - |
@@ -355,29 +355,29 @@ tasks:
         echo "$TOOLS_RESPONSE" | jq '.tools[] | "   • \(.name): \(.description)"' -r
 
   logs:
-    desc: "Show logs from all pods"
+    desc: 'Show logs from all pods'
     cmds:
       - kubectl logs -l app.kubernetes.io/part-of=inference-gateway-mcp -n {{.NAMESPACE}} --tail=100 -f
 
   logs:gateway:
-    desc: "Show logs from inference gateway only"
+    desc: 'Show logs from inference gateway only'
     cmds:
       - kubectl logs -l app.kubernetes.io/name={{.RELEASE_NAME}} -n {{.NAMESPACE}} --tail=100 -f
 
   logs:mcp-servers:
-    desc: "Show logs from MCP servers only"
+    desc: 'Show logs from MCP servers only'
     cmds:
       - kubectl logs -l app.kubernetes.io/name=mcp-time-server -n {{.NAMESPACE}} --tail=50
       - kubectl logs -l app.kubernetes.io/name=mcp-search-server -n {{.NAMESPACE}} --tail=50
       - kubectl logs -l app.kubernetes.io/name=mcp-filesystem-server -n {{.NAMESPACE}} --tail=50
 
   status:
-    desc: "Show status of all resources"
+    desc: 'Show status of all resources'
     cmds:
       - kubectl get all -n {{.NAMESPACE}}
 
   status:detailed:
-    desc: "Show detailed status including events and descriptions"
+    desc: 'Show detailed status including events and descriptions'
     cmds:
       - kubectl get all -n {{.NAMESPACE}} -o wide
       - echo ""
@@ -388,14 +388,14 @@ tasks:
       - kubectl describe pods -n {{.NAMESPACE}}
 
   wait:
-    desc: "Wait for all pods to be ready"
+    desc: 'Wait for all pods to be ready'
     cmds:
       - echo "⏳ Waiting for all pods to be ready..."
       - kubectl wait --for=condition=ready pod --all -n {{.NAMESPACE}} --timeout=300s
       - echo "✅ All pods are ready!"
 
   restart:
-    desc: "Restart all deployments"
+    desc: 'Restart all deployments'
     cmds:
       - kubectl rollout restart deployment --selector=app.kubernetes.io/component=mcp-server -n {{.NAMESPACE}}
       - echo "🔄 All deployments restarted!"
@@ -403,7 +403,7 @@ tasks:
       - kubectl rollout restart deployment/{{.RELEASE_NAME}} -n {{.NAMESPACE}}
 
   undeploy:
-    desc: "Remove all MCP components"
+    desc: 'Remove all MCP components'
     cmds:
       - helm uninstall {{.RELEASE_NAME}} -n {{.NAMESPACE}} --ignore-not-found
       - kubectl delete -f filesystem-server/ -n {{.NAMESPACE}} --ignore-not-found=true
@@ -412,7 +412,7 @@ tasks:
       - kubectl delete namespace {{.NAMESPACE}} --ignore-not-found=true
 
   clean:
-    desc: "Clean up everything including cluster"
+    desc: 'Clean up everything including cluster'
     cmds:
       - task: undeploy
       - |
@@ -422,7 +422,7 @@ tasks:
       - echo "🧹 Everything cleaned up successfully!"
 
   clean-helm:
-    desc: "Clean up stuck Helm releases"
+    desc: 'Clean up stuck Helm releases'
     cmds:
       - echo "🧹 Cleaning up stuck Helm releases..."
       - |

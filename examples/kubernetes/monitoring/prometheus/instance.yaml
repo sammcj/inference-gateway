@@ -13,7 +13,7 @@ spec:
       app: inference-gateway
   serviceMonitorNamespaceSelector:
     matchLabels:
-      monitoring: "true"
+      monitoring: 'true'
   resources:
     requests:
       memory: 256Mi

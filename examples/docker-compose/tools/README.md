@@ -10,6 +10,7 @@ This example demonstrates how to use the Inference Gateway with tools functional
 ## How It Works
 
 The agent in this example:
+
 1. Makes an initial request to the inference-gateway with a query that likely requires tools
 2. Processes any tool calls requested by the model
 3. Simulates tool execution (weather data and web search)
@@ -18,12 +19,14 @@ The agent in this example:
 ## Setup Instructions
 
 1. Configure your API keys in the `.env` file:
+
    ```
    MODEL=openai/gpt-3.5-turbo  # Or another model that supports function calling
    OPENAI_API_KEY=your_openai_api_key_here
    ```
 
 2. Start the services:
+
    ```bash
    docker compose up
    ```
@@ -49,6 +52,7 @@ These are simple examples that return mock data. In a real implementation, you w
 ## Extending This Example
 
 You can expand this example by:
+
 - Adding more sophisticated tools
 - Connecting to real APIs for weather data, search results, etc.
 - Implementing a more interactive agent that can take user input

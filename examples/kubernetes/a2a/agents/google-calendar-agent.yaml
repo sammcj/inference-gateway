@@ -4,7 +4,7 @@ kind: Namespace
 metadata:
   name: agents
   labels:
-    inference-gateway.com/managed: "true"
+    inference-gateway.com/managed: 'true'
 ---
 apiVersion: core.inference-gateway.com/v1alpha1
 kind: A2AServer
@@ -12,26 +12,26 @@ metadata:
   name: a2a-server-google-calendar-agent
   namespace: agents
 spec:
-  image: "ghcr.io/inference-gateway/google-calendar-agent:latest"
-  timezone: "CET"
+  image: 'ghcr.io/inference-gateway/google-calendar-agent:latest'
+  timezone: 'CET'
   port: 8080
-  host: "0.0.0.0"
-  readTimeout: "30s"
-  writeTimeout: "30s"
-  idleTimeout: "60s"
+  host: '0.0.0.0'
+  readTimeout: '30s'
+  writeTimeout: '30s'
+  idleTimeout: '60s'
   logging:
-    level: "info"
-    format: "json"
+    level: 'info'
+    format: 'json'
   telemetry:
     enabled: true
     port: 9090
   queue:
     enabled: true
     maxSize: 1000
-    cleanupInterval: "5m"
+    cleanupInterval: '5m'
   tls:
     enabled: true
-    secretRef: "google-calendar-agent-tls"
+    secretRef: 'google-calendar-agent-tls'
   agent:
     enabled: true
     envFrom:
@@ -45,13 +45,13 @@ spec:
         name: google-calendar-internal-agent
         key: DEEPSEEK_API_KEY
     llm:
-      model: "deepseek/deepseek-agent"
+      model: 'deepseek/deepseek-agent'
       maxTokens: 4096
       temperature: 0.7
       customHeaders:
-        - name: "User-Agent"
-          value: "Google Calendar Agent"
-      systemPrompt: "You are a helpful assistant for managing Google Calendar events. You can create, read, update, and delete events, and you can also list upcoming events."
+        - name: 'User-Agent'
+          value: 'Google Calendar Agent'
+      systemPrompt: 'You are a helpful assistant for managing Google Calendar events. You can create, read, update, and delete events, and you can also list upcoming events.'
 ---
 apiVersion: v1
 kind: Secret
@@ -60,7 +60,7 @@ metadata:
   namespace: agents
 type: Opaque
 stringData:
-  DEEPSEEK_API_KEY: ""
+  DEEPSEEK_API_KEY: ''
 ---
 apiVersion: v1
 kind: Secret
@@ -69,7 +69,7 @@ metadata:
   namespace: agents
 type: Opaque
 stringData:
-  GOOGLE_CALENDAR_SA_JSON: ""
+  GOOGLE_CALENDAR_SA_JSON: ''
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate

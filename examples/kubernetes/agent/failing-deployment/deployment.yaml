@@ -26,7 +26,7 @@ spec:
             - containerPort: 8080
           command:
             [
-              "sh",
-              "-c",
+              'sh',
+              '-c',
               "echo 'error the nginx could not start due to low memory configurations' >&2; exit 1",
             ]

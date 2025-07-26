@@ -105,18 +105,18 @@ Provider:
   x-provider-configs:
     # ... existing providers ...
     newai:
-      id: "newai"
-      url: "https://api.newai.com/v1"
-      auth_type: "bearer" # or "xheader", "query", "none"
+      id: 'newai'
+      url: 'https://api.newai.com/v1'
+      auth_type: 'bearer' # or "xheader", "query", "none"
       endpoints:
         models:
-          name: "list_models"
-          method: "GET"
-          endpoint: "/models"
+          name: 'list_models'
+          method: 'GET'
+          endpoint: '/models'
         chat:
-          name: "chat_completions"
-          method: "POST"
-          endpoint: "/chat/completions"
+          name: 'chat_completions'
+          method: 'POST'
+          endpoint: '/chat/completions'
 ```
 
 #### 2. Generate Provider Files

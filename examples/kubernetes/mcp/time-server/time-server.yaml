@@ -30,7 +30,7 @@ spec:
               protocol: TCP
           env:
             - name: PORT
-              value: "8081"
+              value: '8081'
           livenessProbe:
             httpGet:
               path: /health
@@ -51,11 +51,11 @@ spec:
             failureThreshold: 3
           resources:
             requests:
-              memory: "64Mi"
-              cpu: "25m"
+              memory: '64Mi'
+              cpu: '25m'
             limits:
-              memory: "256Mi"
-              cpu: "250m"
+              memory: '256Mi'
+              cpu: '250m'
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true

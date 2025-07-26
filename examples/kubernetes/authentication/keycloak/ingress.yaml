@@ -6,7 +6,7 @@ metadata:
   namespace: idp
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    nginx.ingress.kubernetes.io/backend-protocol: 'HTTPS'
 spec:
   ingressClassName: nginx
   tls:

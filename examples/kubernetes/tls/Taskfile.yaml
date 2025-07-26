@@ -1,9 +1,9 @@
 ---
-version: "3"
+version: '3'
 
 tasks:
   deploy-infrastructure:
-    desc: "Deploy TLS infrastructure"
+    desc: 'Deploy TLS infrastructure'
     cmds:
       - ctlptl apply -f Cluster.yaml
       - helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
@@ -29,7 +29,7 @@ tasks:
       - echo "🔒 TLS infrastructure deployed successfully!"
 
   deploy-inference-gateway:
-    desc: "Deploy inference-gateway with TLS"
+    desc: 'Deploy inference-gateway with TLS'
     cmds:
       - |
         helm upgrade --install \
@@ -49,7 +49,7 @@ tasks:
       - echo "🔐 Inference Gateway with TLS deployed successfully!"
 
   clean:
-    desc: "Clean up the cluster"
+    desc: 'Clean up the cluster'
     cmds:
       - ctlptl delete -f Cluster.yaml
       - echo "🧹 Cluster cleaned up successfully!"

@@ -1,9 +1,9 @@
 ---
-version: "3"
+version: '3'
 
 tasks:
   deploy-infrastructure:
-    desc: "Deploy hybrid infrastructure"
+    desc: 'Deploy hybrid infrastructure'
     cmds:
       - ctlptl apply -f Cluster.yaml
       - helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
@@ -18,7 +18,7 @@ tasks:
       - echo "🚀 Hybrid infrastructure deployed successfully!"
 
   deploy-ollama:
-    desc: "Deploy deepseek-r1:1.5b with Ollama"
+    desc: 'Deploy deepseek-r1:1.5b with Ollama'
     cmds:
       - kubectl create namespace ollama -o yaml --dry-run=client | kubectl apply -f -
       - kubectl apply -f ollama/
@@ -26,13 +26,13 @@ tasks:
       - echo "🤖 Ollama with deepseek model deployed successfully!"
 
   watch-ollama-download:
-    desc: "Watch download progress"
+    desc: 'Watch download progress'
     cmds:
       - kubectl -n ollama logs deployments/ollama -c ollama-model-puller -f
       - echo "👀 Watching Ollama model download progress..."
 
   deploy-inference-gateway:
-    desc: "Deploy inference-gateway with hybrid providers"
+    desc: 'Deploy inference-gateway with hybrid providers'
     cmds:
       - |
         helm upgrade --install \
@@ -47,7 +47,7 @@ tasks:
       - echo "🚪 Inference Gateway with hybrid providers deployed successfully!"
 
   clean:
-    desc: "Clean up the cluster"
+    desc: 'Clean up the cluster'
     cmds:
       - ctlptl delete -f Cluster.yaml
       - echo "🧹 Cluster cleaned up successfully!"

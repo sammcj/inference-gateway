@@ -37,11 +37,11 @@ spec:
               name: websocket
           env:
             - name: LOG_LEVEL
-              value: "debug"
+              value: 'debug'
             - name: HOST
-              value: "0.0.0.0"
+              value: '0.0.0.0'
             - name: MCP_SERVER_URL
-              value: "http://mcp-time-server:8081/mcp,http://mcp-search-server:8082/mcp,http://mcp-filesystem-server:8083/mcp"
+              value: 'http://mcp-time-server:8081/mcp,http://mcp-search-server:8082/mcp,http://mcp-filesystem-server:8083/mcp'
           livenessProbe:
             httpGet:
               path: /
@@ -56,11 +56,11 @@ spec:
             periodSeconds: 10
           resources:
             requests:
-              memory: "128Mi"
-              cpu: "100m"
+              memory: '128Mi'
+              cpu: '100m'
             limits:
-              memory: "512Mi"
-              cpu: "500m"
+              memory: '512Mi'
+              cpu: '500m'
 
 ---
 apiVersion: v1

@@ -35,8 +35,8 @@ spec:
   #     - step-up-authentication
   resources:
     requests:
-      cpu: "500m"
-      memory: "1Gi"
+      cpu: '500m'
+      memory: '1Gi'
     limits:
-      cpu: "2000m"
-      memory: "2Gi"
+      cpu: '2000m'
+      memory: '2Gi'

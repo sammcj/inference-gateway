@@ -9,7 +9,7 @@ metadata:
 spec:
   instanceSelector:
     matchLabels:
-      dashboards: "grafana"
+      dashboards: 'grafana'
   json: |
     {
       "annotations": {

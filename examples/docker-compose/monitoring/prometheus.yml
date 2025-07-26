@@ -3,13 +3,13 @@ global:
   evaluation_interval: 15s
 
 scrape_configs:
-  - job_name: "prometheus"
+  - job_name: 'prometheus'
     static_configs:
-      - targets: ["localhost:9090"]
+      - targets: ['localhost:9090']
 
-  - job_name: "inference-gateway"
+  - job_name: 'inference-gateway'
     static_configs:
-      - targets: ["inference-gateway:9464"]
+      - targets: ['inference-gateway:9464']
     scrape_interval: 5s
     metrics_path: /metrics
     scrape_timeout: 4s

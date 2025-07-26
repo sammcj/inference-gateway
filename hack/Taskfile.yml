@@ -1,19 +1,19 @@
 ---
-version: "3"
+version: '3'
 
 tasks:
   cluster-create:
-    desc: "Create a local cluster"
+    desc: 'Create a local cluster'
     cmds:
       - ctlptl apply -f Cluster.yaml
 
   cluster-delete:
-    desc: "Delete the local cluster"
+    desc: 'Delete the local cluster'
     cmds:
       - ctlptl delete -f Cluster.yaml
 
   test-helm:
-    desc: "Run helm tests"
+    desc: 'Run helm tests'
     cmds:
       - helm dependency update ../charts/inference-gateway
       - helm lint ../charts/inference-gateway
@@ -38,7 +38,7 @@ tasks:
           --set monitoring.enabled=true
 
   deploy-infrastructure:
-    desc: "Deploy the infrastructure"
+    desc: 'Deploy the infrastructure'
     cmds:
       - task: cluster-create
       - helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
@@ -246,7 +246,7 @@ tasks:
       - task: import-realm
 
   deploy-inference-gateway:
-    desc: "deploy the helm chart to a local cluster"
+    desc: 'deploy the helm chart to a local cluster'
     cmds:
       - helm dependency update ../charts/inference-gateway
       - kubectl create ns inference-gateway -o yaml --dry-run=client | kubectl apply --server-side -f -
@@ -358,12 +358,12 @@ tasks:
         kubectl -n inference-gateway rollout status deployment inference-gateway
 
   clean:
-    desc: "Clean the gateway"
+    desc: 'Clean the gateway'
     cmds:
       - ctlptl delete -f Cluster.yaml
 
   import-realm:
-    desc: "Import Keycloak realm using CRD"
+    desc: 'Import Keycloak realm using CRD'
     cmds:
       - |
         kubectl -n idp apply -f - <<EOF
@@ -441,7 +441,7 @@ tasks:
         EOF
 
   fetch-access-token:
-    desc: "Fetch the access token"
+    desc: 'Fetch the access token'
     cmds:
       - |
         curl -k -s -X POST \
@@ -454,21 +454,21 @@ tasks:
           -d "password=password" | jq -r .access_token
 
   print-access-token-payload:
-    desc: "Print the decoded access token payload"
+    desc: 'Print the decoded access token payload'
     cmds:
       - |
         ACCESS_TOKEN=$(task fetch-access-token)
         echo $ACCESS_TOKEN | tr '.' '\n' | sed -n 2p | base64 -d | jq .
 
   fetch-models:
-    desc: "List all LLMs from the Inference-Gateway"
+    desc: 'List all LLMs from the Inference-Gateway'
     cmds:
       - |
         ACCESS_TOKEN=$(task fetch-access-token)
         curl -k -X GET -H "Authorization: Bearer $ACCESS_TOKEN" https://api.inference-gateway.local/v1/models
 
   generate-completions:
-    desc: "Generate completions using Ollama provider"
+    desc: 'Generate completions using Ollama provider'
     cmds:
       - |
         ACCESS_TOKEN=$(task fetch-access-token)
@@ -503,7 +503,7 @@ tasks:
           -d "$JSON_PAYLOAD" | jq '.'
 
   deploy-ollama-deepseek-r1:
-    desc: "Deploy DeepSeek R1 using ollama"
+    desc: 'Deploy DeepSeek R1 using ollama'
     cmds:
       - |
         echo "Creating ollama namespace if it doesn't exist..."

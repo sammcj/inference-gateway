@@ -132,7 +132,6 @@ The Model Context Protocol is an open standard for implementing function calling
    ```
 
    This will:
-
    - Create a k3d cluster with ingress
    - Set up API keys for inference providers (press enter to skip)
    - Deploy all MCP servers
@@ -148,7 +147,6 @@ The Model Context Protocol is an open standard for implementing function calling
    If using vscode dev container, you can skip this step.
 
 3. **Access the services:**
-
    - Inference Gateway: http://api.inference-gateway.local
    - MCP Inspector: http://localhost:6274 (after running `task port-forward`)
 
@@ -387,7 +385,7 @@ To add your own MCP server:
 2. **Update the MCP servers list** in `values-mcp.yaml`:
 
    ```yaml
-   MCP_SERVERS: "http://mcp-time-server:8081/mcp,http://mcp-search-server:8082/mcp,http://mcp-filesystem-server:8083/mcp,http://my-custom-mcp-server:8084/mcp"
+   MCP_SERVERS: 'http://mcp-time-server:8081/mcp,http://mcp-search-server:8082/mcp,http://mcp-filesystem-server:8083/mcp,http://my-custom-mcp-server:8084/mcp'
    ```
 
 3. **Redeploy:**

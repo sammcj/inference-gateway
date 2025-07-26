@@ -1,14 +1,14 @@
 ---
-version: "3"
+version: '3'
 
 tasks:
   default:
-    desc: "Show available tasks"
+    desc: 'Show available tasks'
     cmds:
       - task --list
 
   mcp-schema-download:
-    desc: "Download the latest MCP schema and convert to YAML"
+    desc: 'Download the latest MCP schema and convert to YAML'
     cmds:
       - curl -o mcp/mcp-schema.json https://raw.githubusercontent.com/modelcontextprotocol/modelcontextprotocol/refs/heads/main/schema/draft/schema.json
       - |
@@ -21,7 +21,7 @@ tasks:
         "
 
   a2a-schema-download:
-    desc: "Download the latest A2A schema and convert to YAML"
+    desc: 'Download the latest A2A schema and convert to YAML'
     cmds:
       - curl -o a2a/a2a-schema.json https://raw.githubusercontent.com/google-a2a/A2A/main/specification/json/a2a.json
       - |
@@ -34,12 +34,12 @@ tasks:
         "
 
   install:generator:
-    desc: "Install the generator tool"
+    desc: 'Install the generator tool'
     cmds:
       - go install github.com/inference-gateway/tools/cmd/generator@v0.1.1
 
   generate:
-    desc: "Generate the gateway from OpenAPI Spec"
+    desc: 'Generate the gateway from OpenAPI Spec'
     deps:
       - install:generator
     cmds:
@@ -65,54 +65,62 @@ tasks:
       - generator -generator jsonrpc -package a2a a2a/a2a-schema.yaml a2a/generated_types.go
       - generator -generator jsonrpc -package mcp mcp/mcp-schema.yaml mcp/generated_types.go
       - go generate ./providers/... ./api/... ./otel/... ./logger/...  ./mcp/... ./a2a/...
+      - task: format
+      - echo "✅ Codegen completed successfully!"
 
   tidy:
-    desc: "Tidy the gateway"
+    desc: 'Tidy the gateway'
     cmds:
       - find . -name 'go.mod' -execdir go mod tidy \;
 
   build:
-    desc: "Build the gateway"
+    desc: 'Build the gateway'
     cmds:
       - go build -o bin/inference-gateway cmd/gateway/main.go
 
   build:container:
-    desc: "Build the gateway container"
+    desc: 'Build the gateway container'
     cmds:
       - docker build -t inference-gateway .
 
   run:
-    desc: "Run the gateway"
+    desc: 'Run the gateway'
     cmds:
       - go run cmd/gateway/main.go
 
+  format:
+    desc: 'Format the code'
+    cmds:
+      - prettier --write .
+      - go fmt ./...
+
   lint:
-    desc: "Run Go static analysis and linting"
+    desc: 'Run Go static analysis and linting'
     cmds:
       - golangci-lint run
 
   openapi:lint:
-    desc: "Lint OpenAPI spec"
+    desc: 'Lint OpenAPI spec'
     cmds:
       - spectral lint --verbose openapi.yaml
-  
+
   openapi:download:
-    desc: "Download the latest OpenAPI Spec"
+    desc: 'Download the latest OpenAPI Spec'
     cmds:
       - curl -o openapi.yaml https://raw.githubusercontent.com/inference-gateway/schemas/refs/heads/main/openapi.yaml
 
   test:
-    desc: "Run tests"
+    desc: 'Run tests'
     cmds:
       - go test -v ./...
 
   benchmark:
-    desc: "Run benchmarks"
+    desc: 'Run benchmarks'
     cmds:
       - go test -bench=. -run=^$ -benchmem -benchtime=100x -count=20 ./tests/...
 
   pre-commit:install:
-    desc: "Install pre-commit hooks"
+    desc: 'Install pre-commit hooks'
     cmds:
       - echo "Installing pre-commit checks..."
       - ln -sf ../../scripts/pre-commit-check.sh .git/hooks/pre-commit
@@ -120,18 +128,18 @@ tasks:
       - echo "✅ Pre-commit hook installed successfully!"
 
   pre-commit:uninstall:
-    desc: "Uninstall pre-commit hooks"
+    desc: 'Uninstall pre-commit hooks'
     cmds:
       - rm -f .git/hooks/pre-commit
       - echo "✅ Pre-commit hook uninstalled successfully!"
 
   package:
-    desc: "Package the gateway"
+    desc: 'Package the gateway'
     cmds:
       - docker build -t inference-gateway .
 
   release-dry-run:
-    desc: "Run a dry-run of both semantic-release and goreleaser"
+    desc: 'Run a dry-run of both semantic-release and goreleaser'
     cmds:
       - echo "Running semantic-release dry run..."
       - semantic-release --dry-run

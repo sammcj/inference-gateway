@@ -7,7 +7,7 @@ metadata:
 spec:
   instanceSelector:
     matchLabels:
-      dashboards: "grafana"
+      dashboards: 'grafana'
   datasource:
     name: Prometheus
     type: prometheus
@@ -16,4 +16,4 @@ spec:
     isDefault: true
     jsonData:
       tlsSkipVerify: true
-      timeInterval: "5s"
+      timeInterval: '5s'

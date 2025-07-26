@@ -25,6 +25,9 @@ if ! git diff --quiet; then
     exit 1
 fi
 
+echo "📦 Running code formatting..."
+task format
+
 echo "📝 Running Go linting..."
 task lint
 

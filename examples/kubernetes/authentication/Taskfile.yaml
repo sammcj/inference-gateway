@@ -1,9 +1,9 @@
 ---
-version: "3"
+version: '3'
 
 tasks:
   deploy-infrastructure:
-    desc: "Deploy authentication infrastructure"
+    desc: 'Deploy authentication infrastructure'
     cmds:
       - ctlptl apply -f Cluster.yaml
       - helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
@@ -75,7 +75,7 @@ tasks:
       - echo "🔐 Authentication infrastructure deployed successfully!"
 
   deploy-inference-gateway:
-    desc: "Deploy inference-gateway with authentication"
+    desc: 'Deploy inference-gateway with authentication'
     cmds:
       - kubectl create ns inference-gateway -o yaml --dry-run=client | kubectl apply --server-side -f -
       - |
@@ -138,13 +138,13 @@ tasks:
       - echo "🔒 Inference Gateway with authentication enabled, deployed successfully!"
 
   keycloak-admin-password:
-    desc: "Get Keycloak admin password"
+    desc: 'Get Keycloak admin password'
     cmds:
       - kubectl -n idp get secret keycloak-initial-admin -o jsonpath="{.data.password}" | base64 --decode
       - echo "🔑 Retrieved Keycloak admin password!"
 
   fetch-access-token:
-    desc: "Fetch the access token"
+    desc: 'Fetch the access token'
     cmds:
       - |
         curl -k -s -X POST \
@@ -158,7 +158,7 @@ tasks:
       - echo "🔑 Access token fetched successfully!"
 
   clean:
-    desc: "Clean up the cluster"
+    desc: 'Clean up the cluster'
     cmds:
       - ctlptl delete -f Cluster.yaml
       - echo "🧹 Cluster cleaned up successfully!"
