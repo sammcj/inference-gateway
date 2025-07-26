@@ -450,7 +450,7 @@ Metrics automatically detect providers from:
 - **Model prefixes**: `openai/gpt-4`, `anthropic/claude-3-haiku`, `groq/llama-3-8b`
 - **URL parameters**: `?provider=openai`
 
-**Supported providers**: `openai`, `anthropic`, `groq`, `cohere`, `ollama`, `cloudflare`, `deepseek`
+**Supported providers**: `openai`, `anthropic`, `groq`, `cohere`, `ollama`, `cloudflare`, `deepseek`, `google`
 
 > **Learn more**: [Docker Compose Monitoring](examples/docker-compose/monitoring/) | [Kubernetes Monitoring](examples/kubernetes/monitoring/) | [OpenTelemetry Documentation](https://opentelemetry.io/)
 
@@ -463,6 +463,7 @@ Metrics automatically detect providers from:
 - [Cohere](https://docs.cohere.com/docs/the-cohere-platform)
 - [Anthropic](https://docs.anthropic.com/en/api/getting-started)
 - [DeepSeek](https://api-docs.deepseek.com/)
+- [Google](https://generativelanguage.googleapis.com/v1beta/openai)
 
 ## Configuration
 
