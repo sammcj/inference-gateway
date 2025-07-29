@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.17.0](https://github.com/inference-gateway/inference-gateway/compare/v0.16.1...v0.17.0) (2025-07-29)
+
+### ✨ Features
+
+* **a2a:** Add Kubernetes service discovery for A2A agents ([#166](https://github.com/inference-gateway/inference-gateway/issues/166)) ([9be30ff](https://github.com/inference-gateway/inference-gateway/commit/9be30ff8c4a22fa26c4aef9bd00579e3cbb9b44a)), closes [#142](https://github.com/inference-gateway/inference-gateway/issues/142)
+
+### 📚 Documentation
+
+* Add a section to ensure this project remains independent and truly Open Source ([b970d8a](https://github.com/inference-gateway/inference-gateway/commit/b970d8ad47beb1a05aa40a0849bbeffb9e8e6ba4))
+
 ## [0.16.1](https://github.com/inference-gateway/inference-gateway/compare/v0.16.0...v0.16.1) (2025-07-26)
 
 ### ♻️ Improvements
