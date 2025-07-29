@@ -7,13 +7,13 @@ metadata:
     inference-gateway.com/managed: 'true'
 ---
 apiVersion: core.inference-gateway.com/v1alpha1
-kind: A2AServer
+kind: A2A
 metadata:
-  name: a2a-server-google-calendar-agent
+  name: a2a-google-calendar-agent
   namespace: agents
 spec:
-  image: 'ghcr.io/inference-gateway/google-calendar-agent:latest'
-  timezone: 'CET'
+  image: ghcr.io/inference-gateway/google-calendar-agent:latest
+  timezone: 'UTC'
   port: 8080
   host: '0.0.0.0'
   readTimeout: '30s'
@@ -24,34 +24,50 @@ spec:
     format: 'json'
   telemetry:
     enabled: true
-    port: 9090
+    metrics:
+      enabled: true
+      port: 9090
   queue:
     enabled: true
     maxSize: 1000
     cleanupInterval: '5m'
   tls:
-    enabled: true
-    secretRef: 'google-calendar-agent-tls'
+    enabled: false
+    secretRef: ''
   agent:
     enabled: true
-    envFrom:
-      - secretRef:
-          name: google-calendar-agent-service-account
+    tls:
+      enabled: true
+      secretRef: ''
     maxConversationHistory: 10
     maxChatCompletionIterations: 5
     maxRetries: 3
     apiKey:
-      secretRef:
-        name: google-calendar-internal-agent
-        key: DEEPSEEK_API_KEY
+      secretRef: 'google-calendar-internal-agent'
     llm:
-      model: 'deepseek/deepseek-agent'
+      model: 'deepseek/deepseek-chat'
       maxTokens: 4096
-      temperature: 0.7
+      temperature: '0.7'
       customHeaders:
         - name: 'User-Agent'
           value: 'Google Calendar Agent'
       systemPrompt: 'You are a helpful assistant for managing Google Calendar events. You can create, read, update, and delete events, and you can also list upcoming events.'
+  env:
+    - name: 'GOOGLE_CALENDAR_SA_JSON'
+      valueFrom:
+        secretKeyRef:
+          name: 'google-calendar-agent-service-account'
+          key: 'GOOGLE_CALENDAR_SA_JSON'
+    - name: 'DEMO_MODE'
+      valueFrom:
+        configMapKeyRef:
+          name: 'a2a-google-calendar-agent-config'
+          key: 'DEMO_MODE'
+    - name: 'A2A_AGENT_URL'
+      valueFrom:
+        configMapKeyRef:
+          name: 'a2a-google-calendar-agent-config'
+          key: 'A2A_AGENT_URL'
 ---
 apiVersion: v1
 kind: Secret
@@ -87,3 +103,12 @@ spec:
   usages:
     - digital signature
     - key encipherment
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: a2a-google-calendar-agent-config
+  namespace: agents
+data:
+  DEMO_MODE: 'true'
+  A2A_AGENT_URL: 'http://google-calendar-agent.agents.svc.cluster.local:8080'
