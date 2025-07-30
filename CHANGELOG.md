@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.17.1](https://github.com/inference-gateway/inference-gateway/compare/v0.17.0...v0.17.1) (2025-07-30)
+
+### ♻️ Improvements
+
+* Update import paths from a2a to adk for consistency ([#167](https://github.com/inference-gateway/inference-gateway/issues/167)) ([99f57ed](https://github.com/inference-gateway/inference-gateway/commit/99f57ed6c66d627bc0bf01ce31747ea4a41030a9))
+
 ## [0.17.0](https://github.com/inference-gateway/inference-gateway/compare/v0.16.1...v0.17.0) (2025-07-29)
 
 ### ✨ Features
