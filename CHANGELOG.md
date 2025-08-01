@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.17.2](https://github.com/inference-gateway/inference-gateway/compare/v0.17.1...v0.17.2) (2025-08-01)
+
+### ♻️ Improvements
+
+* **a2a:** Refactor service discovery to use Agent CRDs instead of A2A ([#169](https://github.com/inference-gateway/inference-gateway/issues/169)) ([d827be7](https://github.com/inference-gateway/inference-gateway/commit/d827be79afe39e10ee80a5c77276ced86b1286ed)), closes [#168](https://github.com/inference-gateway/inference-gateway/issues/168)
+
+### 🔧 Miscellaneous
+
+* Adjust the issues templates ([de3b255](https://github.com/inference-gateway/inference-gateway/commit/de3b25501c946b2ee595b316b453c68c8744c35d))
+
 ## [0.17.1](https://github.com/inference-gateway/inference-gateway/compare/v0.17.0...v0.17.1) (2025-07-30)
 
 ### ♻️ Improvements
