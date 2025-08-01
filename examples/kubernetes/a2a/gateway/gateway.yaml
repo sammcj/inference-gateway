@@ -12,7 +12,7 @@ metadata:
   name: inference-gateway
   namespace: inference-gateway
 spec:
-  image: ghcr.io/inference-gateway/inference-gateway:0.17.0
+  image: ghcr.io/inference-gateway/inference-gateway:0.17.2
   environment: development
   serviceAccount:
     name: inference-gateway
