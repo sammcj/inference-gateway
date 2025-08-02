@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.18.0](https://github.com/inference-gateway/inference-gateway/compare/v0.17.2...v0.18.0) (2025-08-02)
+
+### ✨ Features
+
+* **debug:** Improve debug logging for better development experience ([#171](https://github.com/inference-gateway/inference-gateway/issues/171)) ([4bb1a47](https://github.com/inference-gateway/inference-gateway/commit/4bb1a47f056151c3d32e2fa632c2500a7b37d46f))
+
+### 🔧 Miscellaneous
+
+* Update inference-gateway image to version 0.17.2 ([a54adb4](https://github.com/inference-gateway/inference-gateway/commit/a54adb4295a352b7345df13db3ccc9b9caabe721))
+
 ## [0.17.2](https://github.com/inference-gateway/inference-gateway/compare/v0.17.1...v0.17.2) (2025-08-01)
 
 ### ♻️ Improvements
