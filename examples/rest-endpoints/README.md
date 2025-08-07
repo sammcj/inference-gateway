@@ -14,20 +14,22 @@ Assuming you've deployed the Inference Gateway, you can interact with the langua
 | List Cohere models     | `curl -X GET http://localhost:8080/v1/models?provider=cohere`     |
 | List Anthropic models  | `curl -X GET http://localhost:8080/v1/models?provider=anthropic`  |
 | List DeepSeek models   | `curl -X GET http://localhost:8080/v1/models?provider=deepseek`   |
+| List Google models     | `curl -X GET http://localhost:8080/v1/models?provider=google`     |
 | List Mistral models    | `curl -X GET http://localhost:8080/v1/models?provider=mistral`    |
 
 ### POST Endpoints
 
-| Domain             | Curl Command                                                                                                                                                                                                               |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ollama.local       | `curl -X POST http://localhost:8080/v1/chat/completions -d '{"model":"ollama/deepseek-r1:1.5b","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Hi"}]}'`                   |
-| api.groq.com       | `curl -X POST http://localhost:8080/v1/chat/completions -d '{"model":"groq/llama-3.3-70b-versatile","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Hi"}]}'`              |
-| api.openai.com     | `curl -X POST http://localhost:8080/v1/chat/completions -d '{"model":"openai/gpt-4o-mini","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Hi"}]}'`                        |
-| api.cloudflare.com | `curl -X POST http://localhost:8080/v1/chat/completions -d '{"model":"cloudflare/@cf/meta/llama-3.1-8b-instruct","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Hi"}]}'` |
-| api.cohere.com     | `curl -X POST http://localhost:8080/v1/chat/completions -d '{"model":"cohere/command-r","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Hi"}]}'`                          |
-| api.anthropic.com  | `curl -X POST http://localhost:8080/v1/chat/completions -d '{"model":"anthropic/claude-3-opus-20240229","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Hi"}]}'`          |
-| api.deepseek.com   | `curl -X POST http://localhost:8080/v1/chat/completions -d '{"model":"deepseek/deepseek-reasoner","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Hi"}]}'`                |
-| api.mistral.ai     | `curl -X POST http://localhost:8080/v1/chat/completions -d '{"model":"mistral/pixtral-large-latest","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Hi"}]}'`              |
+| Domain                            | Curl Command                                                                                                                                                                                                               |
+| --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ollama.local                      | `curl -X POST http://localhost:8080/v1/chat/completions -d '{"model":"ollama/deepseek-r1:1.5b","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Hi"}]}'`                   |
+| api.groq.com                      | `curl -X POST http://localhost:8080/v1/chat/completions -d '{"model":"groq/llama-3.3-70b-versatile","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Hi"}]}'`              |
+| api.openai.com                    | `curl -X POST http://localhost:8080/v1/chat/completions -d '{"model":"openai/gpt-4o-mini","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Hi"}]}'`                        |
+| api.cloudflare.com                | `curl -X POST http://localhost:8080/v1/chat/completions -d '{"model":"cloudflare/@cf/meta/llama-3.1-8b-instruct","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Hi"}]}'` |
+| api.cohere.com                    | `curl -X POST http://localhost:8080/v1/chat/completions -d '{"model":"cohere/command-r","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Hi"}]}'`                          |
+| api.anthropic.com                 | `curl -X POST http://localhost:8080/v1/chat/completions -d '{"model":"anthropic/claude-3-opus-20240229","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Hi"}]}'`          |
+| api.deepseek.com                  | `curl -X POST http://localhost:8080/v1/chat/completions -d '{"model":"deepseek/deepseek-reasoner","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Hi"}]}'`                |
+| generativelanguage.googleapis.com | `curl -X POST http://localhost:8080/v1/chat/completions -d '{"model":"google/models/gemini-2.5-flash-lite","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Hi"}]}'`       |
+| api.mistral.ai                    | `curl -X POST http://localhost:8080/v1/chat/completions -d '{"model":"mistral/pixtral-large-latest","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Hi"}]}'`              |
 
 You can set the stream as an optional flag in the request body to enable streaming of tokens. The default value is `false`.
 
