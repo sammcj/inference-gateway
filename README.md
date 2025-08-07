@@ -490,7 +490,8 @@ Metrics automatically detect providers from:
 - [Cohere](https://docs.cohere.com/docs/the-cohere-platform)
 - [Anthropic](https://docs.anthropic.com/en/api/getting-started)
 - [DeepSeek](https://api-docs.deepseek.com/)
-- [Google](https://generativelanguage.googleapis.com/v1beta/openai)
+- [Google](https://aistudio.google.com/)
+- [Mistral](https://mistral.ai/)
 
 ## Configuration
 
