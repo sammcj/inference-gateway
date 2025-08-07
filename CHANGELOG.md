@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.19.0](https://github.com/inference-gateway/inference-gateway/compare/v0.18.0...v0.19.0) (2025-08-07)
+
+### ✨ Features
+
+* **providers:** Add Mistral AI as a provider ([#173](https://github.com/inference-gateway/inference-gateway/issues/173)) ([65d46dd](https://github.com/inference-gateway/inference-gateway/commit/65d46dd8971043dce320e21da7d3abe4c7062509))
+
 ## [0.18.0](https://github.com/inference-gateway/inference-gateway/compare/v0.17.2...v0.18.0) (2025-08-02)
 
 ### ✨ Features
