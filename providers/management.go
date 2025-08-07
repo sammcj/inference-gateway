@@ -23,9 +23,9 @@ func (p *ProviderImpl) prepareStreamingRequest(clientReq CreateChatCompletionReq
 		IncludeUsage: true,
 	}
 
-	// Special case - cohere doesn't like stream_options, so we don't
+	// Special case - cohere and mistral don't like stream_options, so we don't
 	// include it - probably they haven't implemented it yet in their OpenAI "compatible" API
-	if *p.GetID() == CohereID {
+	if *p.GetID() == CohereID || *p.GetID() == MistralID {
 		clientReq.StreamOptions = nil
 	}
 
@@ -194,6 +194,13 @@ func (p *ProviderImpl) ListModels(ctx context.Context) (ListModelsResponse, erro
 		transformer = &resp
 	case GoogleID:
 		var resp ListModelsResponseGoogle
+		if err := json.NewDecoder(response.Body).Decode(&resp); err != nil {
+			p.logger.Error("Failed to unmarshal response", err, "provider", p.GetName(), "url", url)
+			return ListModelsResponse{}, err
+		}
+		transformer = &resp
+	case MistralID:
+		var resp ListModelsResponseMistral
 		if err := json.NewDecoder(response.Body).Decode(&resp); err != nil {
 			p.logger.Error("Failed to unmarshal response", err, "provider", p.GetName(), "url", url)
 			return ListModelsResponse{}, err
