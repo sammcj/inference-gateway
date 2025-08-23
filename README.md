@@ -40,15 +40,22 @@ The Inference Gateway is a proxy server designed to facilitate access to various
   - [Prometheus Configuration](#prometheus-configuration)
   - [Provider Detection](#provider-detection)
 - [Supported API's](#supported-apis)
-- [Configuration](#configuration)
 - [Development Environment](#development-environment)
   - [Prerequisites](#prerequisites)
   - [Quick Start](#quick-start)
   - [Available Tools](#available-tools)
   - [Common Commands](#common-commands)
   - [Environment Details](#environment-details)
+- [Configuration](#configuration)
 - [Examples](#examples)
 - [SDKs](#sdks)
+- [CLI Tool](#cli-tool)
+  - [Key Features](#key-features-1)
+  - [Installation](#installation)
+    - [Using Go Install](#using-go-install)
+    - [Using Install Script](#using-install-script)
+    - [Manual Download](#manual-download)
+  - [Quick Start](#quick-start-1)
 - [License](#license)
 - [Contributing](#contributing)
 - [Motivation](#motivation)
@@ -75,6 +82,7 @@ The Inference Gateway is a proxy server designed to facilitate access to various
 - 📈 **Scalable**: Easily scalable and can be used in a distributed environment - with <a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/" target="_blank">HPA</a> in Kubernetes.
 - 🔒 **Compliance** and Data Privacy: This project does not collect data or analytics, ensuring compliance and data privacy.
 - 🏠 **Self-Hosted**: Can be self-hosted for complete control over the deployment environment.
+- ⌨️ **CLI Tool**: Improved command-line interface for managing and interacting with the Inference Gateway
 
 ## Overview
 
@@ -684,6 +692,57 @@ More SDKs could be generated using the OpenAPI specification. The following SDKs
 - [Rust](https://github.com/inference-gateway/rust-sdk)
 - [Go](https://github.com/inference-gateway/go-sdk)
 - [Python](https://github.com/inference-gateway/python-sdk)
+
+## CLI Tool
+
+The Inference Gateway CLI provides a powerful command-line interface for managing and interacting with the Inference Gateway. It offers tools for configuration, monitoring, and management of inference services.
+
+### Key Features
+
+- **Status Monitoring**: Check gateway health and resource usage
+- **Interactive Chat**: Chat with models using an interactive interface
+- **Configuration Management**: Manage gateway settings via YAML config
+- **Project Initialization**: Set up local project configurations
+- **Tool Execution**: LLMs can execute whitelisted commands and tools
+
+### Installation
+
+#### Using Go Install
+
+```bash
+go install github.com/inference-gateway/cli@latest
+```
+
+#### Using Install Script
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/inference-gateway/cli/main/install.sh | bash
+```
+
+#### Manual Download
+
+Download the latest release from the [releases page](https://github.com/inference-gateway/cli/releases).
+
+### Quick Start
+
+1. **Initialize project configuration:**
+
+   ```bash
+   infer init
+   ```
+
+2. **Check gateway status:**
+
+   ```bash
+   infer status
+   ```
+
+3. **Start an interactive chat:**
+   ```bash
+   infer chat
+   ```
+
+For more details, see the [CLI documentation](https://github.com/inference-gateway/cli).
 
 ## License
 
