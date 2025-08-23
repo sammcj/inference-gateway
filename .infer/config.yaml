@@ -160,8 +160,8 @@ agent:
   max_turns: 50
   max_tokens: 4096
   optimization:
-    enabled: false
-    max_history: 10
-    compact_threshold: 20
+    enabled: true
+    max_history: 20
+    compact_threshold: 30
     truncate_large_outputs: true
     skip_redundant_confirmations: true
