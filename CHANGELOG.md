@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.19.1](https://github.com/inference-gateway/inference-gateway/compare/v0.19.0...v0.19.1) (2025-08-23)
+
+### 👷 CI
+
+* Update golangci-lint installation script to version v2.4.0 in CI workflows ([5f00ebe](https://github.com/inference-gateway/inference-gateway/commit/5f00ebecfb2f04ab5fc4afd415e6a814a143408f))
+
+### 📚 Documentation
+
+* Add Google models to REST endpoints documentation ([658aaf9](https://github.com/inference-gateway/inference-gateway/commit/658aaf9734ce78a3dcf92644cf5c5c6433eee9cd))
+* Improve README with CLI Tool section and installation instructions ([6d081a0](https://github.com/inference-gateway/inference-gateway/commit/6d081a0d66be82441962125b9e422426e4fa8aff))
+* Update Google and Mistral links in metrics section ([f41c475](https://github.com/inference-gateway/inference-gateway/commit/f41c4759b47bc7afe7f0269e87e70d6f0ddf68fc))
+
+### 🔧 Miscellaneous
+
+* **cli:** Enable optimization and adjust parameters in config.yaml ([b5f3f59](https://github.com/inference-gateway/inference-gateway/commit/b5f3f597695ba6b5cb1931dc5c70dab709e27482))
+* Update golangci-lint version and installation method in dev container ([8c4a4fd](https://github.com/inference-gateway/inference-gateway/commit/8c4a4fd635fd1a59cd084c2facfc4e442bd6a504))
+* Update GoReleaser version to v2.11.2 in Dockerfile ([89ddec1](https://github.com/inference-gateway/inference-gateway/commit/89ddec167500923af977b88e96827553d4221d24))
+* Update TASK_VERSION to v3.44.1 in dev container ([03eff9d](https://github.com/inference-gateway/inference-gateway/commit/03eff9d44126f41f63f24da1c2ca2f1aa3e5784f))
+
+### 🔨 Miscellaneous
+
+* Add Flox for development environment ([#175](https://github.com/inference-gateway/inference-gateway/issues/175)) ([2b306c3](https://github.com/inference-gateway/inference-gateway/commit/2b306c3b3c25f3cc9e62b3c71f880ab907f04032))
+* Improve dev container caching and add Inference Gateway CLI ([d09691d](https://github.com/inference-gateway/inference-gateway/commit/d09691dd9a14fc7f842569d47637058290ba9b54))
+
 ## [0.19.0](https://github.com/inference-gateway/inference-gateway/compare/v0.18.0...v0.19.0) (2025-08-07)
 
 ### ✨ Features
