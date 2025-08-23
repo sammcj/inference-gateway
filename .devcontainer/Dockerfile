@@ -1,6 +1,6 @@
 FROM mcr.microsoft.com/devcontainers/go:1-1.24-bookworm
 
-ENV TASK_VERSION=v3.43.3 \
+ENV TASK_VERSION=v3.44.1 \
     CTLPTL_VERSION=0.8.42 \
     K3D_VERSION=v5.8.3 \
     KUBECTL_VERSION=v1.32.3 \
