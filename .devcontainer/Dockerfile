@@ -6,7 +6,7 @@ ENV TASK_VERSION=v3.43.3 \
     KUBECTL_VERSION=v1.32.3 \
     HELM_VERSION=v3.18.2 \
     GORELEASER_VERSION=v2.10.0 \
-    GOLANG_CI_LINT_VERSION=v2.1.6 \
+    GOLANG_CI_LINT_VERSION=v2.4.0 \
     GITHUB_CLI_VERSION=2.74.0 \
     NODE_VERSION=lts \
     SEMANTIC_RELEASE_VERSION=v24.2.5
@@ -38,7 +38,7 @@ RUN apt-get update && \
     # Install GoReleaser
     curl -fsSL https://github.com/goreleaser/goreleaser/releases/download/${GORELEASER_VERSION}/goreleaser_Linux_${architecture_pretty}.tar.gz | tar -xzv -C /usr/local/bin goreleaser && \
     # Install golangci-lint
-    curl -fsSL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b /usr/local/bin ${GOLANG_CI_LINT_VERSION} && \
+    curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s -- -b $(go env GOPATH)/bin ${GOLANG_CI_LINT_VERSION} && \
     # Install GitHub CLI
     curl -fsSL https://github.com/cli/cli/releases/download/v${GITHUB_CLI_VERSION}/gh_${GITHUB_CLI_VERSION}_linux_${architecture_pretty}.tar.gz -o /tmp/gh_${GITHUB_CLI_VERSION}_linux_${architecture_pretty}.tar.gz && \
     tar -xzf /tmp/gh_${GITHUB_CLI_VERSION}_linux_${architecture_pretty}.tar.gz -C /tmp && \
