@@ -1,4 +1,5 @@
-FROM mcr.microsoft.com/devcontainers/go:1-1.24-bookworm
+# Multi-stage build for better caching and smaller final image
+FROM mcr.microsoft.com/devcontainers/go:1-1.24-bookworm AS base
 
 ENV TASK_VERSION=v3.44.1 \
     CTLPTL_VERSION=0.8.42 \
@@ -7,58 +8,85 @@ ENV TASK_VERSION=v3.44.1 \
     HELM_VERSION=v3.18.2 \
     GORELEASER_VERSION=v2.11.2 \
     GOLANG_CI_LINT_VERSION=v2.4.0 \
-    GITHUB_CLI_VERSION=2.74.0 \
+    GITHUB_CLI_VERSION=2.78.0 \
     NODE_VERSION=lts \
-    SEMANTIC_RELEASE_VERSION=v24.2.5
+    SEMANTIC_RELEASE_VERSION=v24.2.7 \
+    INFERENCE_GATEWAY_CLI=v0.36.0
 
-RUN apt-get update && \
-    # Determine architecture
-    architecture=$(uname -m); \
-    architecture_pretty="arm64"; \
+# Determine architecture once and store as build arg
+RUN architecture=$(uname -m) && \
     if [ "$architecture" = "x86_64" ]; then \
-    architecture_pretty="amd64"; \
-    fi && \
-    echo "Installing depenenices for ${architecture}" && \
-    # Install networking utilities
+        echo "amd64" > /tmp/arch; \
+    else \
+        echo "arm64" > /tmp/arch; \
+    fi
+
+# Install system dependencies (stable layer)
+RUN apt-get update && \
     apt-get install -y iputils-ping dnsutils && \
-    # Install Node.js for Spectral
-    curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - && \
-    apt-get install -y nodejs && \
-    # Install Task
-    curl -s https://taskfile.dev/install.sh | sh -s -- -b /usr/local/bin ${TASK_VERSION} && \
-    # Install ctlptl
-    curl -fsSL https://github.com/tilt-dev/ctlptl/releases/download/v${CTLPTL_VERSION}/ctlptl.${CTLPTL_VERSION}.linux.${architecture_pretty}.tar.gz | tar -xzv -C /usr/local/bin ctlptl && \
-    # Install k3d
-    curl -fsSL https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | TAG=${K3D_VERSION} bash && \
-    # Install kubectl
-    curl -fsSL https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/${architecture_pretty}/kubectl -o /usr/local/bin/kubectl && \
-    chmod +x /usr/local/bin/kubectl && \
-    # Install helm
-    curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | HELM_INSTALL_DIR=/usr/local/bin HELM_VERSION=${HELM_VERSION} bash && \
-    # Install GoReleaser
-    curl -fsSL https://github.com/goreleaser/goreleaser/releases/download/${GORELEASER_VERSION}/goreleaser_Linux_${architecture_pretty}.tar.gz | tar -xzv -C /usr/local/bin goreleaser && \
-    # Install golangci-lint
-    curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s -- -b $(go env GOPATH)/bin ${GOLANG_CI_LINT_VERSION} && \
-    # Install GitHub CLI
-    curl -fsSL https://github.com/cli/cli/releases/download/v${GITHUB_CLI_VERSION}/gh_${GITHUB_CLI_VERSION}_linux_${architecture_pretty}.tar.gz -o /tmp/gh_${GITHUB_CLI_VERSION}_linux_${architecture_pretty}.tar.gz && \
-    tar -xzf /tmp/gh_${GITHUB_CLI_VERSION}_linux_${architecture_pretty}.tar.gz -C /tmp && \
-    chmod +x /tmp/gh_${GITHUB_CLI_VERSION}_linux_${architecture_pretty}/bin/gh && \
-    mv /tmp/gh_${GITHUB_CLI_VERSION}_linux_${architecture_pretty}/bin/gh /usr/local/bin/gh && \
-    # Install Spectral for OpenAPI linting
-    npm install -g @stoplight/spectral-cli && \
-    # Install semantic-release and plugins
-    npm install -g semantic-release@${SEMANTIC_RELEASE_VERSION} \
-                   @semantic-release/changelog \
-                   @semantic-release/git \
-                   @semantic-release/github \
-                   @semantic-release/exec \
-                   conventional-changelog-cli \
-                   conventional-changelog-conventionalcommits && \
-    # Install prettier for yaml and md files formatting
-    npm i -g prettier@3.6.2 && \
-    # Clean up
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+# Install Node.js (stable layer)
+RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - && \
+    apt-get install -y nodejs && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install task
+RUN architecture_pretty=$(cat /tmp/arch) && \
+    echo "Installing dependencies for ${architecture_pretty}" && \
+    curl -s https://taskfile.dev/install.sh | sh -s -- -b /usr/local/bin ${TASK_VERSION}
+
+# Install ctlptl
+RUN architecture_pretty=$(cat /tmp/arch) && \
+    curl -fsSL https://github.com/tilt-dev/ctlptl/releases/download/v${CTLPTL_VERSION}/ctlptl.${CTLPTL_VERSION}.linux.${architecture_pretty}.tar.gz | tar -xzv -C /usr/local/bin ctlptl
+
+# Install k3d
+RUN curl -fsSL https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | TAG=${K3D_VERSION} bash
+
+# Install kubectl
+RUN architecture_pretty=$(cat /tmp/arch) && \
+    curl -fsSL https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/${architecture_pretty}/kubectl -o /usr/local/bin/kubectl && \
+    chmod +x /usr/local/bin/kubectl
+
+# Install helm
+RUN curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | HELM_INSTALL_DIR=/usr/local/bin HELM_VERSION=${HELM_VERSION} bash
+
+# Install goreleaser
+RUN architecture_pretty=$(cat /tmp/arch) && \
+    curl -fsSL https://github.com/goreleaser/goreleaser/releases/download/${GORELEASER_VERSION}/goreleaser_Linux_${architecture_pretty}.tar.gz | tar -xzv -C /usr/local/bin goreleaser
+
+# Install golangci-lint
+RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s -- -b $(go env GOPATH)/bin ${GOLANG_CI_LINT_VERSION}
+
+# Install gh cli
+RUN architecture_pretty=$(cat /tmp/arch) && \
+    curl -fsSL https://github.com/cli/cli/releases/download/v${GITHUB_CLI_VERSION}/gh_${GITHUB_CLI_VERSION}_linux_${architecture_pretty}.tar.gz -o /tmp/gh.tar.gz && \
+    tar -xzf /tmp/gh.tar.gz -C /tmp && \
+    find /tmp -name "gh" -type f -executable -exec mv {} /usr/local/bin/gh \; && \
+    rm -rf /tmp/gh*
+
+# Install Inference Gateway CLI
+RUN curl -fsSL https://raw.githubusercontent.com/inference-gateway/cli/main/install.sh | bash -s -- --version ${INFERENCE_GATEWAY_CLI}
+
+# Install Node.js packages
+RUN npm install -g @stoplight/spectral-cli
+
+# Install semantic-release
+RUN npm install -g \
+    semantic-release@${SEMANTIC_RELEASE_VERSION} \
+    @semantic-release/changelog \
+    @semantic-release/git \
+    @semantic-release/github \
+    @semantic-release/exec \
+    conventional-changelog-cli \
+    conventional-changelog-conventionalcommits
+
+RUN npm install -g prettier@3.6.2
+
+# Development stage with all tools
+FROM base AS development
 
 USER vscode
 
@@ -85,4 +113,5 @@ RUN echo "source <(gh completion -s zsh)" >> /home/vscode/.zshrc && \
     echo "source <(k3d completion zsh)" >> /home/vscode/.zshrc && \
     echo "source <(ctlptl completion zsh)" >> /home/vscode/.zshrc && \
     echo "source <(task --completion zsh)" >> /home/vscode/.zshrc && \
-    echo "source <(goreleaser completion zsh)" >> /home/vscode/.zshrc
+    echo "source <(goreleaser completion zsh)" >> /home/vscode/.zshrc && \
+    echo "source <(infer completion zsh)" >> /home/vscode/.zshrc
