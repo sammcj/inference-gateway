@@ -29,7 +29,7 @@ tools:
     protected_paths:
       - .infer/
       - .git/
-      - '*.env'
+      - '*.env*'
   bash:
     enabled: true
     whitelist:
