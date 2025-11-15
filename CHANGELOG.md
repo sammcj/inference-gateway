@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.20.1](https://github.com/inference-gateway/inference-gateway/compare/v0.20.0...v0.20.1) (2025-11-15)
+
+### ♻️ Improvements
+
+* **config:** Add missing fields to startup debug log ([#197](https://github.com/inference-gateway/inference-gateway/issues/197)) ([354cdc7](https://github.com/inference-gateway/inference-gateway/commit/354cdc71e0dd41c1a9a0d32e479064d531981f2b))
+
 ## [0.20.0](https://github.com/inference-gateway/inference-gateway/compare/v0.19.8...v0.20.0) (2025-11-15)
 
 ### ✨ Features
