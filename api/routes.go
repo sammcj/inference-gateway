@@ -527,12 +527,35 @@ func (router *RouterImpl) ChatCompletionsHandler(c *gin.Context) {
 		return
 	}
 
-	router.logger.Debug("server read timeout", "timeout", router.cfg.Server.ReadTimeout)
-
 	ctx, cancel := context.WithTimeout(c, router.cfg.Server.ReadTimeout)
 	defer cancel()
 
-	// Streaming response
+	if router.cfg.EnableVision {
+		hasImageContent := false
+		for _, message := range req.Messages {
+			if message.HasImageContent() {
+				hasImageContent = true
+				break
+			}
+		}
+
+		if hasImageContent {
+			supportsVision, err := provider.SupportsVision(ctx, req.Model)
+			if err != nil {
+				router.logger.Error("failed to check vision support", err, "provider", providerID, "model", req.Model)
+				c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "Failed to check model capabilities"})
+				return
+			}
+			if !supportsVision {
+				router.logger.Error("image content sent to non-vision model", nil, "provider", providerID, "model", req.Model)
+				c.JSON(http.StatusBadRequest, ErrorResponse{Error: fmt.Sprintf("Model %s does not support image content. Please use a vision-capable model.", req.Model)})
+				return
+			}
+		}
+	}
+
+	router.logger.Debug("server read timeout", "timeout", router.cfg.Server.ReadTimeout)
+
 	if req.Stream != nil && *req.Stream {
 		c.Header("Content-Type", "text/event-stream")
 		c.Header("Cache-Control", "no-cache")
@@ -576,7 +599,6 @@ func (router *RouterImpl) ChatCompletionsHandler(c *gin.Context) {
 		return
 	}
 
-	// Non-streaming response
 	c.Header("Content-Type", "application/json")
 	response, err := provider.ChatCompletions(ctx, req)
 	if err != nil {

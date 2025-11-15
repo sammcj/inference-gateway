@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	l "github.com/inference-gateway/inference-gateway/logger"
 )
@@ -78,18 +79,20 @@ type IProvider interface {
 	ListModels(ctx context.Context) (ListModelsResponse, error)
 	ChatCompletions(ctx context.Context, clientReq CreateChatCompletionRequest) (CreateChatCompletionResponse, error)
 	StreamChatCompletions(ctx context.Context, clientReq CreateChatCompletionRequest) (<-chan []byte, error)
+	SupportsVision(ctx context.Context, model string) (bool, error)
 }
 
 type ProviderImpl struct {
-	id           *Provider
-	name         string
-	url          string
-	token        string
-	authType     string
-	extraHeaders map[string][]string
-	endpoints    Endpoints
-	client       Client
-	logger       l.Logger
+	id             *Provider
+	name           string
+	url            string
+	token          string
+	authType       string
+	supportsVision bool
+	extraHeaders   map[string][]string
+	endpoints      Endpoints
+	client         Client
+	logger         l.Logger
 }
 
 func (p *ProviderImpl) GetID() *Provider {
@@ -322,4 +325,38 @@ func (p *ProviderImpl) StreamChatCompletions(ctx context.Context, clientReq Crea
 	}()
 
 	return stream, nil
+}
+
+// SupportsVision checks if the provider and model support vision/image processing
+func (p *ProviderImpl) SupportsVision(ctx context.Context, model string) (bool, error) {
+	if !p.supportsVision {
+		return false, nil
+	}
+
+	modelLower := strings.ToLower(model)
+
+	switch *p.id {
+	case OpenaiID:
+		if strings.Contains(modelLower, "gpt-5") {
+			return true, nil
+		}
+
+		if strings.Contains(modelLower, "gpt-4.1") {
+			return true, nil
+		}
+
+		if strings.Contains(modelLower, "gpt-4") &&
+			(strings.Contains(modelLower, "vision") ||
+				strings.Contains(modelLower, "turbo") ||
+				strings.Contains(modelLower, "gpt-4o")) {
+			return true, nil
+		}
+		return false, nil
+	case AnthropicID:
+		return strings.Contains(modelLower, "claude-3") ||
+			strings.Contains(modelLower, "claude-4"), nil
+	default:
+		return strings.Contains(modelLower, "vision") ||
+			strings.Contains(modelLower, "multimodal"), nil
+	}
 }
