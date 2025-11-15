@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.19.4](https://github.com/inference-gateway/inference-gateway/compare/v0.19.3...v0.19.4) (2025-11-15)
+
+### 🔧 Miscellaneous
+
+* **deps:** Update dependencies and delete claude code review workflow ([#186](https://github.com/inference-gateway/inference-gateway/issues/186)) ([184ed0d](https://github.com/inference-gateway/inference-gateway/commit/184ed0d91370365d51a0c322106e02c09c40ac3a))
+* **deps:** Update quic-go dependency to v0.54.1 across all modules ([#189](https://github.com/inference-gateway/inference-gateway/issues/189)) ([58c157c](https://github.com/inference-gateway/inference-gateway/commit/58c157c46dde74a211e8f1ec5b0cbfb15751bbf4))
+
 ## [0.19.3](https://github.com/inference-gateway/inference-gateway/compare/v0.19.2...v0.19.3) (2025-09-29)
 
 ### ♻️ Improvements
