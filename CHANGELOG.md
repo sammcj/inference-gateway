@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.19.6](https://github.com/inference-gateway/inference-gateway/compare/v0.19.5...v0.19.6) (2025-11-15)
+
+### 🔧 Miscellaneous
+
+* **docs:** Update Kubernetes examples to use k3s v1.34.1 and ingress-nginx v4.14.0 ([#191](https://github.com/inference-gateway/inference-gateway/issues/191)) ([65a1d53](https://github.com/inference-gateway/inference-gateway/commit/65a1d53e51e2d5d8fa0103de27412d79e14ad944))
+
 ## [0.19.5](https://github.com/inference-gateway/inference-gateway/compare/v0.19.4...v0.19.5) (2025-11-15)
 
 ### 🔧 Miscellaneous
