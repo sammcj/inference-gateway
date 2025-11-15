@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.19.8](https://github.com/inference-gateway/inference-gateway/compare/v0.19.7...v0.19.8) (2025-11-15)
+
+### 🔧 Miscellaneous
+
+* **ci:** Add Docker image description label to GoReleaser config ([#194](https://github.com/inference-gateway/inference-gateway/issues/194)) ([61733d4](https://github.com/inference-gateway/inference-gateway/commit/61733d4627da295617aac0ee7968b9ec00d69225))
+* **ci:** Improve GoReleaser configuration for reproducibility and OCI compliance ([#195](https://github.com/inference-gateway/inference-gateway/issues/195)) ([5be4819](https://github.com/inference-gateway/inference-gateway/commit/5be481903661578adde58ff8da0958d3a571323d))
+
 ## [0.19.7](https://github.com/inference-gateway/inference-gateway/compare/v0.19.6...v0.19.7) (2025-11-15)
 
 ### 🔧 Miscellaneous
