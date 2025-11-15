@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.20.0](https://github.com/inference-gateway/inference-gateway/compare/v0.19.8...v0.20.0) (2025-11-15)
+
+### ✨ Features
+
+* **api:** Add multimodal image content support to Chat Completion API ([#177](https://github.com/inference-gateway/inference-gateway/issues/177)) ([6882aa2](https://github.com/inference-gateway/inference-gateway/commit/6882aa2113954e7205b358dc73d450446f98eb4c)), closes [#176](https://github.com/inference-gateway/inference-gateway/issues/176)
+
+### 🔧 Miscellaneous
+
+* Add missing annotations for multi-arch builds in GoReleaser config ([#196](https://github.com/inference-gateway/inference-gateway/issues/196)) ([945d200](https://github.com/inference-gateway/inference-gateway/commit/945d200d9fe139725566ee32a56eddbb1c459266))
+
 ## [0.19.8](https://github.com/inference-gateway/inference-gateway/compare/v0.19.7...v0.19.8) (2025-11-15)
 
 ### 🔧 Miscellaneous
