@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.19.5](https://github.com/inference-gateway/inference-gateway/compare/v0.19.4...v0.19.5) (2025-11-15)
+
+### 🔧 Miscellaneous
+
+* **deps:** Update cosign-installer to v4.0.0 in artifacts workflow ([#190](https://github.com/inference-gateway/inference-gateway/issues/190)) ([fae964c](https://github.com/inference-gateway/inference-gateway/commit/fae964c6b5a811d3523337f416160bb61552d796))
+
 ## [0.19.4](https://github.com/inference-gateway/inference-gateway/compare/v0.19.3...v0.19.4) (2025-11-15)
 
 ### 🔧 Miscellaneous
