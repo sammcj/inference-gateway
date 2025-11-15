@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.19.7](https://github.com/inference-gateway/inference-gateway/compare/v0.19.6...v0.19.7) (2025-11-15)
+
+### 🔧 Miscellaneous
+
+* **ci:** Migrate GoReleaser to dockers_v2 format ([#193](https://github.com/inference-gateway/inference-gateway/issues/193)) ([a491149](https://github.com/inference-gateway/inference-gateway/commit/a4911498bcb19f711035a5708f671a86151f4a89)), closes [#192](https://github.com/inference-gateway/inference-gateway/issues/192)
+
 ## [0.19.6](https://github.com/inference-gateway/inference-gateway/compare/v0.19.5...v0.19.6) (2025-11-15)
 
 ### 🔧 Miscellaneous
