@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.20.2](https://github.com/inference-gateway/inference-gateway/compare/v0.20.1...v0.20.2) (2025-11-17)
+
+### 📚 Documentation
+
+* **readme:** Add installation guide and version/help flags ([#198](https://github.com/inference-gateway/inference-gateway/issues/198)) ([8d03fd5](https://github.com/inference-gateway/inference-gateway/commit/8d03fd5efcffdaff90529cfcfca0fe697291fa19))
+
 ## [0.20.1](https://github.com/inference-gateway/inference-gateway/compare/v0.20.0...v0.20.1) (2025-11-15)
 
 ### ♻️ Improvements
