@@ -1,5 +1,6 @@
 .devcontainer/** linguist-vendored=true
 examples/** linguist-vendored=true
+install.sh linguist-vendored=true
 
 config/config.go linguist-generated=true
 
