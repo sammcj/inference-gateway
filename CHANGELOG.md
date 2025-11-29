@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.22.1](https://github.com/inference-gateway/inference-gateway/compare/v0.22.0...v0.22.1) (2025-11-29)
+
+### ♻️ Improvements
+
+* **providers:** Improve vision model detection ([#212](https://github.com/inference-gateway/inference-gateway/issues/212)) ([cc2b619](https://github.com/inference-gateway/inference-gateway/commit/cc2b61931763ce77a99fdcd9dcf001d78b444630))
+
+### 🔨 Miscellaneous
+
+* **deps:** Bump golang.org/x/crypto ([#210](https://github.com/inference-gateway/inference-gateway/issues/210)) ([698b2dd](https://github.com/inference-gateway/inference-gateway/commit/698b2dd31e86f5de0accf3902f26ef3b2c7bc435))
+* **deps:** Bump golang.org/x/crypto ([#211](https://github.com/inference-gateway/inference-gateway/issues/211)) ([b50fe2a](https://github.com/inference-gateway/inference-gateway/commit/b50fe2afb8d40b5b0932bde4ff943aec5bb58387))
+
 ## [0.22.0](https://github.com/inference-gateway/inference-gateway/compare/v0.21.0...v0.22.0) (2025-11-21)
 
 ### ✨ Features
