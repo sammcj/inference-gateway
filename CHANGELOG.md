@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.22.2](https://github.com/inference-gateway/inference-gateway/compare/v0.22.1...v0.22.2) (2025-11-29)
+
+### ♻️ Improvements
+
+* **providers:** Improve Claude 4 vision model detection ([#213](https://github.com/inference-gateway/inference-gateway/issues/213)) ([6a64730](https://github.com/inference-gateway/inference-gateway/commit/6a647300afde31e1933838d5f7a24df547552917))
+
 ## [0.22.1](https://github.com/inference-gateway/inference-gateway/compare/v0.22.0...v0.22.1) (2025-11-29)
 
 ### ♻️ Improvements
