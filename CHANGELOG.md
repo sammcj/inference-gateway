@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.22.4](https://github.com/inference-gateway/inference-gateway/compare/v0.22.3...v0.22.4) (2025-12-04)
+
+### 📚 Documentation
+
+* Move installation right after the overview section ([a3fda4a](https://github.com/inference-gateway/inference-gateway/commit/a3fda4a0ac3675d510d71935e68d6967335dd3a6))
+
+### 🔧 Miscellaneous
+
+* Add markdownlint and improve docs ([#218](https://github.com/inference-gateway/inference-gateway/issues/218)) ([f351330](https://github.com/inference-gateway/inference-gateway/commit/f35133090388218bbf50405c42ec7fb2d549cf29))
+
 ## [0.22.3](https://github.com/inference-gateway/inference-gateway/compare/v0.22.2...v0.22.3) (2025-12-04)
 
 ### ♻️ Improvements
