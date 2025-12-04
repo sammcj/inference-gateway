@@ -97,7 +97,7 @@ plugins:
         docker run -d \
           -p 8080:8080 \
           -e OPENAI_API_KEY=your-api-key \
-          ghcr.io/inference-gateway/inference-gateway:v${nextRelease.version}
+          ghcr.io/inference-gateway/inference-gateway:${nextRelease.version}
         ```
 
         **Using Docker Compose:**
