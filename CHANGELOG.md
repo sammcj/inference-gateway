@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.22.5](https://github.com/inference-gateway/inference-gateway/compare/v0.22.4...v0.22.5) (2025-12-04)
+
+### 🐛 Bug Fixes
+
+* **docs:** Remove v prefix ([135b3b6](https://github.com/inference-gateway/inference-gateway/commit/135b3b6e274db1208dbca35f3d93bf47a0c98f09))
+
 ## [0.22.4](https://github.com/inference-gateway/inference-gateway/compare/v0.22.3...v0.22.4) (2025-12-04)
 
 ### 📚 Documentation
