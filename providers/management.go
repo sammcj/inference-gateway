@@ -40,12 +40,21 @@ func (p *ProviderImpl) createHTTPRequest(ctx context.Context, url string, body [
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	// Optimize headers for streaming
 	req.Header.Set("Accept", "text/event-stream, application/json")
 	req.Header.Set("Cache-Control", "no-cache")
 	req.Header.Set("Connection", "keep-alive")
 
 	return req, nil
+}
+
+// HTTPError represents an HTTP error with status code and message
+type HTTPError struct {
+	StatusCode int
+	Message    string
+}
+
+func (e *HTTPError) Error() string {
+	return e.Message
 }
 
 func (p *ProviderImpl) handleHTTPError(response *http.Response, operation string) error {
@@ -56,12 +65,18 @@ func (p *ProviderImpl) handleHTTPError(response *http.Response, operation string
 	bodyBytes, readErr := io.ReadAll(response.Body)
 	if readErr != nil {
 		p.logger.Error("Failed to read error response body", readErr, "provider", p.GetName())
-		return fmt.Errorf("HTTP error: %d - %s", response.StatusCode, operation)
+		return &HTTPError{
+			StatusCode: response.StatusCode,
+			Message:    fmt.Sprintf("failed to read response body (status %d)", response.StatusCode),
+		}
 	}
 
 	errorMsg := string(bodyBytes)
-	err := fmt.Errorf("HTTP error: %d - %s: %s", response.StatusCode, operation, errorMsg)
-	p.logger.Error("Non-200 status code", err, "provider", p.GetName(), "statusCode", response.StatusCode)
+	err := &HTTPError{
+		StatusCode: response.StatusCode,
+		Message:    errorMsg,
+	}
+	p.logger.Error("Non-200 status code", err, "provider", p.GetName(), "statusCode", response.StatusCode, "operation", operation)
 	return err
 }
 

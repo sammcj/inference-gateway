@@ -572,7 +572,13 @@ func (router *RouterImpl) ChatCompletionsHandler(c *gin.Context) {
 		streamCh, err := provider.StreamChatCompletions(ctx, req)
 		if err != nil {
 			router.logger.Error("failed to start streaming", err, "provider", providerID)
-			c.JSON(http.StatusBadRequest, ErrorResponse{Error: "Failed to start streaming"})
+
+			statusCode := http.StatusBadRequest
+			if httpErr, ok := err.(*providers.HTTPError); ok {
+				statusCode = httpErr.StatusCode
+			}
+
+			c.JSON(statusCode, ErrorResponse{Error: err.Error()})
 			return
 		}
 
@@ -614,7 +620,13 @@ func (router *RouterImpl) ChatCompletionsHandler(c *gin.Context) {
 			return
 		}
 		router.logger.Error("failed to generate tokens", err, "provider", providerID)
-		c.JSON(http.StatusBadRequest, ErrorResponse{Error: fmt.Sprintf("Failed to generate tokens: %s", err)})
+
+		statusCode := http.StatusBadRequest
+		if httpErr, ok := err.(*providers.HTTPError); ok {
+			statusCode = httpErr.StatusCode
+		}
+
+		c.JSON(statusCode, ErrorResponse{Error: err.Error()})
 		return
 	}
 
