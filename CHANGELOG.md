@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.22.3](https://github.com/inference-gateway/inference-gateway/compare/v0.22.2...v0.22.3) (2025-12-04)
+
+### ♻️ Improvements
+
+* Propagate the actual error from the provider to the client ([e3a9feb](https://github.com/inference-gateway/inference-gateway/commit/e3a9febd6c889a6325e0e4d2f02ee30a53e1c6cb))
+
+### 🔧 Miscellaneous
+
+* **deps:** Bump golang.org/x/crypto from 0.40.0 to 0.45.0 in the examples ([b475adf](https://github.com/inference-gateway/inference-gateway/commit/b475adf99b897c8a2c50ce247cbf99c3666d60c6))
+* **deps:** Update overall dependecies ([42737ed](https://github.com/inference-gateway/inference-gateway/commit/42737ed2fc9898ad27614a189b9a33ca1ada00a4))
+* **style:** Run task format ([e966e07](https://github.com/inference-gateway/inference-gateway/commit/e966e07f00cad71cf9038245278d24e89fe2d1ac))
+
+### 🔨 Miscellaneous
+
+* **deps:** Bump @modelcontextprotocol/sdk ([#215](https://github.com/inference-gateway/inference-gateway/issues/215)) ([839953b](https://github.com/inference-gateway/inference-gateway/commit/839953bd59f57c2997723751fea9cab91a5d0886))
+* **deps:** Bump express in /examples/docker-compose/mcp/pizza-server ([#214](https://github.com/inference-gateway/inference-gateway/issues/214)) ([a81dba7](https://github.com/inference-gateway/inference-gateway/commit/a81dba71638566c95c1b3fe2b6edb58846a3bb5e))
+* **deps:** Bump golang.org/x/crypto ([#216](https://github.com/inference-gateway/inference-gateway/issues/216)) ([1a89da5](https://github.com/inference-gateway/inference-gateway/commit/1a89da564754993a363d97e8e76a2ef3aa3c828f))
+
 ## [0.22.2](https://github.com/inference-gateway/inference-gateway/compare/v0.22.1...v0.22.2) (2025-11-29)
 
 ### ♻️ Improvements
