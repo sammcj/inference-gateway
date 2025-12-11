@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.22.7](https://github.com/inference-gateway/inference-gateway/compare/v0.22.6...v0.22.7) (2025-12-11)
+
+### 📚 Documentation
+
+* Add AGENTS.md for AI agent guidance ([91c2131](https://github.com/inference-gateway/inference-gateway/commit/91c2131a64b93066e1d692947c538b3a13903df6))
+
+### 🔧 Miscellaneous
+
+* **deps:** Bump infer CLI version to its latest ([df3f040](https://github.com/inference-gateway/inference-gateway/commit/df3f04069df85cefcaa9ec8a544c4803f15951d2))
+* **deps:** Bump semantic-release to its latest version ([a3405b5](https://github.com/inference-gateway/inference-gateway/commit/a3405b50a8a9d9bb7d6c830c3da16c012051a452))
+
 ## [0.22.6](https://github.com/inference-gateway/inference-gateway/compare/v0.22.5...v0.22.6) (2025-12-11)
 
 ### 🔧 Miscellaneous
