@@ -10,7 +10,7 @@ ENV TASK_VERSION=v3.45.5 \
     GOLANG_CI_LINT_VERSION=v2.6.2 \
     GITHUB_CLI_VERSION=2.83.0 \
     NODE_VERSION=lts \
-    SEMANTIC_RELEASE_VERSION=v24.2.9 \
+    SEMANTIC_RELEASE_VERSION=v25.0.2 \
     INFERENCE_GATEWAY_CLI=v0.53.4
 
 # Determine architecture once and store as build arg
