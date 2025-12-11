@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.22.6](https://github.com/inference-gateway/inference-gateway/compare/v0.22.5...v0.22.6) (2025-12-11)
+
+### 🔧 Miscellaneous
+
+* **deps:** Bump github.com/quic-go/quic-go from 0.54.1 to 0.57.0 ([#221](https://github.com/inference-gateway/inference-gateway/issues/221)) ([af3fbb5](https://github.com/inference-gateway/inference-gateway/commit/af3fbb5be02170aac6a5130f67c451dbb172894e))
+* **deps:** Bump github.com/quic-go/quic-go from 0.54.1 to 0.57.0 in /examples/*/mcp/* ([#220](https://github.com/inference-gateway/inference-gateway/issues/220)) ([591a7f0](https://github.com/inference-gateway/inference-gateway/commit/591a7f0bd5771d9dec66b2cc2d2d83de9260281b))
+
 ## [0.22.5](https://github.com/inference-gateway/inference-gateway/compare/v0.22.4...v0.22.5) (2025-12-04)
 
 ### 🐛 Bug Fixes
