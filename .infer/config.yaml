@@ -1,15 +1,21 @@
+container_runtime:
+  type: docker
 gateway:
   url: http://localhost:8080
   api_key: ''
   timeout: 200
   oci: ghcr.io/inference-gateway/inference-gateway:latest
   run: true
-  docker: true
+  standalone_binary: true
   exclude_models:
     - ollama_cloud/cogito-2.1:671b
     - ollama_cloud/kimi-k2:1t
     - ollama_cloud/kimi-k2-thinking
     - ollama_cloud/deepseek-v3.1:671b
+    - groq/whisper-large-v3
+    - groq/whisper-large-v3-turbo
+    - groq/playai-tts
+    - groq/playai-tts-arabic
   vision_enabled: true
 client:
   timeout: 200
@@ -42,6 +48,7 @@ tools:
       - '*.env'
   bash:
     enabled: true
+    timeout: 120
     whitelist:
       commands:
         - ls
@@ -62,6 +69,11 @@ tools:
         - ^git diff
         - ^git remote( -v)?$
         - ^git show
+    background_shells:
+      enabled: true
+      max_concurrent: 5
+      max_output_buffer_mb: 10
+      retention_minutes: 60
   read:
     enabled: true
     require_approval: false
@@ -497,12 +509,32 @@ chat:
         description: move cursor to end
         category: text_editing
         enabled: true
+      tools_background_shell:
+        keys:
+          - ctrl+b
+        description: move running bash command to background
+        category: tools
+        enabled: true
       tools_toggle_tool_expansion:
         keys:
           - ctrl+o
         description: expand/collapse tool results
         category: tools
         enabled: true
+  status_bar:
+    enabled: true
+    indicators:
+      model: true
+      theme: true
+      max_output: false
+      a2a_agents: true
+      tools: true
+      background_shells: true
+      mcp: true
+      context_usage: true
+      session_tokens: true
+      cost: true
+      git_branch: true
 a2a:
   enabled: true
   cache:
@@ -531,6 +563,18 @@ a2a:
       download_dir: /tmp/downloads
       timeout_seconds: 30
       require_approval: true
+mcp:
+  enabled: false
+  connection_timeout: 30
+  discovery_timeout: 30
+  liveness_probe_enabled: true
+  liveness_probe_interval: 10
+  max_retries: 10
+  servers: []
+pricing:
+  enabled: true
+  currency: USD
+  custom_prices: {}
 init:
   prompt: |-
     Please analyze this project and generate a comprehensive AGENTS.md file. Start by using the Tree tool to understand the project structure.
