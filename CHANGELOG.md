@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.22.8](https://github.com/inference-gateway/inference-gateway/compare/v0.22.7...v0.22.8) (2025-12-12)
+
+### ♻️ Improvements
+
+* Gracefully handle images sent to non-vision models ([#223](https://github.com/inference-gateway/inference-gateway/issues/223)) ([06fb970](https://github.com/inference-gateway/inference-gateway/commit/06fb970c48563e74f954786adc1c6dc941d5f34f))
+
+### 👷 CI
+
+* Setup infer workflow ([#222](https://github.com/inference-gateway/inference-gateway/issues/222)) ([2c235be](https://github.com/inference-gateway/inference-gateway/commit/2c235be1645c0e2330860b1d008c925d3c3dc2a2))
+
+### 🔧 Miscellaneous
+
+* **deps:** Bump claude code to its latest for development ([9c4a7ee](https://github.com/inference-gateway/inference-gateway/commit/9c4a7eec0315ed7294147752d0bce36f4246358b))
+
 ## [0.22.7](https://github.com/inference-gateway/inference-gateway/compare/v0.22.6...v0.22.7) (2025-12-11)
 
 ### 📚 Documentation
