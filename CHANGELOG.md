@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.22.9](https://github.com/inference-gateway/inference-gateway/compare/v0.22.8...v0.22.9) (2025-12-14)
+
+### 🐛 Bug Fixes
+
+* **install:** Prefix the path with the INSTALL_DIR variable ([78ed26b](https://github.com/inference-gateway/inference-gateway/commit/78ed26bd5279ed629e9ca18dad7e96bdbd8d2496))
+
 ## [0.22.8](https://github.com/inference-gateway/inference-gateway/compare/v0.22.7...v0.22.8) (2025-12-12)
 
 ### ♻️ Improvements
