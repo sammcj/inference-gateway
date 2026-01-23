@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.23.1](https://github.com/inference-gateway/inference-gateway/compare/v0.23.0...v0.23.1) (2026-01-23)
+
+### ♻️ Improvements
+
+* Replace interface{} with any and add multimodal type support ([#232](https://github.com/inference-gateway/inference-gateway/issues/232)) ([bfae43d](https://github.com/inference-gateway/inference-gateway/commit/bfae43d3903ae0f1f542aab6fb563fecb0f976e6))
+
 ## [0.23.0](https://github.com/inference-gateway/inference-gateway/compare/v0.22.10...v0.23.0) (2026-01-22)
 
 ### ✨ Features
