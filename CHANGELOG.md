@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.23.4](https://github.com/inference-gateway/inference-gateway/compare/v0.23.3...v0.23.4) (2026-03-05)
+
+### 🐛 Bug Fixes
+
+* Do not run infer agent if the comment was made by dependabot ([2ea9aa9](https://github.com/inference-gateway/inference-gateway/commit/2ea9aa9f92bb75cf1e8fad8f2721389c8021e092))
+
 ## [0.23.3](https://github.com/inference-gateway/inference-gateway/compare/v0.23.2...v0.23.3) (2026-03-05)
 
 ### ♻️ Improvements
