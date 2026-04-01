@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.23.5](https://github.com/inference-gateway/inference-gateway/compare/v0.23.4...v0.23.5) (2026-04-01)
+
+### 🔧 Miscellaneous
+
+* Add stale issues workflow to auto-close inactive issues ([0989d22](https://github.com/inference-gateway/inference-gateway/commit/0989d225d61f7ba414f1619f5c13058ed5033503))
+* Bump CI and dev containers dependencies ([#255](https://github.com/inference-gateway/inference-gateway/issues/255)) ([aca7a05](https://github.com/inference-gateway/inference-gateway/commit/aca7a0574889e6aeea77e2bf84fe744332b5c016))
+* Change assignees from 'maintainers' to 'core' ([#260](https://github.com/inference-gateway/inference-gateway/issues/260)) ([bdc1cf2](https://github.com/inference-gateway/inference-gateway/commit/bdc1cf2a4cb1c0bfbefa50e2996f982d9a5d7b65))
+* **deps:** Bump claude code to 2.1.70 ([c2d8fa4](https://github.com/inference-gateway/inference-gateway/commit/c2d8fa4c1f45792eeb03c6560cf37e45629a20d4))
+* **deps:** Bump express-rate-limit ([#253](https://github.com/inference-gateway/inference-gateway/issues/253)) ([d778280](https://github.com/inference-gateway/inference-gateway/commit/d7782809193126566ae05f0312b43ab64645fdd7))
+* **deps:** Bump github.com/buger/jsonparser ([#258](https://github.com/inference-gateway/inference-gateway/issues/258)) ([17d0db4](https://github.com/inference-gateway/inference-gateway/commit/17d0db424f4fbe40618c4a507077ea20fec17e54))
+* **deps:** Bump github.com/buger/jsonparser from 1.1.1 to 1.1.2 ([#259](https://github.com/inference-gateway/inference-gateway/issues/259)) ([936a7a8](https://github.com/inference-gateway/inference-gateway/commit/936a7a87c2c0530c378b7791353c6710c9aee7b9))
+* **deps:** Bump hono ([#254](https://github.com/inference-gateway/inference-gateway/issues/254)) ([70d193f](https://github.com/inference-gateway/inference-gateway/commit/70d193f2d24f450ed4db411ef78539693197ad3a))
+* **deps:** Bump the examples-go group across 1 directory with 3 updates ([#256](https://github.com/inference-gateway/inference-gateway/issues/256)) ([5535384](https://github.com/inference-gateway/inference-gateway/commit/55353844fcdd56c46fbc97136604602796af1da8))
+* **deps:** Bump the examples-npm group ([#257](https://github.com/inference-gateway/inference-gateway/issues/257)) ([e9d662f](https://github.com/inference-gateway/inference-gateway/commit/e9d662f41fa13a24a8fa77633344ce59cdcfdfd3))
+* Remove include scope from dependabot ([326771b](https://github.com/inference-gateway/inference-gateway/commit/326771bca52ca5ed902424c3dad91a08eab87599))
+
 ## [0.23.4](https://github.com/inference-gateway/inference-gateway/compare/v0.23.3...v0.23.4) (2026-03-05)
 
 ### 🐛 Bug Fixes
