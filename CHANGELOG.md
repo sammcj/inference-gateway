@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.23.6](https://github.com/inference-gateway/inference-gateway/compare/v0.23.5...v0.23.6) (2026-04-08)
+
+### 🔧 Miscellaneous
+
+* Bump dev dependencies and tool versions ([#266](https://github.com/inference-gateway/inference-gateway/issues/266)) ([d851119](https://github.com/inference-gateway/inference-gateway/commit/d85111908b4063b1d1ac5651f6a8d1c00ae9f426))
+* **deps:** Bump @hono/node-server ([#267](https://github.com/inference-gateway/inference-gateway/issues/267)) ([ec87055](https://github.com/inference-gateway/inference-gateway/commit/ec870559658eb7adbfd66f2fd2e3fe1ffc8ad953))
+* **deps:** Bump github.com/buger/jsonparser ([#262](https://github.com/inference-gateway/inference-gateway/issues/262)) ([a44fc7b](https://github.com/inference-gateway/inference-gateway/commit/a44fc7bd8084108332660f93625cfbe06933175b))
+* **deps:** Bump github.com/buger/jsonparser ([#263](https://github.com/inference-gateway/inference-gateway/issues/263)) ([44dbcc3](https://github.com/inference-gateway/inference-gateway/commit/44dbcc3150d4b4bd77955feb0c49b5c354a4b03f))
+* **deps:** Bump github.com/buger/jsonparser ([#264](https://github.com/inference-gateway/inference-gateway/issues/264)) ([452da2c](https://github.com/inference-gateway/inference-gateway/commit/452da2c9d14b616de4b39f08b5db22d6edc1627a))
+* **deps:** Bump github.com/buger/jsonparser ([#265](https://github.com/inference-gateway/inference-gateway/issues/265)) ([a62131a](https://github.com/inference-gateway/inference-gateway/commit/a62131a646bb932b372f782d1991415f7dc36912))
+* **deps:** Bump github.com/go-jose/go-jose/v4 from 4.1.3 to 4.1.4 ([#261](https://github.com/inference-gateway/inference-gateway/issues/261)) ([cd24fe2](https://github.com/inference-gateway/inference-gateway/commit/cd24fe2e2f05c6685ac2c05984351681d2445fd9))
+* **deps:** Bump hono in /examples/docker-compose/mcp/pizza-server ([#268](https://github.com/inference-gateway/inference-gateway/issues/268)) ([361f095](https://github.com/inference-gateway/inference-gateway/commit/361f095a176d10ad3c647d2ffe12e0d07136f45f))
+* Resolve CVE in MCP examples ([#269](https://github.com/inference-gateway/inference-gateway/issues/269)) ([ef27ea9](https://github.com/inference-gateway/inference-gateway/commit/ef27ea98ff95035b7fcecb5d0a96eb72ae041fde))
+
 ## [0.23.5](https://github.com/inference-gateway/inference-gateway/compare/v0.23.4...v0.23.5) (2026-04-01)
 
 ### 🔧 Miscellaneous
