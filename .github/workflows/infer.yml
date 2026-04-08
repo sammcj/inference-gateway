@@ -17,10 +17,10 @@ permissions:
 
 jobs:
   infer:
+    if: "!endsWith(github.actor, '[bot]')"
     runs-on: ubuntu-24.04
     steps:
       - name: Generate GitHub App Token
-        if: "!endsWith(github.actor, '[bot]')"
         uses: actions/create-github-app-token@v2.2.1
         id: app_token
         with:
