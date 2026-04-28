@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.24.0](https://github.com/inference-gateway/inference-gateway/compare/v0.23.6...v0.24.0) (2026-04-28)
+
+### ✨ Features
+
+* Add Google's extra content for thought_signature passing ([#275](https://github.com/inference-gateway/inference-gateway/issues/275)) ([b31659b](https://github.com/inference-gateway/inference-gateway/commit/b31659b3d83b587077baa26f11d17d6040d4c080))
+
+### 🐛 Bug Fixes
+
+* **ci:** Infer workflow should be skipped when the actor was a bot ([327a86c](https://github.com/inference-gateway/inference-gateway/commit/327a86c72e463f38e7a1fe04052973abf3b37e31))
+
+### 🔧 Miscellaneous
+
+* **deps:** Bump all dev dependecies to latest ([#272](https://github.com/inference-gateway/inference-gateway/issues/272)) ([4280290](https://github.com/inference-gateway/inference-gateway/commit/42802908f6765d032692f9fe3790cf6c3653fbd4))
+* **deps:** Bump go.opentelemetry.io/otel/sdk from 1.40.0 to 1.43.0 ([#270](https://github.com/inference-gateway/inference-gateway/issues/270)) ([9b83399](https://github.com/inference-gateway/inference-gateway/commit/9b833999d8ac13af68f4d5cde8ede27364ce1030))
+* **deps:** Bump hono in /examples/docker-compose/mcp/pizza-server ([#271](https://github.com/inference-gateway/inference-gateway/issues/271)) ([3910ae1](https://github.com/inference-gateway/inference-gateway/commit/3910ae1f664b5e3e38c14cd0951356b88a6109a1))
+* Replace deepseek-chat with deepseek-v4-pro ([#273](https://github.com/inference-gateway/inference-gateway/issues/273)) ([cefa812](https://github.com/inference-gateway/inference-gateway/commit/cefa8127fbc8d5a787cf88dc48dbc6f65882553a))
+
 ## [0.23.6](https://github.com/inference-gateway/inference-gateway/compare/v0.23.5...v0.23.6) (2026-04-08)
 
 ### 🔧 Miscellaneous
