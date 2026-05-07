@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.24.2](https://github.com/inference-gateway/inference-gateway/compare/v0.24.1...v0.24.2) (2026-05-07)
+
+### 🐛 Bug Fixes
+
+* Remove prefix from assignees ([ceefd79](https://github.com/inference-gateway/inference-gateway/commit/ceefd795da588f85d3351e9385dd92e8a2b0264a))
+
+### 👷 CI
+
+* Enable display report for Claude Code action ([458dc0e](https://github.com/inference-gateway/inference-gateway/commit/458dc0e694391649dce70fe8d559a112f912f173))
+* Remove obsolete /review checks from claude workflow ([#286](https://github.com/inference-gateway/inference-gateway/issues/286)) ([31f5fd0](https://github.com/inference-gateway/inference-gateway/commit/31f5fd05174ac4c1204d4bfafe9cf583f8387f27))
+
+### 📚 Documentation
+
+* Add Go version badge to README ([#285](https://github.com/inference-gateway/inference-gateway/issues/285)) ([1cb4a51](https://github.com/inference-gateway/inference-gateway/commit/1cb4a513f6d573bc45b74146ae726907a8c641e1))
+* Improve CLAUDE.md with accurate references and pre-commit details ([#284](https://github.com/inference-gateway/inference-gateway/issues/284)) ([3bf52d5](https://github.com/inference-gateway/inference-gateway/commit/3bf52d599597ef1c784e2aa09a8a205ada5e38cf))
+* Update AGENTS.md with detailed project overview and development guidance ([#283](https://github.com/inference-gateway/inference-gateway/issues/283)) ([93509a3](https://github.com/inference-gateway/inference-gateway/commit/93509a33fe8a162bd618e7d11ac82250e2242a44))
+
+### 🔧 Miscellaneous
+
+* **deps:** Bump @types/node ([#280](https://github.com/inference-gateway/inference-gateway/issues/280)) ([b26ba46](https://github.com/inference-gateway/inference-gateway/commit/b26ba46e5836e88aa14fb8062d506be5ce853873))
+* **deps:** Bump dependencies and update infer config ([#282](https://github.com/inference-gateway/inference-gateway/issues/282)) ([55ade0e](https://github.com/inference-gateway/inference-gateway/commit/55ade0e7f847c7758218905883bb98b1905a214a))
+* **deps:** Bump github.com/inference-gateway/sdk ([#281](https://github.com/inference-gateway/inference-gateway/issues/281)) ([cb9e23d](https://github.com/inference-gateway/inference-gateway/commit/cb9e23d4799610962579aa8c4b7f1af57bfcc0d2))
+* **deps:** Bump hono in /examples/docker-compose/mcp/pizza-server ([#279](https://github.com/inference-gateway/inference-gateway/issues/279)) ([be42ff5](https://github.com/inference-gateway/inference-gateway/commit/be42ff597498a29704d89c992309b88f8eb2a4de))
+* Remove outdated issue templates for bug reports, feature requests, and refactor requests ([2b094f2](https://github.com/inference-gateway/inference-gateway/commit/2b094f2688e398a112ee0a635cdc8e64927c2f42))
+
 ## [0.24.1](https://github.com/inference-gateway/inference-gateway/compare/v0.24.0...v0.24.1) (2026-05-07)
 
 ### 👷 CI
