@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.24.1](https://github.com/inference-gateway/inference-gateway/compare/v0.24.0...v0.24.1) (2026-05-07)
+
+### 👷 CI
+
+* **deps:** Bump golangci-lint to latest ([6924c38](https://github.com/inference-gateway/inference-gateway/commit/6924c3865e90178446142eb0ac622a93421e1950))
+* Update Claude Code action version and refine system prompt instructions ([3e2fae3](https://github.com/inference-gateway/inference-gateway/commit/3e2fae3dfbc50ac8b789d76ba812f339cbc8ee49))
+* Update golangci-lint installation script to use the latest version and correct installation path ([d6982fa](https://github.com/inference-gateway/inference-gateway/commit/d6982fa08b8f2d236ef079d15531424d0050538f))
+
+### 🔧 Miscellaneous
+
+* **deps:** Bump ip-address and express-rate-limit ([#278](https://github.com/inference-gateway/inference-gateway/issues/278)) ([036ee3d](https://github.com/inference-gateway/inference-gateway/commit/036ee3d65516f990531e7b103125b0833efacb75))
+* **deps:** Bump the examples-go group across 1 directory with 3 updates ([#276](https://github.com/inference-gateway/inference-gateway/issues/276)) ([85649f0](https://github.com/inference-gateway/inference-gateway/commit/85649f0a6c3a0dd478238edf0fa70cac943fdbb5))
+* **deps:** Bump the examples-npm group ([#277](https://github.com/inference-gateway/inference-gateway/issues/277)) ([2c7e91d](https://github.com/inference-gateway/inference-gateway/commit/2c7e91d5addfbd34a6493e4e7048e282aa5c6148))
+
 ## [0.24.0](https://github.com/inference-gateway/inference-gateway/compare/v0.23.6...v0.24.0) (2026-04-28)
 
 ### ✨ Features
