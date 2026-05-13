@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.24.4](https://github.com/inference-gateway/inference-gateway/compare/v0.24.3...v0.24.4) (2026-05-13)
+
+### 🔧 Miscellaneous
+
+* **deps:** Bump SDK to v1.16.3 and refresh generated types ([#299](https://github.com/inference-gateway/inference-gateway/issues/299)) ([baa564b](https://github.com/inference-gateway/inference-gateway/commit/baa564bc5675d5d0b0cf37d1e71e76c4c6779a7b)), closes [#298](https://github.com/inference-gateway/inference-gateway/issues/298)
+
 ## [0.24.3](https://github.com/inference-gateway/inference-gateway/compare/v0.24.2...v0.24.3) (2026-05-13)
 
 ### 🐛 Bug Fixes
