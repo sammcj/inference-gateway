@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.24.3](https://github.com/inference-gateway/inference-gateway/compare/v0.24.2...v0.24.3) (2026-05-13)
+
+### 🐛 Bug Fixes
+
+* **dependabot:** Replace assignees with CODEOWNERS ([f360f03](https://github.com/inference-gateway/inference-gateway/commit/f360f03c427cce3def5f39fee63e758158bc3bf0))
+
+### 🔧 Miscellaneous
+
+* **dependabot:** Simplify config to root gomod, docker, and github-actions ([644e958](https://github.com/inference-gateway/inference-gateway/commit/644e9582cff674a3c68fbb613e23e5abed4f425a))
+* **deps:** Bump @types/node ([#287](https://github.com/inference-gateway/inference-gateway/issues/287)) ([7d7c63a](https://github.com/inference-gateway/inference-gateway/commit/7d7c63ab5fb6b933cf23d317ae9d92717e1a9a5a))
+* **deps:** Bump actions/create-github-app-token ([#297](https://github.com/inference-gateway/inference-gateway/issues/297)) ([6a744de](https://github.com/inference-gateway/inference-gateway/commit/6a744de5c156ee30aacade7964c531c055ae43cc))
+* **deps:** Bump fast-uri in /examples/docker-compose/mcp/pizza-server ([#288](https://github.com/inference-gateway/inference-gateway/issues/288)) ([939e56b](https://github.com/inference-gateway/inference-gateway/commit/939e56bd232d87405e1cbb13874afd6a7c2eb2df))
+* **deps:** Bump github.com/coreos/go-oidc/v3 from 3.16.0 to 3.18.0 ([#295](https://github.com/inference-gateway/inference-gateway/issues/295)) ([3dee041](https://github.com/inference-gateway/inference-gateway/commit/3dee041c8da26f8b1498bad4b8788f16e17745a1))
+* **deps:** Bump github.com/gin-gonic/gin from 1.11.0 to 1.12.0 ([#293](https://github.com/inference-gateway/inference-gateway/issues/293)) ([efd3852](https://github.com/inference-gateway/inference-gateway/commit/efd385258cc6a46907587ac6288e591c8f6d7757))
+* **deps:** Bump github.com/metoro-io/mcp-golang from 0.16.0 to 0.16.1 ([#292](https://github.com/inference-gateway/inference-gateway/issues/292)) ([798674e](https://github.com/inference-gateway/inference-gateway/commit/798674ebfcea5b748047c8f4c5bd9c87c8916c0e))
+* **deps:** Bump github.com/oapi-codegen/runtime from 1.1.2 to 1.4.0 ([#296](https://github.com/inference-gateway/inference-gateway/issues/296)) ([0cffdf0](https://github.com/inference-gateway/inference-gateway/commit/0cffdf0a2b4baa67fda9aa4f0e6b74b18f33e25d))
+* **deps:** Bump go.opentelemetry.io/otel/exporters/prometheus ([#289](https://github.com/inference-gateway/inference-gateway/issues/289)) ([9879658](https://github.com/inference-gateway/inference-gateway/commit/98796582c41dc5e0c26a05854d9b48f62fe48a78))
+* **deps:** Bump go.uber.org/zap in the uber group ([#291](https://github.com/inference-gateway/inference-gateway/issues/291)) ([550e25a](https://github.com/inference-gateway/inference-gateway/commit/550e25a17b157152156eae9f778e5e0f69d85f1b))
+* **deps:** Bump golang.org/x/text from 0.34.0 to 0.37.0 ([#294](https://github.com/inference-gateway/inference-gateway/issues/294)) ([836a710](https://github.com/inference-gateway/inference-gateway/commit/836a710decbdfbcee9c55c32c4e8f10c4b6e3f88))
+* **deps:** Bump the github-actions group with 2 updates ([#290](https://github.com/inference-gateway/inference-gateway/issues/290)) ([eb4fcc6](https://github.com/inference-gateway/inference-gateway/commit/eb4fcc647611aca88c6c4b5e8b464d6d3662f3cf))
+
 ## [0.24.2](https://github.com/inference-gateway/inference-gateway/compare/v0.24.1...v0.24.2) (2026-05-07)
 
 ### 🐛 Bug Fixes
