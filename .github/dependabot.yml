@@ -1,50 +1,29 @@
 ---
 version: 2
 updates:
-  - package-ecosystem: 'gomod'
-    directory: '/'
+  - package-ecosystem: gomod
+    directory: /
     schedule:
-      interval: 'weekly'
-    open-pull-requests-limit: 1
-    commit-message:
-      prefix: 'chore(deps)'
-    labels:
-      - 'dependencies'
-      - 'go'
+      interval: weekly
     groups:
-      opentelemetry:
+      gomod:
         patterns:
-          - 'go.opentelemetry.io/*'
-      testing:
-        patterns:
-          - 'github.com/stretchr/testify'
-          - 'go.uber.org/mock'
-      uber:
-        patterns:
-          - 'go.uber.org/*'
+          - "*"
 
-  - package-ecosystem: 'docker'
-    directory: '/'
+  - package-ecosystem: github-actions
+    directory: /
     schedule:
-      interval: 'weekly'
-    open-pull-requests-limit: 1
-    commit-message:
-      prefix: 'chore(deps)'
-    labels:
-      - 'dependencies'
-      - 'docker'
-
-  - package-ecosystem: 'github-actions'
-    directory: '/'
-    schedule:
-      interval: 'weekly'
-    open-pull-requests-limit: 1
-    commit-message:
-      prefix: 'chore(deps)'
-    labels:
-      - 'dependencies'
-      - 'github-actions'
+      interval: weekly
     groups:
       github-actions:
         patterns:
-          - '*'
+          - "*"
+
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      docker:
+        patterns:
+          - "*"
