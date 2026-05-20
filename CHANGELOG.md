@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.24.5](https://github.com/inference-gateway/inference-gateway/compare/v0.24.4...v0.24.5) (2026-05-20)
+
+### 👷 CI
+
+* **dependabot:** Add dependabot to help with dependecies upgrades ([6dbebf6](https://github.com/inference-gateway/inference-gateway/commit/6dbebf6d81ea7e03812a0da63e64274241b2d046))
+* **deps:** Bump anthropics/claude-code-action ([#300](https://github.com/inference-gateway/inference-gateway/issues/300)) ([b5cd833](https://github.com/inference-gateway/inference-gateway/commit/b5cd833183aafea9040d4ed3467b8ab41e7b3558))
+* **deps:** Bump anthropics/claude-code-action in the github-actions group ([#301](https://github.com/inference-gateway/inference-gateway/issues/301)) ([df4276c](https://github.com/inference-gateway/inference-gateway/commit/df4276c91e1740b32a1338b9fe8f80ff261e1cb8))
+* **deps:** Update golangci-lint and task installation methods to use actions ([5c5b457](https://github.com/inference-gateway/inference-gateway/commit/5c5b4571d4c7d43f588aaebf0013a94920c30e18))
+
+### 🔧 Miscellaneous
+
+* **dev-deps:** Add infer to flox manifest ([4451b2c](https://github.com/inference-gateway/inference-gateway/commit/4451b2c19aa1c4ac05b86dc492df605722281eb1))
+* **workflows:** Update Docker Buildx action version and remove unused dependency ([1e071e9](https://github.com/inference-gateway/inference-gateway/commit/1e071e9c7104ba79c2d2dc506ba4b134273c1041))
+
 ## [0.24.4](https://github.com/inference-gateway/inference-gateway/compare/v0.24.3...v0.24.4) (2026-05-13)
 
 ### 🔧 Miscellaneous
