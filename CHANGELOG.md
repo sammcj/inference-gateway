@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.24.6](https://github.com/inference-gateway/inference-gateway/compare/v0.24.5...v0.24.6) (2026-05-21)
+
+### 🐛 Bug Fixes
+
+* **mcp:** Keep gateway running when all MCP servers are unreachable at startup ([#306](https://github.com/inference-gateway/inference-gateway/issues/306)) ([a10910b](https://github.com/inference-gateway/inference-gateway/commit/a10910bc92218e5cb54c7f305bbd794be1e1fe98)), closes [#304](https://github.com/inference-gateway/inference-gateway/issues/304)
+
+### 🔧 Miscellaneous
+
+* **deps:** Bump infer CLI to latest ([80d615c](https://github.com/inference-gateway/inference-gateway/commit/80d615cbc5ddf12308cdbafccb53969ab778fa61))
+
 ## [0.24.5](https://github.com/inference-gateway/inference-gateway/compare/v0.24.4...v0.24.5) (2026-05-20)
 
 ### 👷 CI
