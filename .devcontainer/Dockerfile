@@ -11,7 +11,7 @@ ENV TASK_VERSION=v3.48.0 \
     GITHUB_CLI_VERSION=2.92.0 \
     NODE_VERSION=lts \
     SEMANTIC_RELEASE_VERSION=v25.0.2 \
-    INFERENCE_GATEWAY_CLI=v0.112.0
+    INFERENCE_GATEWAY_CLI=v0.112.1
 
 # Determine architecture once and store as build arg
 RUN architecture=$(uname -m) && \
