@@ -66,6 +66,23 @@ jobs:
             https://raw.githubusercontent.com/inference-gateway/skills/main/skills/maintainer/SKILL.md \
             -o ~/.claude/skills/maintainer/SKILL.md
 
+      - name: Write MCP config
+        run: |
+          mkdir -p .claude
+          cat > .claude/mcp.json <<'JSON'
+          {
+            "mcpServers": {
+              "context7": {
+                "command": "npx",
+                "args": [
+                  "-y",
+                  "@upstash/context7-mcp@latest"
+                ]
+              }
+            }
+          }
+          JSON
+
       - name: Run Claude Code
         id: claude
         uses: anthropics/claude-code-action@v1.0.133
@@ -80,6 +97,4 @@ jobs:
           claude_args: |
             --effort max
             --model claude-opus-4-7
-            --system-prompt "You must NEVER push directly to the main branch. Always create a new feature branch (claude/feature-name), make changes there, and open a pull request to main. Use conventional commits with a capital description, e.g. 'feat(client): Add retry mechanism for streaming requests' or 'fix(auth): Resolve token validation issue'. Follow the development workflow specified in the coding instructions."
-            --allowedTools "Bash(helm:*),Bash(task:*),Bash(go:*),Bash(gh:*),Bash(git:*)"
-            --mcp-config '{"mcpServers":{"context7":{"command":"npx","args":["-y","@upstash/context7-mcp@latest"]}}}'
+            --allowedTools "Bash(helm:*),Bash(task:*),Bash(go:*),Bash(gh:*),Bash(git:*),mcp__context7"
