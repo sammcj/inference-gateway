@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.25.1](https://github.com/inference-gateway/inference-gateway/compare/v0.25.0...v0.25.1) (2026-06-11)
+
+### 🐛 Bug Fixes
+
+* route minimax through its own transformer + label it in telemetry ([#358](https://github.com/inference-gateway/inference-gateway/issues/358)) ([a52057f](https://github.com/inference-gateway/inference-gateway/commit/a52057f674e082f0694321d216a5b6e4173a2908))
+
 ## [0.25.0](https://github.com/inference-gateway/inference-gateway/compare/v0.24.6...v0.25.0) (2026-06-11)
 
 ### ✨ Features
