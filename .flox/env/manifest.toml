@@ -1,4 +1,4 @@
-schema-version = "1.12.0"
+schema-version = "1.13.0"
 
 [vars]
 GOPATH = "$HOME/go"
@@ -47,7 +47,7 @@ mockgen.version = "^0.6.0"
 prettier.pkg-path = "prettier"
 prettier.version = "^3.8.3"
 goreleaser.pkg-path = "goreleaser"
-goreleaser.version = "^2.15.4"
+goreleaser.version = "^2.16.0"
 markdownlint-cli.pkg-path = "markdownlint-cli"
 markdownlint-cli.version = "^0.48.0"
 git.pkg-path = "git"
