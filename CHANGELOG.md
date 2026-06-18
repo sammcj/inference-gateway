@@ -2,6 +2,44 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.26.0](https://github.com/inference-gateway/inference-gateway/compare/v0.25.2...v0.26.0) (2026-06-18)
+
+### ✨ Features
+
+* add MCP tools selector via include/exclude lists ([#380](https://github.com/inference-gateway/inference-gateway/issues/380)) ([1f4aa7f](https://github.com/inference-gateway/inference-gateway/commit/1f4aa7f06f9ecaffe89a5b90cb90d8f59b46a2de))
+* re-vendor openapi schema and regenerate chat types ([#390](https://github.com/inference-gateway/inference-gateway/issues/390)) ([9c49404](https://github.com/inference-gateway/inference-gateway/commit/9c49404bbbbc45305bc7fd27e80ac413bc5bfa5c)), closes [inference-gateway/schemas#71](https://github.com/inference-gateway/schemas/issues/71)
+
+### ♻️ Improvements
+
+* **charts:** deprecate Helm chart in favor of operator ([#372](https://github.com/inference-gateway/inference-gateway/issues/372)) ([2174c34](https://github.com/inference-gateway/inference-gateway/commit/2174c340e5632a78938b3748fa975b6d8e25fa33))
+* **charts:** remove Helm chart in favor of operator ([#310](https://github.com/inference-gateway/inference-gateway/issues/310)) ([4bf19f5](https://github.com/inference-gateway/inference-gateway/commit/4bf19f5933f0a5654c6927b98e26638c83a76a12)), closes [#307](https://github.com/inference-gateway/inference-gateway/issues/307) [#307](https://github.com/inference-gateway/inference-gateway/issues/307)
+* extract MCP logic into internal/mcp subdomain ([#378](https://github.com/inference-gateway/inference-gateway/issues/378)) ([cbfcca4](https://github.com/inference-gateway/inference-gateway/commit/cbfcca46e68066c5af26dd91c308194ac2bd9f32))
+
+### 🐛 Bug Fixes
+
+* **deps:** bump golang.org/x/net and x/crypto to patched versions ([#376](https://github.com/inference-gateway/inference-gateway/issues/376)) ([aebc089](https://github.com/inference-gateway/inference-gateway/commit/aebc0892a30f2721ac27001dd258b11e2646f5cc))
+* **examples:** disable ingress TLS in basic k8s deployment ([#367](https://github.com/inference-gateway/inference-gateway/issues/367)) ([d3fb608](https://github.com/inference-gateway/inference-gateway/commit/d3fb6089d72e9734f3c3617319bace38040601a5)), closes [#362](https://github.com/inference-gateway/inference-gateway/issues/362)
+* **examples:** make MODEL configurable and drop duplicate fixture ([#375](https://github.com/inference-gateway/inference-gateway/issues/375)) ([8cedd1f](https://github.com/inference-gateway/inference-gateway/commit/8cedd1f71b9779aab3afe8505150158121fb74d7))
+* **examples:** pass GROQ_API_KEY through to the gateway container in MCP docker-compose ([#371](https://github.com/inference-gateway/inference-gateway/issues/371)) ([85c98c4](https://github.com/inference-gateway/inference-gateway/commit/85c98c4a0b6421d8d8a9b1d2cd39caad47af26d3))
+
+### 📚 Documentation
+
+* **examples:** migrate Kubernetes examples from the Helm chart to the operator ([#369](https://github.com/inference-gateway/inference-gateway/issues/369)) ([adc2c41](https://github.com/inference-gateway/inference-gateway/commit/adc2c41a6a0534e33469029750fa7cf7fece1dcf))
+* **readme:** format removal timeline for clarity ([f45d95e](https://github.com/inference-gateway/inference-gateway/commit/f45d95e132c0535eff7857e69b8292fc81020451))
+
+### 🔧 Miscellaneous
+
+* **deps:** bump claude-code 2.1.161 -> 2.1.170 ([#381](https://github.com/inference-gateway/inference-gateway/issues/381)) ([152f278](https://github.com/inference-gateway/inference-gateway/commit/152f278a1303e9e6f68796c686163f5d2abf17be))
+* **deps:** bump claude-code 2.1.170 -> 2.1.177, claude-code-action v1.0.142 -> v1.0.150 ([#384](https://github.com/inference-gateway/inference-gateway/issues/384)) ([88929ea](https://github.com/inference-gateway/inference-gateway/commit/88929ea5f16ef9a3f5dbf8762c4c7b6d3c128b3d))
+* **deps:** bump esbuild and tsx ([#377](https://github.com/inference-gateway/inference-gateway/issues/377)) ([5ef90c9](https://github.com/inference-gateway/inference-gateway/commit/5ef90c94e1c0f5cc2c4a48579b5028af8245980c))
+* **deps:** bump github.com/quic-go/quic-go ([#386](https://github.com/inference-gateway/inference-gateway/issues/386)) ([0ef19a6](https://github.com/inference-gateway/inference-gateway/commit/0ef19a6b5e1ac69b184034c2bc57624c9b52ecf1))
+* **deps:** bump github.com/quic-go/quic-go ([#387](https://github.com/inference-gateway/inference-gateway/issues/387)) ([b168eca](https://github.com/inference-gateway/inference-gateway/commit/b168eca1220f2d6aa80cf51d4667be100c5aaf5e))
+* **deps:** bump hono in /examples/docker-compose/mcp/pizza-server ([#385](https://github.com/inference-gateway/inference-gateway/issues/385)) ([33c8e6a](https://github.com/inference-gateway/inference-gateway/commit/33c8e6a67920bb977fc5f098ec6a02b8f70caa8e))
+* **deps:** bump infer CLI v0.121.0 -> v0.121.1, infer-action v0.12.1 -> v0.13.1 ([#382](https://github.com/inference-gateway/inference-gateway/issues/382)) ([466d984](https://github.com/inference-gateway/inference-gateway/commit/466d984de1bee87f21559945fdae9b33434280db))
+* **deps:** bump infer-action v0.13.1 -> v0.15.1 ([#388](https://github.com/inference-gateway/inference-gateway/issues/388)) ([b34b24f](https://github.com/inference-gateway/inference-gateway/commit/b34b24f95555fc7df918dfe6721abd4b31f8ef29))
+* **deps:** bump inference-gateway/.github/.github/workflows/infer.yml ([#379](https://github.com/inference-gateway/inference-gateway/issues/379)) ([86ab75c](https://github.com/inference-gateway/inference-gateway/commit/86ab75c5017a94802ce3d90a6f59fa732dff016a))
+* **examples:** clean up k8s mcp module paths and model ids ([#373](https://github.com/inference-gateway/inference-gateway/issues/373)) ([8c59904](https://github.com/inference-gateway/inference-gateway/commit/8c599044743aa1a4a8ebc765950cf1f965b72f5a))
+
 ## [0.25.2](https://github.com/inference-gateway/inference-gateway/compare/v0.25.1...v0.25.2) (2026-06-11)
 
 ### 🐛 Bug Fixes
