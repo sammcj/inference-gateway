@@ -8,27 +8,18 @@ This example demonstrates comprehensive monitoring setup for the Inference Gatew
 
 ## 📊 Dashboard Features
 
-The enhanced Grafana dashboard provides:
+The Grafana dashboard (identical to the Kubernetes monitoring example) is organized in rows:
 
-### Function/Tool Call Metrics
+- **Overview** - Requests via gateway, input/output token totals, tool calls, sources reporting, and 5m error rate
+- **Traffic** - Request rate and latency (p95 + avg) by provider
+- **Token Usage** - Token rate by source and cumulative totals by source & model
+- **Tool Calls** - Tool call rate by type and top tools by usage
+- **Pushed Client Metrics (OTLP push only)** - Tool execution duration, client operation duration, time to first
+  token/chunk, tool failures by error type, and tool success rate; fed exclusively by clients pushing to `POST /v1/metrics`
+- **Gateway Process** - CPU, goroutines, and resident memory
 
-- **Total Tool Calls** - Real-time count of all function/tool executions
-- **Tool Call Success Rate** - Percentage of successful tool calls with thresholds
-- **Failed Tool Calls** - Count of failures for quick issue identification
-- **Average Tool Call Duration** - Performance monitoring for tool execution
-- **Tool Call Rate by Type** - Breakdown by MCP and other tool types
-- **Tool Call Duration by Provider** - Latency analysis across providers
-- **Top Tool Names by Usage** - Most frequently called tools
-- **Tool Failures by Error Type** - Detailed failure analysis
-
-### Traditional LLM Metrics
-
-- **Request Latency by Provider** - End-to-end request performance
-- **Tokens per Second by Provider** - Throughput monitoring
-- **API Error Rate by Provider** - Success/failure rates
-- **Prompt Token Usage** - Token consumption patterns
-- **Memory Usage** - System resource monitoring
-- **System Metrics** - CPU, memory, and goroutines
+All panels are filterable by the `provider` and `source` template variables, so gateway-served traffic and pushed
+client metrics (e.g. `source="claude-code-subscription"`) can be viewed together or separately.
 
 ## 🚀 Quick Start
 
@@ -51,7 +42,7 @@ The enhanced Grafana dashboard provides:
    - **Grafana**: <http://localhost:3000> (admin/admin)
 
 4. **View enhanced metrics:**
-   - Navigate to the "Inference Gateway - Enhanced Metrics" dashboard
+   - Navigate to the "Inference Gateway" dashboard
    - Send requests with tool calls to see metrics populate
 
 ## 🔧 Configuration
@@ -64,6 +55,7 @@ The gateway is configured with telemetry enabled:
 environment:
   - TELEMETRY_ENABLE=true
   - TELEMETRY_METRICS_PORT=9464
+  - TELEMETRY_METRICS_PUSH_ENABLE=true
 ```
 
 ### Prometheus Configuration
@@ -109,20 +101,81 @@ curl -X POST http://localhost:8080/v1/chat/completions \
 
 ## 📈 Metrics Details
 
-### Function/Tool Call Metrics Labels
+The gateway exposes metrics following the [OpenTelemetry GenAI semantic conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/).
 
-All tool call metrics include rich labeling:
+### Metric Set
 
-- `provider` - LLM provider (openai, anthropic, etc.)
-- `model` - Model name (gpt-4, claude-3-sonnet, etc.)
-- `tool_type` - Tool type (mcp, native)
-- `tool_name` - Specific tool name (list_files, calculator, etc.)
-- `error_type` - Error classification (for failures only)
+- `gen_ai_client_token_usage` (histogram, no unit suffix) - token usage; `gen_ai_token_type` is `input` or `output`
+- `gen_ai_server_request_duration_seconds` (histogram) - end-to-end request duration in seconds; `error_type` (HTTP status string) is set only on errors
+- `gen_ai_execute_tool_duration_seconds` (histogram) - tool execution duration in seconds (fed via the push endpoint)
+- `gen_ai_client_operation_duration_seconds`, `gen_ai_client_operation_time_to_first_chunk_seconds`,
+  `gen_ai_server_time_to_first_token_seconds` (histograms) - push-only client-side latency metrics
+- `inference_gateway_tool_calls_total` (counter) - total function/tool calls
 
-### Metric Types
+### Labels
 
-- **Counters**: `llm_tool_calls_total`, `llm_tool_calls_success_total`, `llm_tool_calls_failure_total`
-- **Histograms**: `llm_tool_call_duration` (includes \_bucket, \_sum, \_count)
+- `gen_ai_provider_name` - LLM provider (openai, anthropic, etc.)
+- `gen_ai_request_model` - Model name (gpt-4o, claude-sonnet-4, etc.)
+- `gen_ai_operation_name` - Operation (e.g. chat)
+- `gen_ai_tool_type` / `gen_ai_tool_name` - Tool metadata (tool metrics only)
+- `gen_ai_token_type` - `input` or `output` (token usage only)
+- `error_type` - HTTP status string, present only on errors
+- `source` - `gateway` for gateway-observed traffic, or a client-supplied value (e.g. `claude-code-subscription`) for pushed metrics
+
+### Migration from old `llm_*` metrics
+
+| Old metric                          | New query                                                                   |
+| ----------------------------------- | --------------------------------------------------------------------------- |
+| `llm_usage_prompt_tokens_total`     | `gen_ai_client_token_usage_sum{gen_ai_token_type="input"}`                  |
+| `llm_usage_completion_tokens_total` | `gen_ai_client_token_usage_sum{gen_ai_token_type="output"}`                 |
+| `llm_usage_total_tokens_total`      | sum of `gen_ai_client_token_usage_sum` over both token types                |
+| `llm_responses_total`               | `gen_ai_server_request_duration_seconds_count` (errors: `{error_type!=""}`) |
+| `llm_request_duration_*` (ms)       | `gen_ai_server_request_duration_seconds_*` (seconds)                        |
+| `llm_tool_calls_total`              | `inference_gateway_tool_calls_total`                                        |
+| `llm_tool_calls_success_total`      | `gen_ai_execute_tool_duration_seconds_count{error_type=""}`                 |
+| `llm_tool_calls_failure_total`      | `gen_ai_execute_tool_duration_seconds_count{error_type!=""}`                |
+| `llm_tool_call_duration_*` (ms)     | `gen_ai_execute_tool_duration_seconds_*` (seconds)                          |
+
+Label renames: `provider` → `gen_ai_provider_name`, `model` → `gen_ai_request_model`, `tool_name` → `gen_ai_tool_name`, `tool_type` → `gen_ai_tool_type`.
+
+Note that duration histograms are now in **seconds** (previously milliseconds), so drop any `/1000` conversions in your queries.
+
+## 📤 Pushing metrics (OTLP)
+
+Subscription clients (e.g. the infer CLI driving Claude Code) can push their own metrics to the gateway.
+Enable the opt-in push endpoint with `TELEMETRY_METRICS_PUSH_ENABLE=true` (alongside `TELEMETRY_ENABLE=true`),
+then POST OTLP JSON to `/v1/metrics`:
+
+```bash
+curl -X POST http://localhost:8080/v1/metrics \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "resourceMetrics": [{
+      "resource": {
+        "attributes": [{ "key": "service.name", "value": { "stringValue": "infer-cli" } }]
+      },
+      "scopeMetrics": [{
+        "metrics": [{
+          "name": "gen_ai.client.token.usage",
+          "sum": {
+            "aggregationTemporality": 1,
+            "dataPoints": [{
+              "asInt": "1234",
+              "attributes": [
+                { "key": "gen_ai.provider.name", "value": { "stringValue": "anthropic" } },
+                { "key": "gen_ai.token.type", "value": { "stringValue": "input" } },
+                { "key": "source", "value": { "stringValue": "claude-code-subscription" } }
+              ]
+            }]
+          }
+        }]
+      }]
+    }]
+  }'
+```
+
+Pushed series carry the client-supplied `source` label (e.g. `claude-code-subscription`), so they can be
+distinguished from gateway-observed traffic (`source="gateway"`) in dashboards.
 
 ## 🎛️ Customization
 
