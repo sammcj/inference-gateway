@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.27.0](https://github.com/inference-gateway/inference-gateway/compare/v0.26.1...v0.27.0) (2026-07-04)
+
+### ✨ Features
+
+* add opt-in OTLP metrics push endpoint and migrate metrics to GenAI semconv ([#409](https://github.com/inference-gateway/inference-gateway/issues/409)) ([455a745](https://github.com/inference-gateway/inference-gateway/commit/455a7452a0f4767cae229e1ef4eb0678971c337b)), closes [#404](https://github.com/inference-gateway/inference-gateway/issues/404)
+
+### 🔧 Miscellaneous
+
+* add .claude symlink to .agents ([44560fc](https://github.com/inference-gateway/inference-gateway/commit/44560fc3751241d20fa5a4d78642f0db6e44fecf))
+* add some useful go skills ([6c95c1a](https://github.com/inference-gateway/inference-gateway/commit/6c95c1a5e3af70eae36333b0cc64a7af626fb35a))
+* **deps:** bump all dependecies to latest ([#410](https://github.com/inference-gateway/inference-gateway/issues/410)) ([af36243](https://github.com/inference-gateway/inference-gateway/commit/af3624362aa702f8400610f86b3872f6ada40a99))
+* **deps:** bump github.com/oapi-codegen/runtime in the gomod group ([#402](https://github.com/inference-gateway/inference-gateway/issues/402)) ([862e9f7](https://github.com/inference-gateway/inference-gateway/commit/862e9f7e572814d9878e9d976350da70e0aad394))
+* **deps:** bump infer CLI v0.122.2 -> v0.125.0, infer-action v0.19.0 -> v0.19.1 ([#405](https://github.com/inference-gateway/inference-gateway/issues/405)) ([60cf4eb](https://github.com/inference-gateway/inference-gateway/commit/60cf4ebd53b5065b845fed4982a753e88ee54173))
+* **deps:** bump infer CLI v0.125.0 -> v0.130.1, infer-action v0.19.1 -> v0.23.1 ([#407](https://github.com/inference-gateway/inference-gateway/issues/407)) ([0cd31cf](https://github.com/inference-gateway/inference-gateway/commit/0cd31cf1d635e060c177a4641f6a1708120277fe))
+* **deps:** bump the github-actions group with 2 updates ([#411](https://github.com/inference-gateway/inference-gateway/issues/411)) ([2f2e3a5](https://github.com/inference-gateway/inference-gateway/commit/2f2e3a50e4ef40f422501a1363398294f5ed12e3))
+* **deps:** bump the github-actions group with 3 updates ([#403](https://github.com/inference-gateway/inference-gateway/issues/403)) ([6103a34](https://github.com/inference-gateway/inference-gateway/commit/6103a340297a314e3f5f2ee34007898576d1f277))
+* **deps:** bump the github-actions group with 6 updates ([#408](https://github.com/inference-gateway/inference-gateway/issues/408)) ([5e9bb44](https://github.com/inference-gateway/inference-gateway/commit/5e9bb447586dd961bb24351bd757a28e0633835c))
+
 ## [0.26.1](https://github.com/inference-gateway/inference-gateway/compare/v0.26.0...v0.26.1) (2026-06-23)
 
 ### 👷 CI
