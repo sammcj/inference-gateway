@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.28.0](https://github.com/inference-gateway/inference-gateway/compare/v0.27.0...v0.28.0) (2026-07-05)
+
+### ✨ Features
+
+* add nvidia provider (NIM / hosted API catalog) ([#415](https://github.com/inference-gateway/inference-gateway/issues/415)) ([62956d6](https://github.com/inference-gateway/inference-gateway/commit/62956d614ee171b0780d783ff30ce604a9a9799b))
+* add team/department attribution for gateway and pushed metrics ([#414](https://github.com/inference-gateway/inference-gateway/issues/414)) ([5cabb4d](https://github.com/inference-gateway/inference-gateway/commit/5cabb4d9c30bbf408cf6b5dab589886268f6c544)), closes [#412](https://github.com/inference-gateway/inference-gateway/issues/412)
+
+### 👷 CI
+
+* **deps:** update inference workflow to version v0.15.0 ([f4cbc8c](https://github.com/inference-gateway/inference-gateway/commit/f4cbc8ce3a7e73a57b65a71b529a43e5cb252662))
+* **deps:** upgrade infer.yml to version 0.15.1 and enable debug ([075893c](https://github.com/inference-gateway/inference-gateway/commit/075893c6442310856b1d4c801269c435d2a3a42c))
+
+### 🔧 Miscellaneous
+
+* **deps:** bump google.golang.org/grpc from 1.79.2 to 1.79.3 ([#413](https://github.com/inference-gateway/inference-gateway/issues/413)) ([db5977d](https://github.com/inference-gateway/inference-gateway/commit/db5977d8c569a44224b498e5e57a7814c55cf456))
+* **deps:** update infer CLI version to v0.132.1 in manifest files ([b66ea96](https://github.com/inference-gateway/inference-gateway/commit/b66ea96b00231f8feb1066fbee7784d413332510))
+
 ## [0.27.0](https://github.com/inference-gateway/inference-gateway/compare/v0.26.1...v0.27.0) (2026-07-04)
 
 ### ✨ Features
