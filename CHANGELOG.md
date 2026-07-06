@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.28.1](https://github.com/inference-gateway/inference-gateway/compare/v0.28.0...v0.28.1) (2026-07-06)
+
+### 🐛 Bug Fixes
+
+* **ci:** release notes are not being generated ([ac19a48](https://github.com/inference-gateway/inference-gateway/commit/ac19a481cc056b6db9a2f6bf892960aa9986c62b))
+
+### 🔧 Miscellaneous
+
+* **deps:** bump claude-code-action v1.0.164 -> v1.0.165 ([#417](https://github.com/inference-gateway/inference-gateway/issues/417)) ([2f3d46d](https://github.com/inference-gateway/inference-gateway/commit/2f3d46d3e16f9787be5bb3de5342acb47eb2cd3d))
+
 ## [0.28.0](https://github.com/inference-gateway/inference-gateway/compare/v0.27.0...v0.28.0) (2026-07-05)
 
 ### ✨ Features
