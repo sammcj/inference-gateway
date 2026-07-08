@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.29.0](https://github.com/inference-gateway/inference-gateway/compare/v0.28.1...v0.29.0) (2026-07-08)
+
+### ✨ Features
+
+* **mcp:** sync MCP schema to schemas v0.4.0 and generate SubscriptionsListenResult types ([#431](https://github.com/inference-gateway/inference-gateway/issues/431)) ([1e948ae](https://github.com/inference-gateway/inference-gateway/commit/1e948ae5a2b66de35afbc46f1d21fbff27211fb4))
+
+### ♻️ Improvements
+
+* **api,mcp:** delete dead code and collapse duplicated logic ([#429](https://github.com/inference-gateway/inference-gateway/issues/429)) ([6a0ca91](https://github.com/inference-gateway/inference-gateway/commit/6a0ca91701700de04d4f1a7268b2cd8e7918f26f))
+* **providers:** derive routing, telemetry and transformers from the registry ([#428](https://github.com/inference-gateway/inference-gateway/issues/428)) ([f7809c3](https://github.com/inference-gateway/inference-gateway/commit/f7809c348d77b9d66596fbd6bdfd5a5e033d6239))
+
+### 🐛 Bug Fixes
+
+* **api:** close model-list bodies, repair timeout math and auth context propagation ([#426](https://github.com/inference-gateway/inference-gateway/issues/426)) ([9208048](https://github.com/inference-gateway/inference-gateway/commit/9208048185811d9d7e0a94811b3f2b7b3afa980a))
+* **mcp:** guard shared client state, single-flight reconnects, ctx-aware stream sends ([#425](https://github.com/inference-gateway/inference-gateway/issues/425)) ([74aa135](https://github.com/inference-gateway/inference-gateway/commit/74aa135fe191d629edbbf3226465445d3ac4ea02))
+* **streaming:** keep SSE responses alive past server and client timeouts ([#427](https://github.com/inference-gateway/inference-gateway/issues/427)) ([8dcee1e](https://github.com/inference-gateway/inference-gateway/commit/8dcee1e9d8b1193afd04a104aba44c03431b7466))
+
+### 🔧 Miscellaneous
+
+* **codegen:** make generator formatting failures fatal and use text/template ([#430](https://github.com/inference-gateway/inference-gateway/issues/430)) ([fa36210](https://github.com/inference-gateway/inference-gateway/commit/fa36210343fa6b528f66444bc3a8be5f78e30b6e))
+* **deps:** bump claude-code 2.1.197 -> 2.1.201 ([#419](https://github.com/inference-gateway/inference-gateway/issues/419)) ([8aa601f](https://github.com/inference-gateway/inference-gateway/commit/8aa601f176d23b6fe8a67edab24532666d6e1206))
+* **deps:** bump infer CLI v0.132.1 -> v0.133.0, infer-action v0.24.0 -> v0.26.0 ([#420](https://github.com/inference-gateway/inference-gateway/issues/420)) ([e742579](https://github.com/inference-gateway/inference-gateway/commit/e74257926e1c727a0621fdf9c1357fa5b8307140))
+* **deps:** bump infer CLI v0.133.0 -> v0.133.1, infer-action v0.26.0 -> v0.27.1 ([#421](https://github.com/inference-gateway/inference-gateway/issues/421)) ([ee40298](https://github.com/inference-gateway/inference-gateway/commit/ee40298e689d8c0d63b2fcf96f55e029381e6184))
+* **deps:** bump infer CLI v0.133.1 -> v0.137.0, infer-action v0.27.1 -> v0.29.0 ([#423](https://github.com/inference-gateway/inference-gateway/issues/423)) ([d8b9ecd](https://github.com/inference-gateway/inference-gateway/commit/d8b9ecd7fe8840a6ed3c6f4b7f57d1cdab718f4d))
+* update flox environment dependencies ([add540d](https://github.com/inference-gateway/inference-gateway/commit/add540daa427f0c9a7b6781097ae4a3ec1dfec39))
+
 ## [0.28.1](https://github.com/inference-gateway/inference-gateway/compare/v0.28.0...v0.28.1) (2026-07-06)
 
 ### 🐛 Bug Fixes
