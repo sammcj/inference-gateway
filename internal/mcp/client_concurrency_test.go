@@ -11,15 +11,14 @@ import (
 	"testing"
 	"time"
 
-	assert "github.com/stretchr/testify/assert"
-	require "github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	gomock "go.uber.org/mock/gomock"
-
-	providersmocks "github.com/inference-gateway/inference-gateway/tests/mocks/providers"
 
 	config "github.com/inference-gateway/inference-gateway/config"
 	logger "github.com/inference-gateway/inference-gateway/logger"
 	types "github.com/inference-gateway/inference-gateway/providers/types"
+	providersmocks "github.com/inference-gateway/inference-gateway/tests/mocks/providers"
 )
 
 func newMCPStubServer(t *testing.T, initDelay time.Duration, initCount *atomic.Int32) *httptest.Server {
@@ -119,7 +118,6 @@ func TestMCPClientConcurrentReadersDuringReconnection(t *testing.T) {
 				mc.GetServers()
 				mc.GetAllChatCompletionTools()
 				mc.GetAllServerStatuses()
-				mc.GetServerCapabilities()
 				mc.IsInitialized()
 				_, _ = mc.GetServerTools(srv.URL)
 				_, _ = mc.GetServerForTool("echo")
@@ -196,7 +194,7 @@ func TestRunWithStreamReturnsWhenConsumerAbandons(t *testing.T) {
 
 	errCh := make(chan error, 1)
 	go func() {
-		errCh <- agent.RunWithStream(ctx, middlewareCh, nil, &types.CreateChatCompletionRequest{})
+		errCh <- agent.RunWithStream(ctx, middlewareCh, &types.CreateChatCompletionRequest{})
 	}()
 
 	time.Sleep(100 * time.Millisecond)
