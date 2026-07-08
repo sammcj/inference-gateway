@@ -107,6 +107,6 @@
 | MOONSHOT_API_KEY | `""` | Moonshot API Key |
 | NVIDIA_API_URL | `https://integrate.api.nvidia.com/v1` | NVIDIA API URL |
 | NVIDIA_API_KEY | `""` | NVIDIA API Key |
-| ZAI_API_URL | `https://open.bigmodel.cn/api/paas/v4` | Z-AI API URL |
-| ZAI_API_KEY | `""` | Z-AI API Key |
+| ZAI_API_URL | `https://api.z.ai/v1` | ZAI API URL |
+| ZAI_API_KEY | `""` | ZAI API Key |
 
