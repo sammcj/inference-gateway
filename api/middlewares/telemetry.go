@@ -10,11 +10,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gin-gonic/gin"
-	"github.com/inference-gateway/inference-gateway/config"
-	"github.com/inference-gateway/inference-gateway/logger"
-	"github.com/inference-gateway/inference-gateway/otel"
-	"github.com/inference-gateway/inference-gateway/providers/types"
+	gin "github.com/gin-gonic/gin"
+
+	config "github.com/inference-gateway/inference-gateway/config"
+	logger "github.com/inference-gateway/inference-gateway/logger"
+	otel "github.com/inference-gateway/inference-gateway/otel"
+	types "github.com/inference-gateway/inference-gateway/providers/types"
 )
 
 type Telemetry interface {
@@ -61,6 +62,10 @@ func (w *responseBodyWriter) Write(b []byte) (int, error) {
 		w.body.Next(w.body.Len() - maxCapturedResponseBytes)
 	}
 	return w.ResponseWriter.Write(b)
+}
+
+func (w *responseBodyWriter) Unwrap() http.ResponseWriter {
+	return w.ResponseWriter
 }
 
 func (t *TelemetryImpl) Middleware() gin.HandlerFunc {
