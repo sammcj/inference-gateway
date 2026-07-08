@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.30.0](https://github.com/inference-gateway/inference-gateway/compare/v0.29.0...v0.30.0) (2026-07-08)
+
+### ✨ Features
+
+* **providers:** add Z-AI (Zhipu AI) provider for direct access to GLM 5.2 ([#433](https://github.com/inference-gateway/inference-gateway/issues/433)) ([70fa3a8](https://github.com/inference-gateway/inference-gateway/commit/70fa3a88146fe41e28b45f6cb246601ca09ef4b2))
+
 ## [0.29.0](https://github.com/inference-gateway/inference-gateway/compare/v0.28.1...v0.29.0) (2026-07-08)
 
 ### ✨ Features
