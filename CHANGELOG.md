@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.31.0](https://github.com/inference-gateway/inference-gateway/compare/v0.30.0...v0.31.0) (2026-07-09)
+
+### ✨ Features
+
+* **release:** add Windows release assets to goreleaser build matrix ([#440](https://github.com/inference-gateway/inference-gateway/issues/440)) ([12aa00a](https://github.com/inference-gateway/inference-gateway/commit/12aa00aafd5af1f65505c4e7bc84cf8ebc2a7e05))
+
+### ♻️ Improvements
+
+* **codegen:** Consolidate OpenAPI Go type generation on oapi-codegen ([#437](https://github.com/inference-gateway/inference-gateway/issues/437)) ([7367bb0](https://github.com/inference-gateway/inference-gateway/commit/7367bb06aba6aa75145c02055f07d563d83f1168)), closes [#434](https://github.com/inference-gateway/inference-gateway/issues/434)
+
+### 👷 CI
+
+* **claude:** centralize claude.yml via reusable workflow ([#441](https://github.com/inference-gateway/inference-gateway/issues/441)) ([4c22b1f](https://github.com/inference-gateway/inference-gateway/commit/4c22b1f3303821d4f544c47ada553ee878409016))
+* **infer:** centralize infer.yml via reusable workflow ([#436](https://github.com/inference-gateway/inference-gateway/issues/436)) ([0523c51](https://github.com/inference-gateway/inference-gateway/commit/0523c512463d8bc9c6ca9be280271290f5473d06))
+
+### 🔧 Miscellaneous
+
+* **deps:** bump claude-code-action v1.0.165 -> v1.0.169 ([#439](https://github.com/inference-gateway/inference-gateway/issues/439)) ([7be8112](https://github.com/inference-gateway/inference-gateway/commit/7be8112bcb442dd21a57012601d07a146b59a297))
+* **deps:** bump infer CLI v0.137.0 -> v0.138.0, infer-action v0.29.0 -> v0.30.1 ([#435](https://github.com/inference-gateway/inference-gateway/issues/435)) ([d50843c](https://github.com/inference-gateway/inference-gateway/commit/d50843cbffc2824798cdf2feb0f80a83f792f86a))
+* **deps:** update inference workflow to version 0.18.2 -> 0.19.0 ([1cd6e27](https://github.com/inference-gateway/inference-gateway/commit/1cd6e271b67364d939c2924d78c295a6927b2668))
+
 ## [0.30.0](https://github.com/inference-gateway/inference-gateway/compare/v0.29.0...v0.30.0) (2026-07-08)
 
 ### ✨ Features
