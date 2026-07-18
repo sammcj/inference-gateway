@@ -45,7 +45,7 @@ how the feature would be used.
 1. Fork the repository.
 2. Create a new branch for your feature or bug fix.
 3. **Set up development environment** by running `task pre-commit:install`
-   to install pre-commit hooks for automatic code quality checks.
+   to install git hooks from `.githooks/` for automatic code quality checks.
 4. Write your code and tests.
 5. Run the tests to ensure everything works.
 6. Commit your changes and push your branch to your fork.
@@ -68,11 +68,14 @@ This ensures all contributors have identical tooling and configurations.
    flox activate
    ```
 
-3. **Install pre-commit hooks:**
+3. **Install git hooks:**
 
    ```bash
    task pre-commit:install
    ```
+
+   This configures `core.hooksPath = .githooks` and makes the hook executable.
+   The hook runs automatically on `git commit`.
 
 The Flox environment provides all necessary development tools with pinned versions:
 
@@ -83,14 +86,16 @@ The Flox environment provides all necessary development tools with pinned versio
 
 For detailed development information, see [DEVELOPMENT.md](./DEVELOPMENT.md).
 
-**Pre-commit Hook:** The installed pre-commit hook automatically runs:
+**Git Hooks:** The installed hook from `.githooks/` runs automatically on
+`git commit`:
 
-- Code generation (`task generate`)
-- Linting (`task lint` and `task openapi:lint`)
-- Building (`task build`)
-- Testing (`task test`)
+- **pre-commit**:
+  - `go fmt ./...` - format Go source files
+  - `go vet ./...` - static analysis on Go code
+  - `markdownlint` - lint Markdown files
 
-The pre-commit hook ensures code quality and prevents commits that would break the build or introduce inconsistencies.
+The hook provides fast local feedback before CI runs. To skip it in an
+emergency, use `git commit --no-verify`.
 
 #### Alternative: Dev Container
 
