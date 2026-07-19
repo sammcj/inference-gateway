@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.33.1](https://github.com/inference-gateway/inference-gateway/compare/v0.33.0...v0.33.1) (2026-07-19)
+
+### 🐛 Bug Fixes
+
+* **providers:** regenerate with corrected Z.AI base URL from schemas ([#460](https://github.com/inference-gateway/inference-gateway/issues/460)) ([3d3e65e](https://github.com/inference-gateway/inference-gateway/commit/3d3e65e4ba90e5dad6990a0d5f4cc7aa5f1c0dc7))
+
 ## [0.33.0](https://github.com/inference-gateway/inference-gateway/compare/v0.32.0...v0.33.0) (2026-07-19)
 
 ### ✨ Features
