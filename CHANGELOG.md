@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.33.0](https://github.com/inference-gateway/inference-gateway/compare/v0.32.0...v0.33.0) (2026-07-19)
+
+### ✨ Features
+
+* **dev:** add .githooks directory with pre-commit hook ([#453](https://github.com/inference-gateway/inference-gateway/issues/453)) ([98035ea](https://github.com/inference-gateway/inference-gateway/commit/98035ea9f655dfa093e076dd39d5eac09c9f35ef))
+
+### 🐛 Bug Fixes
+
+* sync llamacpp bearer auth from schemas ([#459](https://github.com/inference-gateway/inference-gateway/issues/459)) ([6bae8f4](https://github.com/inference-gateway/inference-gateway/commit/6bae8f48be42021fa8ecc0892863a57026c8795f))
+
+### 📚 Documentation
+
+* **examples:** enable llamacpp in k8s hybrid example ([#456](https://github.com/inference-gateway/inference-gateway/issues/456)) ([b032e62](https://github.com/inference-gateway/inference-gateway/commit/b032e629bf1a5e3adcf19c3d910761cd35eab368)), closes [#455](https://github.com/inference-gateway/inference-gateway/issues/455), references [#161](https://github.com/inference-gateway/inference-gateway/issues/161)
+* **readme:** add Windows to supported platforms ([#451](https://github.com/inference-gateway/inference-gateway/issues/451)) ([80defba](https://github.com/inference-gateway/inference-gateway/commit/80defbaa6bd5c850e902905e81251878be05c12b))
+
 ## [0.32.0](https://github.com/inference-gateway/inference-gateway/compare/v0.31.0...v0.32.0) (2026-07-18)
 
 ### ✨ Features
