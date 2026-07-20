@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.35.2](https://github.com/inference-gateway/inference-gateway/compare/v0.35.1...v0.35.2) (2026-07-20)
+
+### 🐛 Bug Fixes
+
+* **providers:** stream usage for ollama_cloud and dotted community-id matching ([#474](https://github.com/inference-gateway/inference-gateway/issues/474)) ([a43abea](https://github.com/inference-gateway/inference-gateway/commit/a43abea20b918599c660ead94779cb7245cee686)), references [#207](https://github.com/inference-gateway/inference-gateway/issues/207)
+
 ## [0.35.1](https://github.com/inference-gateway/inference-gateway/compare/v0.35.0...v0.35.1) (2026-07-20)
 
 ### 🐛 Bug Fixes
