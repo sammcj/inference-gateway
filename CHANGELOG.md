@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.35.0](https://github.com/inference-gateway/inference-gateway/compare/v0.34.0...v0.35.0) (2026-07-20)
+
+### ✨ Features
+
+* add community context-window fallback synced from models.dev ([#472](https://github.com/inference-gateway/inference-gateway/issues/472)) ([02ec108](https://github.com/inference-gateway/inference-gateway/commit/02ec1088d5d32de750a28cad15712778639d8f57))
+* add community model pricing fallback synced from models.dev ([#470](https://github.com/inference-gateway/inference-gateway/issues/470)) ([1caa729](https://github.com/inference-gateway/inference-gateway/commit/1caa729588bd94ba707dc6890a8fa35fb1b30dbf))
+* add include query param to /v1/models for metadata ([#465](https://github.com/inference-gateway/inference-gateway/issues/465)) ([fa461ff](https://github.com/inference-gateway/inference-gateway/commit/fa461ff2ddefe10b25d4e8d2ad28fe141e076fcd)), references [#463](https://github.com/inference-gateway/inference-gateway/issues/463) [#464](https://github.com/inference-gateway/inference-gateway/issues/464)
+* expose normalized model pricing for include=pricing ([#467](https://github.com/inference-gateway/inference-gateway/issues/467)) ([c8f6545](https://github.com/inference-gateway/inference-gateway/commit/c8f6545f3b9c25fa051a72f4b8c6ac7a0cb79849))
+* resolve model context windows for include=context_window ([#466](https://github.com/inference-gateway/inference-gateway/issues/466)) ([107ee5d](https://github.com/inference-gateway/inference-gateway/commit/107ee5d7fb0b599e629cc1c7627ff854b41e6d92))
+
 ## [0.34.0](https://github.com/inference-gateway/inference-gateway/compare/v0.33.1...v0.34.0) (2026-07-20)
 
 ### ✨ Features
