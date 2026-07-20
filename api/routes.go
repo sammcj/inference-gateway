@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"slices"
 	"strings"
 	"sync"
 
@@ -337,6 +338,12 @@ func parseIncludeParam(raw string) ([]string, error) {
 // is written unchanged so the default payload stays byte-for-byte
 // OpenAI-compatible.
 func (router *RouterImpl) renderModelsResponse(c *gin.Context, resp types.ListModelsResponse, includeKeys []string) {
+	if !slices.Contains(includeKeys, string(types.ContextWindow)) {
+		for i := range resp.Data {
+			resp.Data[i].ContextWindow = nil
+		}
+	}
+
 	if len(includeKeys) == 0 {
 		c.JSON(http.StatusOK, resp)
 		return
@@ -444,6 +451,10 @@ func (router *RouterImpl) ListModelsHandler(c *gin.Context) {
 
 		response.Data = routing.FilterModels(response.Data, router.cfg.AllowedModels, router.cfg.DisallowedModels)
 
+		if slices.Contains(includeKeys, string(types.ContextWindow)) {
+			router.resolveContextWindows(ctx, response.Data)
+		}
+
 		router.renderModelsResponse(c, response, includeKeys)
 	} else {
 		var wg sync.WaitGroup
@@ -495,6 +506,10 @@ func (router *RouterImpl) ListModelsHandler(c *gin.Context) {
 		}
 
 		allModels = routing.FilterModels(allModels, router.cfg.AllowedModels, router.cfg.DisallowedModels)
+
+		if slices.Contains(includeKeys, string(types.ContextWindow)) {
+			router.resolveContextWindows(ctx, allModels)
+		}
 
 		unifiedResponse := types.ListModelsResponse{
 			Object: "list",
