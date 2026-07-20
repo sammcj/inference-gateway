@@ -2,6 +2,7 @@ package core
 
 import (
 	"encoding/json"
+	"math"
 
 	types "github.com/inference-gateway/inference-gateway/providers/types"
 )
@@ -43,11 +44,11 @@ func applyProviderContextWindows(raw []byte, models []types.Model) {
 		}
 		for _, key := range providerContextWindowKeys {
 			tokens, ok := entry[key].(float64)
-			if !ok || tokens <= 0 {
+			if !ok || tokens <= 0 || tokens >= math.MaxInt {
 				continue
 			}
-			models[i].ContextWindow = &types.ModelContextWindow{
-				Tokens: int64(tokens),
+			models[i].ContextWindow = &types.ContextWindow{
+				Tokens: int(tokens),
 				Source: types.ContextWindowSourceProvider,
 			}
 			break

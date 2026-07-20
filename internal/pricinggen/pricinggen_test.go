@@ -115,7 +115,7 @@ func TestGenerate_FreeVsUnpublished(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	var table map[string]types.ModelPricing
+	var table map[string]types.Pricing
 	if err := json.Unmarshal(data, &table); err != nil {
 		t.Fatal(err)
 	}
@@ -124,15 +124,54 @@ func TestGenerate_FreeVsUnpublished(t *testing.T) {
 	if !ok {
 		t.Fatal("free-tier model with explicit zero cost missing from table")
 	}
-	if free.InputPerToken == nil || *free.InputPerToken != "0" || free.OutputPerToken == nil || *free.OutputPerToken != "0" {
+	if free.InputPerToken != "0" || free.OutputPerToken != "0" {
 		t.Errorf("free-tier rates = %v/%v, want \"0\"/\"0\"", free.InputPerToken, free.OutputPerToken)
 	}
 	if _, ok := table["ollama_cloud/kimi-sub"]; ok {
 		t.Error("model without a cost section must not get an entry")
 	}
 	paid, ok := table["openai/gpt-paid"]
-	if !ok || paid.InputPerToken == nil || *paid.InputPerToken != "0.000003" {
+	if !ok || paid.InputPerToken != "0.000003" {
 		t.Errorf("paid model entry = %+v, want input_per_token 0.000003", paid)
+	}
+}
+
+// TestGenerate_PreservesTimestampsForUnchangedRates re-syncs over an existing
+// table: entries whose rates did not change keep their prior updated_at, while
+// changed entries get a fresh stamp.
+func TestGenerate_PreservesTimestampsForUnchangedRates(t *testing.T) {
+	tarball := writeTarball(t, map[string]string{
+		"sst-models.dev-abc/providers/openai/models/gpt-same.toml":    "[cost]\ninput = 3.0\noutput = 15.0\n",
+		"sst-models.dev-abc/providers/openai/models/gpt-changed.toml": "[cost]\ninput = 4.0\noutput = 15.0\n",
+	})
+
+	output := filepath.Join(t.TempDir(), "pricing.json")
+	prior := `{
+		"openai/gpt-same": {"currency":"USD","input_per_token":"0.000003","output_per_token":"0.000015","source":"community","updated_at":"2020-01-02T03:04:05Z"},
+		"openai/gpt-changed": {"currency":"USD","input_per_token":"0.000003","output_per_token":"0.000015","source":"community","updated_at":"2020-01-02T03:04:05Z"}
+	}`
+	if err := os.WriteFile(output, []byte(prior), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := Generate(output, tarball); err != nil {
+		t.Fatalf("Generate() = %v", err)
+	}
+
+	data, err := os.ReadFile(output)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var table map[string]types.Pricing
+	if err := json.Unmarshal(data, &table); err != nil {
+		t.Fatal(err)
+	}
+
+	if got := table["openai/gpt-same"].UpdatedAt.Format("2006-01-02T15:04:05Z"); got != "2020-01-02T03:04:05Z" {
+		t.Errorf("unchanged entry updated_at = %s, want prior timestamp preserved", got)
+	}
+	if got := table["openai/gpt-changed"].UpdatedAt.Year(); got == 2020 {
+		t.Error("changed entry must get a fresh updated_at, kept the prior one")
 	}
 }
 
