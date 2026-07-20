@@ -3,6 +3,7 @@ package core
 import (
 	"bufio"
 	"bytes"
+	"cmp"
 	"context"
 	"encoding/json"
 	"errors"
@@ -13,7 +14,7 @@ import (
 
 	l "github.com/inference-gateway/inference-gateway/logger"
 	client "github.com/inference-gateway/inference-gateway/providers/client"
-	"github.com/inference-gateway/inference-gateway/providers/constants"
+	constants "github.com/inference-gateway/inference-gateway/providers/constants"
 	transformers "github.com/inference-gateway/inference-gateway/providers/transformers"
 	types "github.com/inference-gateway/inference-gateway/providers/types"
 )
@@ -175,8 +176,10 @@ func (p *ProviderImpl) ListModels(ctx context.Context) (types.ListModelsResponse
 	}
 
 	resp := transformer.Transform()
+	resp.Object = cmp.Or(resp.Object, "list")
 	applyProviderContextWindows(body, resp.Data)
 	applyProviderPricing(body, resp.Data)
+	applyCommunityPricing(resp.Data)
 	return resp, nil
 }
 
