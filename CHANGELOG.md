@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.36.1](https://github.com/inference-gateway/inference-gateway/compare/v0.36.0...v0.36.1) (2026-07-21)
+
+### 👷 CI
+
+* add deterministic schemas type sync ([#479](https://github.com/inference-gateway/inference-gateway/issues/479)) ([366ae79](https://github.com/inference-gateway/inference-gateway/commit/366ae7943a82dc5f40ea8a0d3c3a3e50c5de299b))
+* install mockgen for schemas-sync codegen ([#481](https://github.com/inference-gateway/inference-gateway/issues/481)) ([8fe83ef](https://github.com/inference-gateway/inference-gateway/commit/8fe83ef8456d301942645bda789cd66e7e40f3d3))
+
+### 🔧 Miscellaneous
+
+* **deps:** bump body-parser ([#480](https://github.com/inference-gateway/inference-gateway/issues/480)) ([a87540f](https://github.com/inference-gateway/inference-gateway/commit/a87540f20c920d56afbfbcc83706ea766ff59ebf))
+
 ## [0.36.0](https://github.com/inference-gateway/inference-gateway/compare/v0.35.2...v0.36.0) (2026-07-21)
 
 ### ✨ Features
