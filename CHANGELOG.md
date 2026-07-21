@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.37.0](https://github.com/inference-gateway/inference-gateway/compare/v0.36.1...v0.37.0) (2026-07-21)
+
+### ✨ Features
+
+* implement POST /v1/messages Anthropic Messages API (schemas v0.11.1) ([#482](https://github.com/inference-gateway/inference-gateway/issues/482)) ([4fa28a6](https://github.com/inference-gateway/inference-gateway/commit/4fa28a66c6f4f5f3f78c91c3d067cc201b5a702f))
+
 ## [0.36.1](https://github.com/inference-gateway/inference-gateway/compare/v0.36.0...v0.36.1) (2026-07-21)
 
 ### 👷 CI
