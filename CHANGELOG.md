@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.36.0](https://github.com/inference-gateway/inference-gateway/compare/v0.35.2...v0.36.0) (2026-07-21)
+
+### ✨ Features
+
+* **pricing:** report subscription flag for gated models ([#477](https://github.com/inference-gateway/inference-gateway/issues/477)) ([fcd8b4e](https://github.com/inference-gateway/inference-gateway/commit/fcd8b4ee8826875520970907a84624dc10e4f21f))
+
 ## [0.35.2](https://github.com/inference-gateway/inference-gateway/compare/v0.35.1...v0.35.2) (2026-07-20)
 
 ### 🐛 Bug Fixes
