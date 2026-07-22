@@ -55,6 +55,7 @@ type RouterImpl struct {
 	client    client.Client
 	mcpClient mcp.MCPClientInterface
 	telemetry otel.OpenTelemetry
+	selector  *routing.Selector
 }
 
 type ErrorResponse struct {
@@ -72,6 +73,7 @@ func NewRouter(
 	httpClient client.Client,
 	mcpClient mcp.MCPClientInterface,
 	telemetry otel.OpenTelemetry,
+	selector *routing.Selector,
 ) Router {
 	return &RouterImpl{
 		cfg,
@@ -80,6 +82,7 @@ func NewRouter(
 		httpClient,
 		mcpClient,
 		telemetry,
+		selector,
 	}
 }
 
@@ -612,6 +615,17 @@ func (router *RouterImpl) ChatCompletionsHandler(c *gin.Context) {
 	model := req.Model
 	originalModel := req.Model
 	providerID := types.Provider(c.Query("provider"))
+
+	var routedProvider, routedModel string
+	if router.selector != nil && providerID == "" {
+		if dep, ok := router.selector.Select(model); ok {
+			providerID = types.Provider(dep.Provider)
+			model = dep.Model
+			routedProvider, routedModel = dep.Provider, dep.Model
+			router.logger.Debug("routed logical model", "alias", originalModel, "provider", dep.Provider, "model", dep.Model)
+		}
+	}
+
 	if providerID == "" {
 		var providerPtr *types.Provider
 		providerPtr, model = routing.DetermineProviderAndModelName(model)
@@ -692,6 +706,11 @@ func (router *RouterImpl) ChatCompletionsHandler(c *gin.Context) {
 	}
 
 	router.logger.Debug("server read timeout", "timeout", router.cfg.Server.ReadTimeout)
+
+	if routedProvider != "" {
+		c.Header("X-Selected-Provider", routedProvider)
+		c.Header("X-Selected-Model", routedModel)
+	}
 
 	if req.Stream != nil && *req.Stream {
 		middlewares.SetSSEHeaders(c)
