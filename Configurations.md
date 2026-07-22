@@ -13,11 +13,13 @@
 
 ### Telemetry
 
-| Environment Variable          | Default Value | Description                                              |
-| ----------------------------- | ------------- | -------------------------------------------------------- |
-| TELEMETRY_ENABLE              | `false`       | Enable telemetry                                         |
-| TELEMETRY_METRICS_PUSH_ENABLE | `false`       | Enable the OTLP metrics push endpoint (POST /v1/metrics) |
-| TELEMETRY_METRICS_PORT        | `9464`        | Port for telemetry metrics server                        |
+| Environment Variable            | Default Value           | Description                                                    |
+| ------------------------------- | ----------------------- | -------------------------------------------------------------- |
+| TELEMETRY_ENABLE                | `false`                 | Enable telemetry                                               |
+| TELEMETRY_METRICS_PUSH_ENABLE   | `false`                 | Enable the OTLP metrics push endpoint (POST /v1/metrics)       |
+| TELEMETRY_METRICS_PORT          | `9464`                  | Port for telemetry metrics server                              |
+| TELEMETRY_TRACING_ENABLE        | `false`                 | Enable OpenTelemetry tracing spans (requires TELEMETRY_ENABLE) |
+| TELEMETRY_TRACING_OTLP_ENDPOINT | `http://localhost:4318` | OTLP HTTP endpoint for trace export                            |
 
 ### Model Context Protocol (MCP)
 

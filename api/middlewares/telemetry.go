@@ -11,6 +11,9 @@ import (
 	"time"
 
 	gin "github.com/gin-gonic/gin"
+	codes "go.opentelemetry.io/otel/codes"
+	semconv "go.opentelemetry.io/otel/semconv/v1.41.0"
+	trace "go.opentelemetry.io/otel/trace"
 
 	config "github.com/inference-gateway/inference-gateway/config"
 	logger "github.com/inference-gateway/inference-gateway/logger"
@@ -129,6 +132,17 @@ func (t *TelemetryImpl) Middleware() gin.HandlerFunc {
 		if statusCode >= 400 {
 			errorType = strconv.Itoa(statusCode)
 		}
+
+		span := trace.SpanFromContext(c.Request.Context())
+		span.SetAttributes(
+			semconv.GenAIProviderNameKey.String(provider),
+			semconv.GenAIRequestModel(model),
+		)
+		if errorType != "" {
+			span.SetStatus(codes.Error, errorType)
+			span.SetAttributes(semconv.ErrorTypeKey.String(errorType))
+		}
+
 		team := otel.TeamUnknown
 		t.telemetry.RecordRequestDuration(c.Request.Context(), otel.SourceGateway, team, provider, model, errorType, duration)
 
