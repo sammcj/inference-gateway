@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.39.0](https://github.com/inference-gateway/inference-gateway/compare/v0.38.0...v0.39.0) (2026-07-22)
+
+### ✨ Features
+
+* add round-robin model routing over upstream pools ([#490](https://github.com/inference-gateway/inference-gateway/issues/490)) ([4060c2a](https://github.com/inference-gateway/inference-gateway/commit/4060c2a43782735157b8e4029f100210d4fb4b32)), references [#397](https://github.com/inference-gateway/inference-gateway/issues/397)
+* **schema:** bump OpenAPI schema to v0.13.0 and regenerate types ([#491](https://github.com/inference-gateway/inference-gateway/issues/491)) ([654f8b5](https://github.com/inference-gateway/inference-gateway/commit/654f8b506f770a8a74f8000e891faa1078036035))
+
 ## [0.38.0](https://github.com/inference-gateway/inference-gateway/compare/v0.37.0...v0.38.0) (2026-07-22)
 
 ### ✨ Features
