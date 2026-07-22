@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.38.0](https://github.com/inference-gateway/inference-gateway/compare/v0.37.0...v0.38.0) (2026-07-22)
+
+### ✨ Features
+
+* add opentelemetry tracing spans across gateway call paths ([#483](https://github.com/inference-gateway/inference-gateway/issues/483)) ([98a343d](https://github.com/inference-gateway/inference-gateway/commit/98a343d190917a038a90328defb246ab08f005ab))
+
+### 👷 CI
+
+* **claude:** centralize claude.yml via reusable workflow ([#485](https://github.com/inference-gateway/inference-gateway/issues/485)) ([c98771d](https://github.com/inference-gateway/inference-gateway/commit/c98771d96fd0979c04c5e561cb41d38d5270dd38))
+
+### 📚 Documentation
+
+* remove stale helm chart references ([#489](https://github.com/inference-gateway/inference-gateway/issues/489)) ([e306fce](https://github.com/inference-gateway/inference-gateway/commit/e306fce2993ae6c417c371ba6237faa2f4d0d25b))
+
+### 🔧 Miscellaneous
+
+* **deps:** bump fast-uri in /examples/docker-compose/mcp/pizza-server ([#487](https://github.com/inference-gateway/inference-gateway/issues/487)) ([b4d0f19](https://github.com/inference-gateway/inference-gateway/commit/b4d0f19f8d73d2a32b97df56671ec84771890f9a))
+* **deps:** bump google.golang.org/grpc from 1.79.3 to 1.82.1 ([#486](https://github.com/inference-gateway/inference-gateway/issues/486)) ([0dcbe19](https://github.com/inference-gateway/inference-gateway/commit/0dcbe198f854dc63e10930938efe2c09834bd400))
+* **deps:** bump hono in /examples/docker-compose/mcp/pizza-server ([#488](https://github.com/inference-gateway/inference-gateway/issues/488)) ([e0f39c7](https://github.com/inference-gateway/inference-gateway/commit/e0f39c7f9266b131267ab349804cdcbdbbd143b8))
+
 ## [0.37.0](https://github.com/inference-gateway/inference-gateway/compare/v0.36.1...v0.37.0) (2026-07-21)
 
 ### ✨ Features
