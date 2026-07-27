@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.40.0](https://github.com/inference-gateway/inference-gateway/compare/v0.39.1...v0.40.0) (2026-07-27)
+
+### ✨ Features
+
+* add max body size to config ([#508](https://github.com/inference-gateway/inference-gateway/issues/508)) ([1105767](https://github.com/inference-gateway/inference-gateway/commit/1105767ca75b8fafd0c507b64f7686fdd49f3538))
+* sync generated types with schemas v0.13.0 ([#507](https://github.com/inference-gateway/inference-gateway/issues/507)) ([c8eb1a0](https://github.com/inference-gateway/inference-gateway/commit/c8eb1a020e731722d8e8d79ed619609432db9a48))
+
 ## [0.39.1](https://github.com/inference-gateway/inference-gateway/compare/v0.39.0...v0.39.1) (2026-07-27)
 
 ### ♻️ Improvements
