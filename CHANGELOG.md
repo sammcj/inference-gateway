@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.39.1](https://github.com/inference-gateway/inference-gateway/compare/v0.39.0...v0.39.1) (2026-07-27)
+
+### ♻️ Improvements
+
+* **codegen:** generate MCP types via oapi-codegen ([#495](https://github.com/inference-gateway/inference-gateway/issues/495)) ([efd1077](https://github.com/inference-gateway/inference-gateway/commit/efd10774188a6492111b559d405dce5627fc0b3b)), closes [#492](https://github.com/inference-gateway/inference-gateway/issues/492)
+
+### 🐛 Bug Fixes
+
+* cap chat completions request body at 10 MiB ([#506](https://github.com/inference-gateway/inference-gateway/issues/506)) ([7d1d2b6](https://github.com/inference-gateway/inference-gateway/commit/7d1d2b63a1aaa30500fb7da34ff2e2dc092737f1))
+* **ci:** update maintainer app ID to client ID in workflows and documentation ([81d1f5a](https://github.com/inference-gateway/inference-gateway/commit/81d1f5a48c86ab010b03abe14fcf4d51e6d78df9))
+* **ci:** update model name from opus-8 to opus-4-8 ([2dde13d](https://github.com/inference-gateway/inference-gateway/commit/2dde13df65dd60efaa5ad745016c70e2555ddd3d))
+* strip caller Authorization before proxying upstream ([#503](https://github.com/inference-gateway/inference-gateway/issues/503)) ([5fb4dea](https://github.com/inference-gateway/inference-gateway/commit/5fb4deabd29ab1a4dacfa6d1eaad127c438b0ba1))
+* sync community pricing and context-window tables from models.dev ([#500](https://github.com/inference-gateway/inference-gateway/issues/500)) ([6669dba](https://github.com/inference-gateway/inference-gateway/commit/6669dba8ad5253a27d4fd42e8305f8266346666e))
+
+### 👷 CI
+
+* **claude:** centralize claude.yml via reusable workflow ([#493](https://github.com/inference-gateway/inference-gateway/issues/493)) ([b2c8b3a](https://github.com/inference-gateway/inference-gateway/commit/b2c8b3ae96f756ba5fddf0f3e98ea64f12d65fb2))
+* **claude:** centralize claude.yml via reusable workflow ([#494](https://github.com/inference-gateway/inference-gateway/issues/494)) ([6b553bc](https://github.com/inference-gateway/inference-gateway/commit/6b553bc4d7748a19875f53c6c71879ec72e367c9))
+* **sync-tables:** use maintainer app and chore commit type ([#501](https://github.com/inference-gateway/inference-gateway/issues/501)) ([fe2c97f](https://github.com/inference-gateway/inference-gateway/commit/fe2c97fcc3b40560d79b70d58c9269aedd636979))
+
+### 🔧 Miscellaneous
+
+* **deps:** bump infer CLI v0.147.1 -> v0.153.1 ([#502](https://github.com/inference-gateway/inference-gateway/issues/502)) ([01787b6](https://github.com/inference-gateway/inference-gateway/commit/01787b6ccb4fb75fdbb9fe84dcca0b1344d0f082))
+* **deps:** bump the github-actions group with 2 updates ([#499](https://github.com/inference-gateway/inference-gateway/issues/499)) ([f5e85c1](https://github.com/inference-gateway/inference-gateway/commit/f5e85c113eb9726be43b0ec7d80695731f727ffe))
+* **deps:** bump the gomod group with 4 updates ([#498](https://github.com/inference-gateway/inference-gateway/issues/498)) ([dfaf859](https://github.com/inference-gateway/inference-gateway/commit/dfaf859fb6b541eb08df1a046174febe47b9e002))
+* **devcontainer:** remove inference-gateway/tools generator install ([#497](https://github.com/inference-gateway/inference-gateway/issues/497)) ([de6a2f6](https://github.com/inference-gateway/inference-gateway/commit/de6a2f60bcdd7a4187c4ecbdd24bb983bc0e4cba))
+
 ## [0.39.0](https://github.com/inference-gateway/inference-gateway/compare/v0.38.0...v0.39.0) (2026-07-22)
 
 ### ✨ Features
