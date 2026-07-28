@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.42.0](https://github.com/inference-gateway/inference-gateway/compare/v0.41.0...v0.42.0) (2026-07-28)
+
+### ✨ Features
+
+* add effort level for anthropic's endpoint ([#520](https://github.com/inference-gateway/inference-gateway/issues/520)) ([2b1bbb8](https://github.com/inference-gateway/inference-gateway/commit/2b1bbb80e4ca3ba8e4fd9ad2277ee45656620b0d))
+
 ## [0.41.0](https://github.com/inference-gateway/inference-gateway/compare/v0.40.0...v0.41.0) (2026-07-28)
 
 ### ✨ Features
