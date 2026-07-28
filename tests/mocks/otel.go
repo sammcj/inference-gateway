@@ -72,6 +72,18 @@ func (mr *MockOpenTelemetryMockRecorder) Init(arg0, arg1 any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Init", reflect.TypeOf((*MockOpenTelemetry)(nil).Init), arg0, arg1)
 }
 
+// RecordGuardrail mocks base method.
+func (m *MockOpenTelemetry) RecordGuardrail(ctx context.Context, source, phase, action, path, model string) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "RecordGuardrail", ctx, source, phase, action, path, model)
+}
+
+// RecordGuardrail indicates an expected call of RecordGuardrail.
+func (mr *MockOpenTelemetryMockRecorder) RecordGuardrail(ctx, source, phase, action, path, model any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RecordGuardrail", reflect.TypeOf((*MockOpenTelemetry)(nil).RecordGuardrail), ctx, source, phase, action, path, model)
+}
+
 // RecordRequestDuration mocks base method.
 func (m *MockOpenTelemetry) RecordRequestDuration(ctx context.Context, source, team, provider, model, errorType string, seconds float64) {
 	m.ctrl.T.Helper()
