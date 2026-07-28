@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.42.1](https://github.com/inference-gateway/inference-gateway/compare/v0.42.0...v0.42.1) (2026-07-28)
+
+### 🔧 Miscellaneous
+
+* **pricing:** sync community pricing and context-window tables from models.dev ([#521](https://github.com/inference-gateway/inference-gateway/issues/521)) ([fcda023](https://github.com/inference-gateway/inference-gateway/commit/fcda0233f4f35c1b6bc62d19387f4d7dddbc32fc))
+
 ## [0.42.0](https://github.com/inference-gateway/inference-gateway/compare/v0.41.0...v0.42.0) (2026-07-28)
 
 ### ✨ Features
