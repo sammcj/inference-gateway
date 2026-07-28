@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.41.0](https://github.com/inference-gateway/inference-gateway/compare/v0.40.0...v0.41.0) (2026-07-28)
+
+### ✨ Features
+
+* **api:** implement POST /v1/responses (OpenAI-compatible Responses API) ([#510](https://github.com/inference-gateway/inference-gateway/issues/510)) ([8ed602c](https://github.com/inference-gateway/inference-gateway/commit/8ed602c1fa6e09f75bcb205dff951b91877b7b67))
+* **guardrails:** add guardrails middleware with OPA evaluator and detectors wiring ([#514](https://github.com/inference-gateway/inference-gateway/issues/514)) ([703b597](https://github.com/inference-gateway/inference-gateway/commit/703b59709a54f2bc68ea24dcfa65f1dd3dd1ddf0))
+
+### ♻️ Improvements
+
+* rename _ENABLE env vars to _ENABLED (schemas v0.15.3) ([#516](https://github.com/inference-gateway/inference-gateway/issues/516)) ([790ebc8](https://github.com/inference-gateway/inference-gateway/commit/790ebc8a6031a29cef589c1957de9080ade3204f)), closes [#515](https://github.com/inference-gateway/inference-gateway/issues/515)
+
+### 🐛 Bug Fixes
+
+* **examples:** bump @hono/node-server to 2.x for GHSA-frvp-7c67-39w9 ([#509](https://github.com/inference-gateway/inference-gateway/issues/509)) ([51fb2a7](https://github.com/inference-gateway/inference-gateway/commit/51fb2a75a194fee3acfe7e2ccbe4d7b399c83d3a))
+
+### 👷 CI
+
+* **claude:** centralize claude.yml via reusable workflow ([#512](https://github.com/inference-gateway/inference-gateway/issues/512)) ([e5697da](https://github.com/inference-gateway/inference-gateway/commit/e5697da19e3320b8fff381c6add6a8c4936a258b))
+* **infer:** centralize infer.yml via reusable workflow ([#511](https://github.com/inference-gateway/inference-gateway/issues/511)) ([b8988f6](https://github.com/inference-gateway/inference-gateway/commit/b8988f67238d8103b8a03483220c0aea8e030f32))
+
+### 🔧 Miscellaneous
+
+* **deps:** bump github.com/open-policy-agent/opa from 1.3.0 to 1.4.0 ([#517](https://github.com/inference-gateway/inference-gateway/issues/517)) ([94bac15](https://github.com/inference-gateway/inference-gateway/commit/94bac1548ae3a738eaa7b1387f35b1799a62fa75))
+
 ## [0.40.0](https://github.com/inference-gateway/inference-gateway/compare/v0.39.1...v0.40.0) (2026-07-27)
 
 ### ✨ Features
