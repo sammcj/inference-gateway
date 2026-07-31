@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.43.0](https://github.com/inference-gateway/inference-gateway/compare/v0.42.1...v0.43.0) (2026-07-31)
+
+### ✨ Features
+
+* **mcp:** add selector tool mode with two meta-tools ([#522](https://github.com/inference-gateway/inference-gateway/issues/522)) ([897a34f](https://github.com/inference-gateway/inference-gateway/commit/897a34f452e6aaa4b3d3e39195d2864134093d6c)), closes [#519](https://github.com/inference-gateway/inference-gateway/issues/519)
+* sync generated types with schemas v0.18.1 ([#531](https://github.com/inference-gateway/inference-gateway/issues/531)) ([57a33ad](https://github.com/inference-gateway/inference-gateway/commit/57a33ad712afa0de0ac83941a1696ee58f50989c))
+* sync schemas v0.17.0 - images endpoints ([#527](https://github.com/inference-gateway/inference-gateway/issues/527)) ([371dfb6](https://github.com/inference-gateway/inference-gateway/commit/371dfb6f20a0b331bb09b28d97464e37db915108))
+
+### ♻️ Improvements
+
+* **openapi:** remove dead GetSchemas reflection machinery ([#526](https://github.com/inference-gateway/inference-gateway/issues/526)) ([572e318](https://github.com/inference-gateway/inference-gateway/commit/572e3180dd83b3b931543642c5a6508c8f411276))
+
+### 👷 CI
+
+* **claude:** centralize claude.yml via reusable workflow ([#524](https://github.com/inference-gateway/inference-gateway/issues/524)) ([cfee98a](https://github.com/inference-gateway/inference-gateway/commit/cfee98a422b4ebfafc63e00b37cae1b9f209ddee))
+* **claude:** centralize claude.yml via reusable workflow ([#530](https://github.com/inference-gateway/inference-gateway/issues/530)) ([2a9f643](https://github.com/inference-gateway/inference-gateway/commit/2a9f643bf260d2393fa66e861f52d8dbbc5e0153))
+
+### 🔧 Miscellaneous
+
+* **deps:** bump infer CLI v0.153.1 -> v0.155.0 ([#529](https://github.com/inference-gateway/inference-gateway/issues/529)) ([d3cd0b6](https://github.com/inference-gateway/inference-gateway/commit/d3cd0b6f62a8ad26196622e291fba1f28689c054))
+* sync generated types with schemas v0.18.1 ([#532](https://github.com/inference-gateway/inference-gateway/issues/532)) ([9b72416](https://github.com/inference-gateway/inference-gateway/commit/9b72416400a3cfd09577e87424086ef40257b0d6))
+
 ## [0.42.1](https://github.com/inference-gateway/inference-gateway/compare/v0.42.0...v0.42.1) (2026-07-28)
 
 ### 🔧 Miscellaneous
