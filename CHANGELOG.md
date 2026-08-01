@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.44.0](https://github.com/inference-gateway/inference-gateway/compare/v0.43.0...v0.44.0) (2026-08-01)
+
+### ✨ Features
+
+* implement images edits and variations endpoints ([#536](https://github.com/inference-gateway/inference-gateway/issues/536)) ([eed5fc5](https://github.com/inference-gateway/inference-gateway/commit/eed5fc569766523f3c3e9216aa4245d0d9ad8537)), closes [#535](https://github.com/inference-gateway/inference-gateway/issues/535)
+* sync generated types with schemas v0.19.1 ([#538](https://github.com/inference-gateway/inference-gateway/issues/538)) ([1680603](https://github.com/inference-gateway/inference-gateway/commit/16806030b1a7ae84ac98b9d79da6413961ffbaa9))
+
+### 👷 CI
+
+* **claude:** centralize claude.yml via reusable workflow ([#537](https://github.com/inference-gateway/inference-gateway/issues/537)) ([45f648b](https://github.com/inference-gateway/inference-gateway/commit/45f648b0c76c3cbfb48ac5f2ea56c1798ba59a30))
+
+### 🔧 Miscellaneous
+
+* **deps:** bump github.com/open-policy-agent/opa in the gomod group ([#533](https://github.com/inference-gateway/inference-gateway/issues/533)) ([8e5ab39](https://github.com/inference-gateway/inference-gateway/commit/8e5ab39f4700dc9875a4cdb9cf9ff46e1c1fb537))
+* **deps:** bump the github-actions group with 2 updates ([#534](https://github.com/inference-gateway/inference-gateway/issues/534)) ([53faa68](https://github.com/inference-gateway/inference-gateway/commit/53faa680155d45bb103446d01be8960702ee064e))
+
 ## [0.43.0](https://github.com/inference-gateway/inference-gateway/compare/v0.42.1...v0.43.0) (2026-07-31)
 
 ### ✨ Features
