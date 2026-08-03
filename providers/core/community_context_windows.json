@@ -452,6 +452,10 @@
     "context": 128000,
     "output": 128000
   },
+  "mistral/voxtral-small-latest": {
+    "context": 32000,
+    "output": 32000
+  },
   "moonshot/kimi-k2-0711-preview": {
     "context": 131072,
     "output": 16384
