@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.46.0](https://github.com/inference-gateway/inference-gateway/compare/v0.45.0...v0.46.0) (2026-08-04)
+
+### ✨ Features
+
+* add community maintained modalities info to list models endpoint - schema v0.21.1 ([#540](https://github.com/inference-gateway/inference-gateway/issues/540)) ([9f7a822](https://github.com/inference-gateway/inference-gateway/commit/9f7a8224db66b0b4ec5466d9efc8d95b500c7012))
+
+### ♻️ Improvements
+
+* split static go out of codegen templates ([#547](https://github.com/inference-gateway/inference-gateway/issues/547)) ([6677da6](https://github.com/inference-gateway/inference-gateway/commit/6677da6afd0a606899f833c2351635edeef386f5)), closes [#546](https://github.com/inference-gateway/inference-gateway/issues/546)
+
 ## [0.45.0](https://github.com/inference-gateway/inference-gateway/compare/v0.44.0...v0.45.0) (2026-08-04)
 
 ### ✨ Features
