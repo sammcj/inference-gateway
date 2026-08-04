@@ -19,6 +19,7 @@ import (
 	"sync"
 
 	gin "github.com/gin-gonic/gin"
+	otelhttp "go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	otelapi "go.opentelemetry.io/otel"
 	codes "go.opentelemetry.io/otel/codes"
 	propagation "go.opentelemetry.io/otel/propagation"
@@ -229,7 +230,9 @@ func handleProxyRequest(c *gin.Context, provider core.IProvider, router *RouterI
 		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "Failed to construct URL"})
 		return
 	}
-	proxy := &httputil.ReverseProxy{}
+	proxy := &httputil.ReverseProxy{
+		Transport: proxyTransport,
+	}
 
 	proxy.ErrorHandler = func(w http.ResponseWriter, r *http.Request, err error) {
 		router.logger.Error("proxy request failed", err, "url", fullURL.String())
@@ -1346,6 +1349,10 @@ type imagesMultipartTarget struct {
 	endpoint      func(types.Endpoints) *string
 	requirePrompt bool
 }
+
+// proxyTransport wraps http.DefaultTransport with OpenTelemetry instrumentation
+// so that every non-streaming reverse proxy call emits a distinct client span.
+var proxyTransport = otelhttp.NewTransport(http.DefaultTransport)
 
 var (
 	imagesEditsTarget = imagesMultipartTarget{
