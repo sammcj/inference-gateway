@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.45.0](https://github.com/inference-gateway/inference-gateway/compare/v0.44.0...v0.45.0) (2026-08-04)
+
+### ✨ Features
+
+* **providers:** wrap provider HTTP transport with otelhttp for client spans ([#545](https://github.com/inference-gateway/inference-gateway/issues/545)) ([59b0a41](https://github.com/inference-gateway/inference-gateway/commit/59b0a41cc071b2f8dd450543407c057015523ffd))
+
+### 🔧 Miscellaneous
+
+* **deps:** bump fast-uri in /examples/docker-compose/mcp/pizza-server ([#542](https://github.com/inference-gateway/inference-gateway/issues/542)) ([ff92b44](https://github.com/inference-gateway/inference-gateway/commit/ff92b4457d3ba24ba7c4419839bba9580a7c6b1c))
+* **deps:** bump hono in /examples/docker-compose/mcp/pizza-server ([#543](https://github.com/inference-gateway/inference-gateway/issues/543)) ([415f7a9](https://github.com/inference-gateway/inference-gateway/commit/415f7a9832c8546ad261a44e08482ae14b95c90a))
+* **deps:** bump ip-address ([#541](https://github.com/inference-gateway/inference-gateway/issues/541)) ([db17638](https://github.com/inference-gateway/inference-gateway/commit/db176385651968267d035da89fc78b2b3245c999))
+* sync community pricing and context-window tables from models.dev ([#539](https://github.com/inference-gateway/inference-gateway/issues/539)) ([802b135](https://github.com/inference-gateway/inference-gateway/commit/802b135008e247a8917dc57e10cdb7ebf32bef83))
+
 ## [0.44.0](https://github.com/inference-gateway/inference-gateway/compare/v0.43.0...v0.44.0) (2026-08-01)
 
 ### ✨ Features
