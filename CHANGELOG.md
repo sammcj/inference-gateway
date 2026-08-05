@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.47.0](https://github.com/inference-gateway/inference-gateway/compare/v0.46.0...v0.47.0) (2026-08-05)
+
+### ✨ Features
+
+* restructure model modalities into nested input/output and resolve models.dev base_model inheritance ([#548](https://github.com/inference-gateway/inference-gateway/issues/548)) ([8f6a064](https://github.com/inference-gateway/inference-gateway/commit/8f6a06453b4983d662305779cc05c224a1583a98))
+
 ## [0.46.0](https://github.com/inference-gateway/inference-gateway/compare/v0.45.0...v0.46.0) (2026-08-04)
 
 ### ✨ Features
