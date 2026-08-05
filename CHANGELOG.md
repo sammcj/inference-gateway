@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.47.1](https://github.com/inference-gateway/inference-gateway/compare/v0.47.0...v0.47.1) (2026-08-05)
+
+### ♻️ Improvements
+
+* gate image stripping on per-model modalities ([#549](https://github.com/inference-gateway/inference-gateway/issues/549)) ([3199ad2](https://github.com/inference-gateway/inference-gateway/commit/3199ad26900672d1fce4c707bff1c969b5a61327))
+
 ## [0.47.0](https://github.com/inference-gateway/inference-gateway/compare/v0.46.0...v0.47.0) (2026-08-05)
 
 ### ✨ Features
