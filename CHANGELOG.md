@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.48.0](https://github.com/inference-gateway/inference-gateway/compare/v0.47.1...v0.48.0) (2026-08-13)
+
+### ✨ Features
+
+* **telemetry:** name outbound spans with method and path ([#554](https://github.com/inference-gateway/inference-gateway/issues/554)) ([0c89a51](https://github.com/inference-gateway/inference-gateway/commit/0c89a51934cac8dbe8acc49cd0164bc07afea357))
+
+### 🔧 Miscellaneous
+
+* **deps:** bump infer CLI v0.155.0 -> v0.164.0 ([#550](https://github.com/inference-gateway/inference-gateway/issues/550)) ([906ded1](https://github.com/inference-gateway/inference-gateway/commit/906ded1e4e42867d072dd51a79169f2a6640bd2f))
+* **deps:** bump the gomod group with 10 updates ([#551](https://github.com/inference-gateway/inference-gateway/issues/551)) ([210dfe9](https://github.com/inference-gateway/inference-gateway/commit/210dfe9b3b378577038aa384b267abfe7d4782e1))
+* sync community pricing, context-window, and modalities tables from models.dev ([#552](https://github.com/inference-gateway/inference-gateway/issues/552)) ([568f013](https://github.com/inference-gateway/inference-gateway/commit/568f0139ad59af4664296408af6a1f3fed36c558))
+
 ## [0.47.1](https://github.com/inference-gateway/inference-gateway/compare/v0.47.0...v0.47.1) (2026-08-05)
 
 ### ♻️ Improvements
