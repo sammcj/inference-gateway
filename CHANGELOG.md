@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.48.1](https://github.com/inference-gateway/inference-gateway/compare/v0.48.0...v0.48.1) (2026-08-13)
+
+### 🐛 Bug Fixes
+
+* **telemetry:** append /v1/traces to path-less OTLP trace endpoints ([#555](https://github.com/inference-gateway/inference-gateway/issues/555)) ([1c1f1e3](https://github.com/inference-gateway/inference-gateway/commit/1c1f1e3c6faa9e5485050caa3ccc75cb9bfa83b1)), references [#551](https://github.com/inference-gateway/inference-gateway/issues/551)
+
 ## [0.48.0](https://github.com/inference-gateway/inference-gateway/compare/v0.47.1...v0.48.0) (2026-08-13)
 
 ### ✨ Features
