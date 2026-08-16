@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.48.2](https://github.com/inference-gateway/inference-gateway/compare/v0.48.1...v0.48.2) (2026-08-16)
+
+### 🐛 Bug Fixes
+
+* correct MiniMax M3 community pricing ([#557](https://github.com/inference-gateway/inference-gateway/issues/557)) ([75e7d78](https://github.com/inference-gateway/inference-gateway/commit/75e7d786c14759aef19b59cc2e7fdca7727d4613))
+
+### 🔧 Miscellaneous
+
+* **deps:** bump the gomod group with 2 updates ([#556](https://github.com/inference-gateway/inference-gateway/issues/556)) ([f5146f0](https://github.com/inference-gateway/inference-gateway/commit/f5146f078e35027ea93f754582cb25bbeaf4fa5a))
+
 ## [0.48.1](https://github.com/inference-gateway/inference-gateway/compare/v0.48.0...v0.48.1) (2026-08-13)
 
 ### 🐛 Bug Fixes
