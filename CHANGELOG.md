@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.49.0](https://github.com/inference-gateway/inference-gateway/compare/v0.48.2...v0.49.0) (2026-08-31)
+
+### ✨ Features
+
+* add an opt-in text-to-speech endpoint with zero-shot voice cloning ([#569](https://github.com/inference-gateway/inference-gateway/issues/569)) ([2c195da](https://github.com/inference-gateway/inference-gateway/commit/2c195da9d45aae05b057efa90259a09a9bb990e6))
+
+### 📚 Documentation
+
+* restyle README with hero terminal and cleaner diagram ([#561](https://github.com/inference-gateway/inference-gateway/issues/561)) ([abc6723](https://github.com/inference-gateway/inference-gateway/commit/abc67230bac5bb1970adb7fdd74bdf611182b34e))
+* simplify AGENTS.md ([#567](https://github.com/inference-gateway/inference-gateway/issues/567)) ([2781830](https://github.com/inference-gateway/inference-gateway/commit/2781830d64e4288948adf619c486c3a91ae610c4))
+
+### 🔧 Miscellaneous
+
+* **deps:** bump docker/setup-buildx-action in the github-actions group ([#563](https://github.com/inference-gateway/inference-gateway/issues/563)) ([2957493](https://github.com/inference-gateway/inference-gateway/commit/295749367b57bec002a67ce0a4d1294d790b011b))
+* **deps:** bump the gomod group with 3 updates ([#562](https://github.com/inference-gateway/inference-gateway/issues/562)) ([0118dac](https://github.com/inference-gateway/inference-gateway/commit/0118daceed00236af6eed2b07c397830d0e451df))
+* **deps:** bump the gomod group with 7 updates ([#566](https://github.com/inference-gateway/inference-gateway/issues/566)) ([b4343a3](https://github.com/inference-gateway/inference-gateway/commit/b4343a39b0995b8c2187798d53819f13ea296989))
+* **deps:** update flox environment dependencies ([e798fbf](https://github.com/inference-gateway/inference-gateway/commit/e798fbf0cb09ea38303436ccd4899b95bb6fa080))
+* sync community pricing, context-window, and modalities tables from models.dev ([#560](https://github.com/inference-gateway/inference-gateway/issues/560)) ([2c37818](https://github.com/inference-gateway/inference-gateway/commit/2c3781812c58453f9bf6d97d3552c1100438484d))
+* sync community pricing, context-window, and modalities tables from models.dev ([#564](https://github.com/inference-gateway/inference-gateway/issues/564)) ([34858de](https://github.com/inference-gateway/inference-gateway/commit/34858de299bad7ee005fe0ed238a3aa5fdec5006))
+
 ## [0.48.2](https://github.com/inference-gateway/inference-gateway/compare/v0.48.1...v0.48.2) (2026-08-16)
 
 ### 🐛 Bug Fixes
