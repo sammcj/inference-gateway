@@ -40,6 +40,7 @@ const (
 	GroqChatEndpoint               = "/chat/completions"
 	LlamacppModelsEndpoint         = "/models"
 	LlamacppChatEndpoint           = "/chat/completions"
+	LlamacppSpeechEndpoint         = "/audio/speech"
 	MinimaxModelsEndpoint          = "/models"
 	MinimaxChatEndpoint            = "/chat/completions"
 	MistralModelsEndpoint          = "/models"
@@ -58,6 +59,7 @@ const (
 	OpenaiImagesEndpoint           = "/images/generations"
 	OpenaiImagesEditsEndpoint      = "/images/edits"
 	OpenaiImagesVariationsEndpoint = "/images/variations"
+	OpenaiSpeechEndpoint           = "/audio/speech"
 	ZaiModelsEndpoint              = "/models"
 	ZaiChatEndpoint                = "/chat/completions"
 )

@@ -79,6 +79,7 @@ var Registry = map[types.Provider]*ProviderConfig{
 		Endpoints: types.Endpoints{
 			Models: constants.LlamacppModelsEndpoint,
 			Chat:   constants.LlamacppChatEndpoint,
+			Speech: ptr(constants.LlamacppSpeechEndpoint),
 		},
 	},
 	constants.MinimaxID: {
@@ -153,6 +154,7 @@ var Registry = map[types.Provider]*ProviderConfig{
 			Images:           ptr(constants.OpenaiImagesEndpoint),
 			ImagesEdits:      ptr(constants.OpenaiImagesEditsEndpoint),
 			ImagesVariations: ptr(constants.OpenaiImagesVariationsEndpoint),
+			Speech:           ptr(constants.OpenaiSpeechEndpoint),
 		},
 	},
 	constants.ZaiID: {
