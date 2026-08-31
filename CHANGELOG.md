@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.49.1](https://github.com/inference-gateway/inference-gateway/compare/v0.49.0...v0.49.1) (2026-08-31)
+
+### 🐛 Bug Fixes
+
+* **models:** resolve community modalities for speech, image, video and dated model ids ([#571](https://github.com/inference-gateway/inference-gateway/issues/571)) ([fecea39](https://github.com/inference-gateway/inference-gateway/commit/fecea393ca6ce9437a11ef9cc8577605e8872528)), references [#570](https://github.com/inference-gateway/inference-gateway/issues/570)
+
+### 🔧 Miscellaneous
+
+* sync community pricing, context-window, and modalities tables from models.dev ([#573](https://github.com/inference-gateway/inference-gateway/issues/573)) ([6a2b80c](https://github.com/inference-gateway/inference-gateway/commit/6a2b80cd2bbddb1dcb063d366a930d1f1412603d))
+
 ## [0.49.0](https://github.com/inference-gateway/inference-gateway/compare/v0.48.2...v0.49.0) (2026-08-31)
 
 ### ✨ Features
