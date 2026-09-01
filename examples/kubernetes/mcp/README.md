@@ -28,8 +28,8 @@ MCP servers (time, search, filesystem) and exposes their tools through the OpenA
 
 - **Gateway**: An `inference-gateway` `Gateway` custom resource with MCP enabled (`spec.mcp.enabled: true`,
   `spec.mcp.expose: true`).
-- **MCP servers**: Three minimal Go servers — `time-server` (`:8081`), `search-server` (`:8082`) and
-  `filesystem-server` (`:8083`) — deployed as plain Deployments/Services and built locally into the k3d
+- **MCP servers**: Three minimal Go servers - `time-server` (`:8081`), `search-server` (`:8082`) and
+  `filesystem-server` (`:8083`) - deployed as plain Deployments/Services and built locally into the k3d
   cluster. They are wired into the gateway as **static MCP servers** (`spec.mcp.servers`), the operator's
   documented pattern for externally-hosted MCPs.
 - **MCP Inspector**: A web UI (`mcp-inspector`) for exploring the MCP servers.

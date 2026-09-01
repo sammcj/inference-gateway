@@ -57,7 +57,7 @@ spec:
               key: ANTHROPIC_API_KEY
   # The three MCP servers are deployed as plain Deployments/Services (see the
   # time-server/, search-server/ and filesystem-server/ directories). They are
-  # wired into the gateway as static MCP servers — the operator's documented
+  # wired into the gateway as static MCP servers - the operator's documented
   # pattern for externally-hosted MCPs that have no MCP custom resource.
   mcp:
     enabled: true

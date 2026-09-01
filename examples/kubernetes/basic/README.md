@@ -67,7 +67,7 @@ This example demonstrates the simplest deployment of the Inference Gateway using
 
 ## Configuration
 
-The gateway is configured declaratively in `gateway.yaml` via the `Gateway` spec — providers, telemetry,
+The gateway is configured declaratively in `gateway.yaml` via the `Gateway` spec - providers, telemetry,
 autoscaling (HPA), resources and routing. Provider API keys are read from the `inference-gateway-secrets`
 Secret. See the [operator documentation](https://github.com/inference-gateway/operator) for the full
 `Gateway` API reference.

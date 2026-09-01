@@ -18,10 +18,10 @@ This directory contains examples that demonstrate how to deploy the Inference Ga
 
 Every example shares the same shape:
 
-1. `task deploy-infrastructure` — provision a local k3d cluster and install the Gateway API CRDs, Envoy
+1. `task deploy-infrastructure` - provision a local k3d cluster and install the Gateway API CRDs, Envoy
    Gateway and the operator (plus any example-specific dependencies such as cert-manager, Prometheus or
    Keycloak).
-2. `task deploy-inference-gateway` — apply `gateway.yaml`.
+2. `task deploy-inference-gateway` - apply `gateway.yaml`.
 3. Reach the gateway by port-forwarding the Envoy data plane (each README shows the exact command), so no
    `/etc/hosts` changes are required:
 

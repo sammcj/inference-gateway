@@ -201,7 +201,7 @@ curl -X POST http://localhost:8080/v1/audio/speech \
   }' -o speech.mp3
 ```
 
-Local text to speech without any provider — the reserved `local/qwen3-tts`
+Local text to speech without any provider - the reserved `local/qwen3-tts`
 model is synthesized by the gateway itself via llama.cpp's `llama-tts`
 (one-shot, WAV output, supports `reference_audio` voice cloning). With
 `AUDIO_LOCAL_AUTO_DOWNLOAD=true` (default) the binary and GGUF models are

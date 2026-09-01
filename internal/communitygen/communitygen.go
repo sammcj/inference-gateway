@@ -402,7 +402,7 @@ func eqRate(a, b *string) bool {
 
 // freeOrRate maps an input/output rate from a present cost section: an
 // explicit zero is a published free-tier rate and becomes "0", anything else
-// converts as usual. Cache rates keep the plain conversion — a zero cache
+// converts as usual. Cache rates keep the plain conversion - a zero cache
 // rate means "not applicable", matching the gateway's omit-zero convention.
 func freeOrRate(perMTok float64) *string {
 	if perMTok == 0 {

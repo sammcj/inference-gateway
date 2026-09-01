@@ -2539,7 +2539,7 @@ type Model struct {
 	ServedBy Provider `json:"served_by"`
 }
 
-// ModelModalities The input and output modalities of a model, mirroring the models.dev dataset shape. Vision models accept `image` in `input`; image-generation models list `image` in `output` — when `output` carries `image` but not `text`, the model only generates images and cannot chat.
+// ModelModalities The input and output modalities of a model, mirroring the models.dev dataset shape. Vision models accept `image` in `input`; image-generation models list `image` in `output` - when `output` carries `image` but not `text`, the model only generates images and cannot chat.
 type ModelModalities struct {
 	Input  []Modality `json:"input"`
 	Output []Modality `json:"output"`

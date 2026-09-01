@@ -16,7 +16,7 @@ tasks:
 
   deploy-gateway-api:
     # The operator watches Gateway API resources, so their CRDs must be present
-    # for it to start — even though this example does not expose the gateway.
+    # for it to start - even though this example does not expose the gateway.
     desc: 'Install the Kubernetes Gateway API CRDs (required by the operator)'
     cmds:
       - kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/{{.GATEWAY_API_VERSION}}/standard-install.yaml

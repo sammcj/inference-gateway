@@ -51,7 +51,7 @@ This example demonstrates a hybrid deployment of the Inference Gateway using:
    task deploy-ollama
    ```
 
-   You can also watch the model download progress — it will take a while:
+   You can also watch the model download progress - it will take a while:
 
    ```bash
    task watch-ollama-download

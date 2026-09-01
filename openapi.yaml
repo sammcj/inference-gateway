@@ -1745,7 +1745,7 @@ components:
       description: >-
         The input and output modalities of a model, mirroring the models.dev dataset shape.
         Vision models accept `image` in `input`; image-generation models list `image` in
-        `output` — when `output` carries `image` but not `text`, the model only generates
+        `output` - when `output` carries `image` but not `text`, the model only generates
         images and cannot chat.
       properties:
         input:
