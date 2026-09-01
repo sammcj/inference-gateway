@@ -160,7 +160,7 @@ For streaming the tokens simply add to the request body `stream: true`.
 | `POST /v1/images/generations` | [OpenAI Images API](https://platform.openai.com/docs/api-reference/images/create) - generate images. Opt-in via `ENABLE_IMAGES=true` (OpenAI provider only)                                                                      |
 | `POST /v1/images/edits`       | Edit an image with an optional mask, `multipart/form-data`. Opt-in via `ENABLE_IMAGES=true`                                                                                                                                      |
 | `POST /v1/images/variations`  | Create variations of an image, `multipart/form-data`. Opt-in via `ENABLE_IMAGES=true`                                                                                                                                            |
-| `POST /v1/audio/speech`       | [OpenAI Audio Speech API](https://platform.openai.com/docs/api-reference/audio/createSpeech) - generate speech audio from text. Opt-in via `ENABLE_AUDIO=true` (OpenAI provider only)                                            |
+| `POST /v1/audio/speech`       | [OpenAI Audio Speech API](https://platform.openai.com/docs/api-reference/audio/createSpeech) - generate speech audio from text. Opt-in via `AUDIO_ENABLED=true` (OpenAI provider, or the built-in `local/qwen3-tts` engine)      |
 | `POST /v1/metrics`            | OTLP metrics push from clients. Opt-in via `METRICS_PUSH_ENABLED=true`                                                                                                                                                           |
 | `ANY /proxy/:provider/*path`  | Passthrough to a provider's native API with the API key injected                                                                                                                                                                 |
 
@@ -190,7 +190,7 @@ curl -X POST http://localhost:8080/v1/images/generations \
   }'
 ```
 
-Text to speech (requires `ENABLE_AUDIO=true`):
+Text to speech (requires `AUDIO_ENABLED=true`):
 
 ```bash
 curl -X POST http://localhost:8080/v1/audio/speech \
@@ -199,6 +199,22 @@ curl -X POST http://localhost:8080/v1/audio/speech \
     "input": "Ahoy! Welcome aboard the Inference Gateway.",
     "voice": "alloy"
   }' -o speech.mp3
+```
+
+Local text to speech without any provider — the reserved `local/qwen3-tts`
+model is synthesized by the gateway itself via llama.cpp's `llama-tts`
+(one-shot, WAV output, supports `reference_audio` voice cloning). With
+`AUDIO_LOCAL_AUTO_DOWNLOAD=true` (default) the binary and GGUF models are
+fetched in the background at startup into the shared `~/.infer` cache
+(`~/.infer/models/tts`, `~/.infer/bin`); requests answer `503` with
+`Retry-After` until assets are ready:
+
+```bash
+curl -X POST http://localhost:8080/v1/audio/speech \
+  -d '{
+    "model": "local/qwen3-tts",
+    "input": "Ahoy! Welcome aboard the Inference Gateway."
+  }' -o speech.wav
 ```
 
 ## Installation
