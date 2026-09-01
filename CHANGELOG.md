@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.50.0](https://github.com/inference-gateway/inference-gateway/compare/v0.49.1...v0.50.0) (2026-09-01)
+
+### ✨ Features
+
+* **audio:** serve /v1/audio/speech locally via one-shot llama-tts ([#575](https://github.com/inference-gateway/inference-gateway/issues/575)) ([fa83d98](https://github.com/inference-gateway/inference-gateway/commit/fa83d98952ccbc3db2f12f76b63d5ba5423bcd72)), references [inference-gateway/schemas#191](https://github.com/inference-gateway/schemas/issues/191)
+* **tts:** per-request language for /v1/audio/speech ([#582](https://github.com/inference-gateway/inference-gateway/issues/582)) ([6d0a006](https://github.com/inference-gateway/inference-gateway/commit/6d0a006db41ece28cb2ff1a5724860ffe9c5c8a4))
+
+### 📚 Documentation
+
+* correct metrics push env var in README and stale chart versions in hack/README ([#580](https://github.com/inference-gateway/inference-gateway/issues/580)) ([9bc4299](https://github.com/inference-gateway/inference-gateway/commit/9bc4299b8c388789f38c009b91693361bcfac6c3))
+* fix dead CONTRIBUTING links and complete README provider and example lists ([#579](https://github.com/inference-gateway/inference-gateway/issues/579)) ([296a5e1](https://github.com/inference-gateway/inference-gateway/commit/296a5e1ebc6ce7659c46a98604d3ad4fb525dce7))
+* restore AUDIO_ENABLED in the README endpoints table ([#581](https://github.com/inference-gateway/inference-gateway/issues/581)) ([b512eb2](https://github.com/inference-gateway/inference-gateway/commit/b512eb2144325c472438603565bc6eee13979d3b)), references [#580](https://github.com/inference-gateway/inference-gateway/issues/580) [pre-#575](https://github.com/pre-/issues/575) [#575](https://github.com/inference-gateway/inference-gateway/issues/575)
+
+### 🔧 Miscellaneous
+
+* remove em dashes from user's docs ([9ae783c](https://github.com/inference-gateway/inference-gateway/commit/9ae783ced0a9378f57b8fbbbc05fc5f3aebc6cc5))
+
 ## [0.49.1](https://github.com/inference-gateway/inference-gateway/compare/v0.49.0...v0.49.1) (2026-08-31)
 
 ### 🐛 Bug Fixes
