@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.50.2](https://github.com/inference-gateway/inference-gateway/compare/v0.50.1...v0.50.2) (2026-09-03)
+
+### ♻️ Improvements
+
+* rename ENABLE_IMAGES to IMAGES_ENABLED (schemas v0.27.2) ([#589](https://github.com/inference-gateway/inference-gateway/issues/589)) ([565cdf7](https://github.com/inference-gateway/inference-gateway/commit/565cdf774a942a9163af0c2843d45950fadb5e95))
+
+### 🔧 Miscellaneous
+
+* **build:** bump go toolchain to 1.26.7 and pin explicitly ([#591](https://github.com/inference-gateway/inference-gateway/issues/591)) ([bfb7634](https://github.com/inference-gateway/inference-gateway/commit/bfb76340eea33a18746508b2b4e2f74e12d6b71d))
+* **deps:** bump claude-code 2.1.238 -> 2.1.245 ([#587](https://github.com/inference-gateway/inference-gateway/issues/587)) ([f27de6e](https://github.com/inference-gateway/inference-gateway/commit/f27de6e1e7c6221583b99ea1622319ccc40a1081))
+* **deps:** bump fast-uri in /examples/docker-compose/mcp/pizza-server ([#585](https://github.com/inference-gateway/inference-gateway/issues/585)) ([dd4623d](https://github.com/inference-gateway/inference-gateway/commit/dd4623d8b31161539675f7fce18aa4e794c16c89))
+* **deps:** bump qs in /examples/docker-compose/mcp/pizza-server ([#586](https://github.com/inference-gateway/inference-gateway/issues/586)) ([2e48299](https://github.com/inference-gateway/inference-gateway/commit/2e482994c3055655cf17a34947a88792490d44ee))
+
 ## [0.50.1](https://github.com/inference-gateway/inference-gateway/compare/v0.50.0...v0.50.1) (2026-09-03)
 
 ### 🐛 Bug Fixes
