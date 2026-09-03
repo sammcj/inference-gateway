@@ -1,6 +1,10 @@
 ---
 version: '3'
 
+vars:
+  BENCH_CMD: go test -bench=. -run=^$ -benchmem -benchtime=100x -count=20 ./tests/...
+  BENCHSTAT: go run golang.org/x/perf/cmd/benchstat@v0.0.0-20260825160852-19be9d8e6c70 -row .name
+
 tasks:
   default:
     desc: 'Show available tasks'
@@ -122,7 +126,32 @@ tasks:
   benchmark:
     desc: 'Run benchmarks'
     cmds:
-      - go test -bench=. -run=^$ -benchmem -benchtime=100x -count=20 ./tests/...
+      - '{{.BENCH_CMD}}'
+
+  benchmark:check:
+    desc: 'Run benchmarks and fail on regression vs tests/benchmarks/baseline.txt'
+    vars:
+      TIME_TOLERANCE_PCT: 15
+      ALLOCS_TOLERANCE_PCT: 5
+    cmds:
+      - mkdir -p bin
+      - 'set -o pipefail; {{.BENCH_CMD}} | tee bin/benchmark.txt'
+      - '{{.BENCHSTAT}} tests/benchmarks/baseline.txt bin/benchmark.txt'
+      - |
+        {{.BENCHSTAT}} -format csv tests/benchmarks/baseline.txt bin/benchmark.txt 2>/dev/null |
+        awk -F, -v t_time={{.TIME_TOLERANCE_PCT}} -v t_allocs={{.ALLOCS_TOLERANCE_PCT}} '
+          $3 == "CI" { unit = $2; limit = (unit == "sec/op") ? t_time : (unit == "allocs/op") ? t_allocs : 0; next }
+          limit && $1 != "geomean" && $6 ~ /^\+/ && substr($6, 2) + 0 > limit {
+            printf "REGRESSION: %s %s %s vs baseline (limit +%d%%)\n", $1, unit, $6, limit
+            failed = 1
+          }
+          END { if (failed) exit 1; print "benchmark:check: no regression beyond tolerance" }
+        '
+
+  benchmark:baseline:
+    desc: 'Refresh tests/benchmarks/baseline.txt (run on a GitHub-hosted runner, commit the result)'
+    cmds:
+      - '{{.BENCH_CMD}} > tests/benchmarks/baseline.txt'
 
   pre-commit:install:
     desc: 'Install git hooks from .githooks/'
