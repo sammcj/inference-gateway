@@ -4,10 +4,11 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/inference-gateway/inference-gateway/logger"
-	"github.com/inference-gateway/inference-gateway/tests/mocks"
-	"github.com/stretchr/testify/assert"
-	"go.uber.org/mock/gomock"
+	logger "github.com/inference-gateway/inference-gateway/logger"
+	constants "github.com/inference-gateway/inference-gateway/providers/constants"
+	mocks "github.com/inference-gateway/inference-gateway/tests/mocks"
+	assert "github.com/stretchr/testify/assert"
+	gomock "go.uber.org/mock/gomock"
 )
 
 func TestNewLogger(t *testing.T) {
@@ -18,12 +19,12 @@ func TestNewLogger(t *testing.T) {
 	}{
 		{
 			name:    "Development environment",
-			env:     "development",
+			env:     constants.EnvironmentDevelopment,
 			wantErr: false,
 		},
 		{
 			name:    "Production environment",
-			env:     "production",
+			env:     constants.EnvironmentProduction,
 			wantErr: false,
 		},
 	}
