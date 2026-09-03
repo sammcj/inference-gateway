@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.50.1](https://github.com/inference-gateway/inference-gateway/compare/v0.50.0...v0.50.1) (2026-09-03)
+
+### 🐛 Bug Fixes
+
+* **communitygen:** report subscription pricing for all ollama cloud models ([#584](https://github.com/inference-gateway/inference-gateway/issues/584)) ([a6bdaa6](https://github.com/inference-gateway/inference-gateway/commit/a6bdaa6313868711f3beb60c1f2e20502dc343e6))
+
 ## [0.50.0](https://github.com/inference-gateway/inference-gateway/compare/v0.49.1...v0.50.0) (2026-09-01)
 
 ### ✨ Features
