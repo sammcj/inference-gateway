@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.51.0](https://github.com/inference-gateway/inference-gateway/compare/v0.50.2...v0.51.0) (2026-09-04)
+
+### ✨ Features
+
+* **ci:** add benchmark baseline and benchstat regression gate ([#610](https://github.com/inference-gateway/inference-gateway/issues/610)) ([a2195e0](https://github.com/inference-gateway/inference-gateway/commit/a2195e0ac65521c1e9f8883ae6ef86e176990b8a))
+
+### ♻️ Improvements
+
+* **api:** extract model-rewrite, SSE relay and upstream-error helpers ([#608](https://github.com/inference-gateway/inference-gateway/issues/608)) ([5b32684](https://github.com/inference-gateway/inference-gateway/commit/5b3268493d98a70b12f2fa34309775da3f7d1c17))
+* **api:** sentinel registry errors and shared buildProvider helper ([#607](https://github.com/inference-gateway/inference-gateway/issues/607)) ([4215818](https://github.com/inference-gateway/inference-gateway/commit/421581855d4323eb5f3e1383638e4b6157b338e1))
+* **constants:** name development environment literal and gateway durations ([#606](https://github.com/inference-gateway/inference-gateway/issues/606)) ([6ccb2f9](https://github.com/inference-gateway/inference-gateway/commit/6ccb2f95f857ed182df98779afdd74fdbd8b6df4))
+
+### 📚 Documentation
+
+* correct ENABLE_VISION behavior description ([#596](https://github.com/inference-gateway/inference-gateway/issues/596)) ([1bbc78f](https://github.com/inference-gateway/inference-gateway/commit/1bbc78fc235afe48b2aba8e300592407e32a8f7e))
+* mark llamacpp speech support as work in progress ([#599](https://github.com/inference-gateway/inference-gateway/issues/599)) ([259a42c](https://github.com/inference-gateway/inference-gateway/commit/259a42c31af5cdd628ab9f3d4ee242a7516fd2ea))
+* note MCP_EXPOSE requirement for /v1/mcp/tools ([#600](https://github.com/inference-gateway/inference-gateway/issues/600)) ([56e1b82](https://github.com/inference-gateway/inference-gateway/commit/56e1b821ca45ccf288d7a64256f791974e387e1d))
+
+### 🔧 Miscellaneous
+
+* bump golangci-lint, goreleaser and infer cli pins ([#605](https://github.com/inference-gateway/inference-gateway/issues/605)) ([8ac6d2b](https://github.com/inference-gateway/inference-gateway/commit/8ac6d2ba2d19213831ddbc13521b2966ba8a6cc4))
+* **deps:** bump the gomod group with 3 updates ([#592](https://github.com/inference-gateway/inference-gateway/issues/592)) ([735292d](https://github.com/inference-gateway/inference-gateway/commit/735292d7d55d784958047e6513626b0f7e902a2a))
+* **hack:** use gateway api and bump cluster to k3s v1.36 ([#598](https://github.com/inference-gateway/inference-gateway/issues/598)) ([bdadcff](https://github.com/inference-gateway/inference-gateway/commit/bdadcfff3d961068df507333b591757f82e873af))
+* **scripts:** remove duplicate pre-commit script ([#611](https://github.com/inference-gateway/inference-gateway/issues/611)) ([d4a9f48](https://github.com/inference-gateway/inference-gateway/commit/d4a9f48b7fb3c2f394c9f654b282a0c4e8057d7e))
+
 ## [0.50.2](https://github.com/inference-gateway/inference-gateway/compare/v0.50.1...v0.50.2) (2026-09-03)
 
 ### ♻️ Improvements
