@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.51.1](https://github.com/inference-gateway/inference-gateway/compare/v0.51.0...v0.51.1) (2026-09-04)
+
+### ♻️ Improvements
+
+* rename ENABLE_VISION -> VISION_ENABLED - schemas v0.27.4 ([#613](https://github.com/inference-gateway/inference-gateway/issues/613)) ([634a077](https://github.com/inference-gateway/inference-gateway/commit/634a077607e6fd73b25f3ceb194184fe773edfb6))
+
 ## [0.51.0](https://github.com/inference-gateway/inference-gateway/compare/v0.50.2...v0.51.0) (2026-09-04)
 
 ### ✨ Features
