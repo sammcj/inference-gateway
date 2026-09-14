@@ -100,7 +100,7 @@ func TestModelAcceptsImages(t *testing.T) {
 	}{
 		{"vision model with date pin", "anthropic", "claude-haiku-4-5-20251001", true},
 		{"vision model", "anthropic", "claude-haiku-4-5", true},
-		{"text-only model", "deepseek", "deepseek-v4-flash", false},
+		{"text-only model", "openai", "gpt-4-0613", false},
 		{"unknown model is permissive", "openai", "gpt-nonexistent", true},
 	}
 	for _, tt := range tests {
