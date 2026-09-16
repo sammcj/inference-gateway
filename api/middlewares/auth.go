@@ -11,8 +11,9 @@ import (
 	"time"
 	"unicode"
 
-	oidcV3 "github.com/coreos/go-oidc/v3/oidc"
+	oidc "github.com/coreos/go-oidc/v3/oidc"
 	gin "github.com/gin-gonic/gin"
+
 	config "github.com/inference-gateway/inference-gateway/config"
 	logger "github.com/inference-gateway/inference-gateway/logger"
 	types "github.com/inference-gateway/inference-gateway/providers/types"
@@ -42,7 +43,7 @@ type OIDCAuthenticator interface {
 
 type OIDCAuthenticatorImpl struct {
 	logger    logger.Logger
-	verifier  *oidcV3.IDTokenVerifier
+	verifier  *oidc.IDTokenVerifier
 	audiences []string
 }
 
@@ -61,15 +62,15 @@ func NewOIDCAuthenticatorMiddleware(logger logger.Logger, cfg config.Config) (OI
 		return nil, errors.New("AUTH_OIDC_AUDIENCE or AUTH_OIDC_CLIENT_ID is required when AUTH_ENABLED=true")
 	}
 
-	ctx := oidcV3.ClientContext(context.Background(), &http.Client{Timeout: oidcHTTPTimeout})
-	provider, err := oidcV3.NewProvider(ctx, cfg.Auth.OidcIssuer)
+	ctx := oidc.ClientContext(context.Background(), &http.Client{Timeout: oidcHTTPTimeout})
+	provider, err := oidc.NewProvider(ctx, cfg.Auth.OidcIssuer)
 	if err != nil {
 		return nil, err
 	}
 
 	return &OIDCAuthenticatorImpl{
 		logger:    logger,
-		verifier:  provider.Verifier(&oidcV3.Config{SkipClientIDCheck: true}),
+		verifier:  provider.Verifier(&oidc.Config{SkipClientIDCheck: true}),
 		audiences: audiences,
 	}, nil
 }

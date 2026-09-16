@@ -2,6 +2,23 @@ version: '2'
 linters:
   enable:
     - gocritic
+    - importas
+  settings:
+    importas:
+      no-unaliased: true
+      alias:
+        - pkg: github.com/inference-gateway/inference-gateway/tests/mocks/mcp
+          alias: mcpmocks
+        - pkg: go.opentelemetry.io/otel
+          alias: otelapi
+        - pkg: github.com/metoro-io/mcp-golang/transport/http
+          alias: transport
+        - pkg: go.opentelemetry.io/otel/sdk/metric
+          alias: sdkmetric
+        - pkg: go.opentelemetry.io/proto/otlp/collector/metrics/v1
+          alias: colmetricspb
+        - pkg: '^[^/]+\.[^/]+/.*?([a-z][a-z0-9]*)(?:\.v[0-9]+)?(?:/v[0-9][0-9.]*)?$'
+          alias: '$1'
   exclusions:
     generated: lax
     presets:
@@ -17,6 +34,17 @@ formatters:
   enable:
     - gofmt
     - goimports
+    - gci
+  settings:
+    gci:
+      custom-order: true
+      sections:
+        - standard
+        - prefix(github.com/stretchr/testify,go.uber.org/mock)
+        - prefix(github.com/inference-gateway/inference-gateway/tests/mocks)
+        - default
+        - prefix(github.com/inference-gateway/)
+        - prefix(github.com/inference-gateway/inference-gateway)
   exclusions:
     generated: lax
     paths:

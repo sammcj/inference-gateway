@@ -12,11 +12,12 @@ import (
 	"sync"
 	"time"
 
-	types "github.com/inference-gateway/inference-gateway/providers/types"
-	m "github.com/metoro-io/mcp-golang"
+	golang "github.com/metoro-io/mcp-golang"
 	transport "github.com/metoro-io/mcp-golang/transport/http"
 	otelapi "go.opentelemetry.io/otel"
 	propagation "go.opentelemetry.io/otel/propagation"
+
+	types "github.com/inference-gateway/inference-gateway/providers/types"
 )
 
 // TransportMode represents the type of transport being used
@@ -188,7 +189,7 @@ func (c *customRoundTripper) attemptSSEFallback(req *http.Request, bodyBytes []b
 }
 
 // NewClientWithTransport creates a new MCP client with specific transport mode
-func (mc *MCPClient) NewClientWithTransport(serverURL string, mode TransportMode) *m.Client {
+func (mc *MCPClient) NewClientWithTransport(serverURL string, mode TransportMode) *golang.Client {
 	baseTransport := &http.Transport{
 		DialContext: (&net.Dialer{
 			Timeout:   mc.Config.MCP.DialTimeout,
@@ -223,7 +224,7 @@ func (mc *MCPClient) NewClientWithTransport(serverURL string, mode TransportMode
 	httpTransport := transport.NewHTTPClientTransport(serverURL).WithHeader(
 		"Accept", acceptHeader).WithClient(httpClient)
 
-	return m.NewClient(httpTransport)
+	return golang.NewClient(httpTransport)
 }
 
 // BuildSSEFallbackURL creates an SSE fallback URL from the main server URL

@@ -7,10 +7,13 @@ import (
 	"testing"
 	"time"
 
-	gin "github.com/gin-gonic/gin"
 	assert "github.com/stretchr/testify/assert"
 	require "github.com/stretchr/testify/require"
 	gomock "go.uber.org/mock/gomock"
+
+	providers "github.com/inference-gateway/inference-gateway/tests/mocks/providers"
+
+	gin "github.com/gin-gonic/gin"
 
 	api "github.com/inference-gateway/inference-gateway/api"
 	config "github.com/inference-gateway/inference-gateway/config"
@@ -18,7 +21,6 @@ import (
 	constants "github.com/inference-gateway/inference-gateway/providers/constants"
 	registry "github.com/inference-gateway/inference-gateway/providers/registry"
 	types "github.com/inference-gateway/inference-gateway/providers/types"
-	providersmocks "github.com/inference-gateway/inference-gateway/tests/mocks/providers"
 )
 
 // newContextWindowRouter builds a models router whose mock client forwards
@@ -29,7 +31,7 @@ func newContextWindowRouter(t testing.TB, server *httptest.Server, providerCfg m
 
 	ctrl := gomock.NewController(t)
 	t.Cleanup(ctrl.Finish)
-	mockClient := providersmocks.NewMockClient(ctrl)
+	mockClient := providers.NewMockClient(ctrl)
 	mockClient.EXPECT().
 		Do(gomock.Any()).
 		DoAndReturn(func(req *http.Request) (*http.Response, error) {

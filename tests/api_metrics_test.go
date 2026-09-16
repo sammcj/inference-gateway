@@ -7,19 +7,21 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	gin "github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-	colmetricspb "go.opentelemetry.io/proto/otlp/collector/metrics/v1"
-	"go.uber.org/mock/gomock"
-	"google.golang.org/protobuf/encoding/protojson"
-	"google.golang.org/protobuf/proto"
+	assert "github.com/stretchr/testify/assert"
+	require "github.com/stretchr/testify/require"
+	gomock "go.uber.org/mock/gomock"
 
-	"github.com/inference-gateway/inference-gateway/api"
-	"github.com/inference-gateway/inference-gateway/config"
-	"github.com/inference-gateway/inference-gateway/logger"
-	"github.com/inference-gateway/inference-gateway/otel"
 	mocks "github.com/inference-gateway/inference-gateway/tests/mocks"
+
+	gin "github.com/gin-gonic/gin"
+	colmetricspb "go.opentelemetry.io/proto/otlp/collector/metrics/v1"
+	protojson "google.golang.org/protobuf/encoding/protojson"
+	proto "google.golang.org/protobuf/proto"
+
+	api "github.com/inference-gateway/inference-gateway/api"
+	config "github.com/inference-gateway/inference-gateway/config"
+	logger "github.com/inference-gateway/inference-gateway/logger"
+	otel "github.com/inference-gateway/inference-gateway/otel"
 )
 
 func newMetricsTestRouter(t *testing.T, telemetryEnabled, pushEnabled bool, telemetry otel.OpenTelemetry) *gin.Engine {

@@ -12,9 +12,9 @@ import (
 	require "github.com/stretchr/testify/require"
 	gomock "go.uber.org/mock/gomock"
 
-	gin "github.com/gin-gonic/gin"
-
 	mocks "github.com/inference-gateway/inference-gateway/tests/mocks"
+
+	gin "github.com/gin-gonic/gin"
 
 	middlewares "github.com/inference-gateway/inference-gateway/api/middlewares"
 	config "github.com/inference-gateway/inference-gateway/config"

@@ -29,9 +29,9 @@ import (
 	middlewares "github.com/inference-gateway/inference-gateway/api/middlewares"
 	config "github.com/inference-gateway/inference-gateway/config"
 	mcp "github.com/inference-gateway/inference-gateway/internal/mcp"
-	proxymodifier "github.com/inference-gateway/inference-gateway/internal/proxy"
+	proxy "github.com/inference-gateway/inference-gateway/internal/proxy"
 	tts "github.com/inference-gateway/inference-gateway/internal/tts"
-	l "github.com/inference-gateway/inference-gateway/logger"
+	logger "github.com/inference-gateway/inference-gateway/logger"
 	otel "github.com/inference-gateway/inference-gateway/otel"
 	client "github.com/inference-gateway/inference-gateway/providers/client"
 	constants "github.com/inference-gateway/inference-gateway/providers/constants"
@@ -43,7 +43,7 @@ import (
 
 type RouterImpl struct {
 	cfg       config.Config
-	logger    l.Logger
+	logger    logger.Logger
 	registry  registry.ProviderRegistry
 	client    client.Client
 	mcpClient mcp.MCPClientInterface
@@ -62,7 +62,7 @@ type ResponseJSON struct {
 
 func NewRouter(
 	cfg config.Config,
-	logger l.Logger,
+	logger logger.Logger,
 	providerRegistry registry.ProviderRegistry,
 	httpClient client.Client,
 	mcpClient mcp.MCPClientInterface,
@@ -403,11 +403,11 @@ func handleProxyRequest(c *gin.Context, provider core.IProvider, router *RouterI
 		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "Failed to construct URL"})
 		return
 	}
-	proxy := &httputil.ReverseProxy{
+	reverseProxy := &httputil.ReverseProxy{
 		Transport: proxyTransport,
 	}
 
-	proxy.ErrorHandler = func(w http.ResponseWriter, r *http.Request, err error) {
+	reverseProxy.ErrorHandler = func(w http.ResponseWriter, r *http.Request, err error) {
 		router.logger.Error("proxy request failed", err, "url", fullURL.String())
 		w.Header().Set("Content-Type", contentTypeJSON)
 		w.WriteHeader(http.StatusBadGateway)
@@ -419,13 +419,13 @@ func handleProxyRequest(c *gin.Context, provider core.IProvider, router *RouterI
 		}
 	}
 
-	var reqModifier *proxymodifier.DevRequestModifier
+	var reqModifier *proxy.DevRequestModifier
 	if router.cfg.Environment == constants.EnvironmentDevelopment {
-		reqModifier = proxymodifier.NewDevRequestModifier(router.logger, &router.cfg)
-		proxy.ModifyResponse = proxymodifier.NewDevResponseModifier(router.logger).Modify
+		reqModifier = proxy.NewDevRequestModifier(router.logger, &router.cfg)
+		reverseProxy.ModifyResponse = proxy.NewDevResponseModifier(router.logger).Modify
 	}
 
-	proxy.Rewrite = func(pr *httputil.ProxyRequest) {
+	reverseProxy.Rewrite = func(pr *httputil.ProxyRequest) {
 		pr.SetURL(fullURL)
 		pr.Out.URL.Path = fullURL.Path
 		pr.Out.URL.RawQuery = fullURL.RawQuery
@@ -442,7 +442,7 @@ func handleProxyRequest(c *gin.Context, provider core.IProvider, router *RouterI
 		}
 	}
 
-	proxy.ServeHTTP(&middlewares.DeadlineResetWriter{ResponseWriter: c.Writer, Timeout: router.cfg.Server.WriteTimeout}, c.Request)
+	reverseProxy.ServeHTTP(&middlewares.DeadlineResetWriter{ResponseWriter: c.Writer, Timeout: router.cfg.Server.WriteTimeout}, c.Request)
 }
 
 // applyProviderAuth sets the provider's auth credential (header or query

@@ -8,10 +8,13 @@ import (
 	"testing"
 	"time"
 
-	gin "github.com/gin-gonic/gin"
 	assert "github.com/stretchr/testify/assert"
 	require "github.com/stretchr/testify/require"
 	gomock "go.uber.org/mock/gomock"
+
+	providers "github.com/inference-gateway/inference-gateway/tests/mocks/providers"
+
+	gin "github.com/gin-gonic/gin"
 
 	api "github.com/inference-gateway/inference-gateway/api"
 	config "github.com/inference-gateway/inference-gateway/config"
@@ -20,7 +23,6 @@ import (
 	core "github.com/inference-gateway/inference-gateway/providers/core"
 	registry "github.com/inference-gateway/inference-gateway/providers/registry"
 	types "github.com/inference-gateway/inference-gateway/providers/types"
-	providersmocks "github.com/inference-gateway/inference-gateway/tests/mocks/providers"
 )
 
 func init() {
@@ -135,7 +137,7 @@ func TestListModelsHandler_AllowedModelsFiltering(t *testing.T) {
 
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
-			mockClient := providersmocks.NewMockClient(ctrl)
+			mockClient := providers.NewMockClient(ctrl)
 
 			mockClient.EXPECT().
 				Do(gomock.Any()).
@@ -245,7 +247,7 @@ func TestListModelsHandler_ErrorCases(t *testing.T) {
 	tests := []struct {
 		name           string
 		providerParam  string
-		mockSetup      func(*providersmocks.MockClient)
+		mockSetup      func(*providers.MockClient)
 		expectedStatus int
 		expectedError  string
 		description    string
@@ -253,7 +255,7 @@ func TestListModelsHandler_ErrorCases(t *testing.T) {
 		{
 			name:           "Unknown provider",
 			providerParam:  "unknown",
-			mockSetup:      func(mockClient *providersmocks.MockClient) {},
+			mockSetup:      func(mockClient *providers.MockClient) {},
 			expectedStatus: http.StatusBadRequest,
 			expectedError:  "Provider not found",
 			description:    "Should return error for unknown provider",
@@ -264,7 +266,7 @@ func TestListModelsHandler_ErrorCases(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
-			mockClient := providersmocks.NewMockClient(ctrl)
+			mockClient := providers.NewMockClient(ctrl)
 			tt.mockSetup(mockClient)
 
 			log, err := logger.NewLogger("test")
@@ -325,7 +327,7 @@ func TestListModelsHandler_Include(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockClient := providersmocks.NewMockClient(ctrl)
+	mockClient := providers.NewMockClient(ctrl)
 	mockClient.EXPECT().
 		Do(gomock.Any()).
 		DoAndReturn(func(req *http.Request) (*http.Response, error) {
@@ -554,7 +556,7 @@ func TestChatCompletionsHandler_ModelValidation(t *testing.T) {
 
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
-			mockClient := providersmocks.NewMockClient(ctrl)
+			mockClient := providers.NewMockClient(ctrl)
 
 			mockClient.EXPECT().
 				Do(gomock.Any()).
@@ -652,7 +654,7 @@ func TestChatCompletionsHandler_RejectsOversizedBody(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockClient := providersmocks.NewMockClient(ctrl)
+	mockClient := providers.NewMockClient(ctrl)
 
 	providerCfg := map[types.Provider]*registry.ProviderConfig{
 		constants.OpenaiID: {ID: constants.OpenaiID, Name: constants.OpenaiDisplayName, URL: "http://example.com", Token: "test-token", AuthType: constants.AuthTypeBearer},
@@ -763,7 +765,7 @@ func TestListModelsHandler_DisallowedModelsFiltering(t *testing.T) {
 
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
-			mockClient := providersmocks.NewMockClient(ctrl)
+			mockClient := providers.NewMockClient(ctrl)
 
 			mockClient.EXPECT().
 				Do(gomock.Any()).
@@ -949,7 +951,7 @@ func TestChatCompletionsHandler_DisallowedModelValidation(t *testing.T) {
 
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
-			mockClient := providersmocks.NewMockClient(ctrl)
+			mockClient := providers.NewMockClient(ctrl)
 
 			mockClient.EXPECT().
 				Do(gomock.Any()).
@@ -1105,7 +1107,7 @@ func TestChatCompletionsHandler_AllowedModelsTakesPrecedence(t *testing.T) {
 
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
-			mockClient := providersmocks.NewMockClient(ctrl)
+			mockClient := providers.NewMockClient(ctrl)
 
 			mockClient.EXPECT().
 				Do(gomock.Any()).
@@ -1256,9 +1258,9 @@ func TestChatCompletionsHandler_StreamingErrorHandling(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
-			mockProvider := providersmocks.NewMockIProvider(ctrl)
-			mockClient := providersmocks.NewMockClient(ctrl)
-			mockRegistry := providersmocks.NewMockProviderRegistry(ctrl)
+			mockProvider := providers.NewMockIProvider(ctrl)
+			mockClient := providers.NewMockClient(ctrl)
+			mockRegistry := providers.NewMockProviderRegistry(ctrl)
 
 			log, err := logger.NewLogger("test")
 			require.NoError(t, err)

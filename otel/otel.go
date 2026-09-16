@@ -7,9 +7,7 @@ import (
 	"errors"
 	"net/url"
 
-	config "github.com/inference-gateway/inference-gateway/config"
-	logger "github.com/inference-gateway/inference-gateway/logger"
-	otel "go.opentelemetry.io/otel"
+	otelapi "go.opentelemetry.io/otel"
 	attribute "go.opentelemetry.io/otel/attribute"
 	otlptracehttp "go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	prometheus "go.opentelemetry.io/otel/exporters/prometheus"
@@ -17,9 +15,12 @@ import (
 	propagation "go.opentelemetry.io/otel/propagation"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 	resource "go.opentelemetry.io/otel/sdk/resource"
-	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+	trace "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.41.0"
 	colmetricspb "go.opentelemetry.io/proto/otlp/collector/metrics/v1"
+
+	config "github.com/inference-gateway/inference-gateway/config"
+	logger "github.com/inference-gateway/inference-gateway/logger"
 )
 
 // SourceGateway is the source attribute value for metrics recorded by the
@@ -65,7 +66,7 @@ type OpenTelemetry interface {
 type OpenTelemetryImpl struct {
 	logger         logger.Logger
 	meterProvider  *sdkmetric.MeterProvider
-	tracerProvider *sdktrace.TracerProvider
+	tracerProvider *trace.TracerProvider
 	meter          metric.Meter
 
 	// GenAI semantic-convention instruments
@@ -128,7 +129,7 @@ func (o *OpenTelemetryImpl) Init(cfg config.Config, log logger.Logger) error {
 		sdkmetric.WithView(metricViews()...),
 	)
 
-	otel.SetMeterProvider(o.meterProvider)
+	otelapi.SetMeterProvider(o.meterProvider)
 
 	if err := o.initInstruments(o.meterProvider); err != nil {
 		return err
@@ -142,12 +143,12 @@ func (o *OpenTelemetryImpl) Init(cfg config.Config, log logger.Logger) error {
 			return err
 		}
 
-		o.tracerProvider = sdktrace.NewTracerProvider(
-			sdktrace.WithResource(res),
-			sdktrace.WithBatcher(traceExporter),
+		o.tracerProvider = trace.NewTracerProvider(
+			trace.WithResource(res),
+			trace.WithBatcher(traceExporter),
 		)
-		otel.SetTracerProvider(o.tracerProvider)
-		otel.SetTextMapPropagator(propagation.TraceContext{})
+		otelapi.SetTracerProvider(o.tracerProvider)
+		otelapi.SetTextMapPropagator(propagation.TraceContext{})
 
 		o.logger.Info("opentelemetry tracing enabled",
 			"otlp_endpoint", cfg.Telemetry.TracingOtlpEndpoint)

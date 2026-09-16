@@ -8,10 +8,13 @@ import (
 	"testing"
 	"time"
 
-	gin "github.com/gin-gonic/gin"
 	assert "github.com/stretchr/testify/assert"
 	require "github.com/stretchr/testify/require"
 	gomock "go.uber.org/mock/gomock"
+
+	providers "github.com/inference-gateway/inference-gateway/tests/mocks/providers"
+
+	gin "github.com/gin-gonic/gin"
 
 	api "github.com/inference-gateway/inference-gateway/api"
 	config "github.com/inference-gateway/inference-gateway/config"
@@ -20,7 +23,6 @@ import (
 	registry "github.com/inference-gateway/inference-gateway/providers/registry"
 	routing "github.com/inference-gateway/inference-gateway/providers/routing"
 	types "github.com/inference-gateway/inference-gateway/providers/types"
-	providersmocks "github.com/inference-gateway/inference-gateway/tests/mocks/providers"
 )
 
 func routingTestSetup(t *testing.T) (logger.Logger, config.Config) {
@@ -67,10 +69,10 @@ func TestChatCompletionsRouting_RoundRobinRotation(t *testing.T) {
 	defer ctrl.Finish()
 	log, cfg := routingTestSetup(t)
 
-	mockClient := providersmocks.NewMockClient(ctrl)
-	provA := providersmocks.NewMockIProvider(ctrl)
-	provB := providersmocks.NewMockIProvider(ctrl)
-	reg := providersmocks.NewMockProviderRegistry(ctrl)
+	mockClient := providers.NewMockClient(ctrl)
+	provA := providers.NewMockIProvider(ctrl)
+	provB := providers.NewMockIProvider(ctrl)
+	reg := providers.NewMockProviderRegistry(ctrl)
 
 	provA.EXPECT().ChatCompletions(gomock.Any(), gomock.Any()).DoAndReturn(
 		func(_ any, req types.CreateChatCompletionRequest) (types.CreateChatCompletionResponse, error) {
@@ -110,9 +112,9 @@ func TestChatCompletionsRouting_StreamingPassthrough(t *testing.T) {
 	defer ctrl.Finish()
 	log, cfg := routingTestSetup(t)
 
-	mockClient := providersmocks.NewMockClient(ctrl)
-	prov := providersmocks.NewMockIProvider(ctrl)
-	reg := providersmocks.NewMockProviderRegistry(ctrl)
+	mockClient := providers.NewMockClient(ctrl)
+	prov := providers.NewMockIProvider(ctrl)
+	reg := providers.NewMockProviderRegistry(ctrl)
 
 	prov.EXPECT().StreamChatCompletions(gomock.Any(), gomock.Any()).DoAndReturn(
 		func(_ any, req types.CreateChatCompletionRequest) (<-chan []byte, error) {
@@ -152,8 +154,8 @@ func TestChatCompletionsRouting_DisabledPassthrough(t *testing.T) {
 	defer ctrl.Finish()
 	log, cfg := routingTestSetup(t)
 
-	mockClient := providersmocks.NewMockClient(ctrl)
-	reg := providersmocks.NewMockProviderRegistry(ctrl)
+	mockClient := providers.NewMockClient(ctrl)
+	reg := providers.NewMockProviderRegistry(ctrl)
 
 	router := api.NewRouter(cfg, log, reg, mockClient, nil, nil, nil, nil)
 	r := gin.New()
@@ -173,9 +175,9 @@ func TestChatCompletionsRouting_ExplicitProviderWins(t *testing.T) {
 	defer ctrl.Finish()
 	log, cfg := routingTestSetup(t)
 
-	mockClient := providersmocks.NewMockClient(ctrl)
-	prov := providersmocks.NewMockIProvider(ctrl)
-	reg := providersmocks.NewMockProviderRegistry(ctrl)
+	mockClient := providers.NewMockClient(ctrl)
+	prov := providers.NewMockIProvider(ctrl)
+	reg := providers.NewMockProviderRegistry(ctrl)
 
 	prov.EXPECT().ChatCompletions(gomock.Any(), gomock.Any()).DoAndReturn(
 		func(_ any, req types.CreateChatCompletionRequest) (types.CreateChatCompletionResponse, error) {
@@ -220,9 +222,9 @@ func TestChatCompletionsRouting_AllowedModelsFiltersAlias(t *testing.T) {
 			log, cfg := routingTestSetup(t)
 			cfg.AllowedModels = tt.allowed
 
-			mockClient := providersmocks.NewMockClient(ctrl)
-			prov := providersmocks.NewMockIProvider(ctrl)
-			reg := providersmocks.NewMockProviderRegistry(ctrl)
+			mockClient := providers.NewMockClient(ctrl)
+			prov := providers.NewMockIProvider(ctrl)
+			reg := providers.NewMockProviderRegistry(ctrl)
 
 			if tt.wantCall {
 				prov.EXPECT().ChatCompletions(gomock.Any(), gomock.Any()).Return(

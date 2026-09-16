@@ -9,16 +9,17 @@ import (
 	"strings"
 	"testing"
 
-	gin "github.com/gin-gonic/gin"
 	assert "github.com/stretchr/testify/assert"
 	gomock "go.uber.org/mock/gomock"
+
+	mocks "github.com/inference-gateway/inference-gateway/tests/mocks"
+
+	gin "github.com/gin-gonic/gin"
 
 	middlewares "github.com/inference-gateway/inference-gateway/api/middlewares"
 	config "github.com/inference-gateway/inference-gateway/config"
 	guardrails "github.com/inference-gateway/inference-gateway/internal/guardrails"
 	types "github.com/inference-gateway/inference-gateway/providers/types"
-
-	mocks "github.com/inference-gateway/inference-gateway/tests/mocks"
 )
 
 func TestNewGuardrailsMiddleware(t *testing.T) {

@@ -13,9 +13,9 @@ import (
 	require "github.com/stretchr/testify/require"
 	gomock "go.uber.org/mock/gomock"
 
-	gin "github.com/gin-gonic/gin"
+	providers "github.com/inference-gateway/inference-gateway/tests/mocks/providers"
 
-	providersmocks "github.com/inference-gateway/inference-gateway/tests/mocks/providers"
+	gin "github.com/gin-gonic/gin"
 
 	api "github.com/inference-gateway/inference-gateway/api"
 	config "github.com/inference-gateway/inference-gateway/config"
@@ -34,7 +34,7 @@ func newResponsesTestRouter(t *testing.T, upstreamURL string) *api.RouterImpl {
 	ctrl := gomock.NewController(t)
 	t.Cleanup(ctrl.Finish)
 
-	mockClient := providersmocks.NewMockClient(ctrl)
+	mockClient := providers.NewMockClient(ctrl)
 	mockClient.EXPECT().
 		Do(gomock.Any()).
 		DoAndReturn(func(req *http.Request) (*http.Response, error) {
