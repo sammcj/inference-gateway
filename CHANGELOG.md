@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.53.0](https://github.com/inference-gateway/inference-gateway/compare/v0.52.0...v0.53.0) (2026-09-16)
+
+### ✨ Features
+
+* sync generated types with schemas v0.28.0 ([#660](https://github.com/inference-gateway/inference-gateway/issues/660)) ([9ca95b7](https://github.com/inference-gateway/inference-gateway/commit/9ca95b75ab0e0b85c9f441b6fcf5a749d8e80a79))
+
+### 🐛 Bug Fixes
+
+* **telemetry:** include the target host in outbound client span names ([#665](https://github.com/inference-gateway/inference-gateway/issues/665)) ([5c4eb4b](https://github.com/inference-gateway/inference-gateway/commit/5c4eb4be789865bc3154f895969bfecebe136b79)), references [inference-gateway/infer-action#321](https://github.com/inference-gateway/infer-action/issues/321)
+
+### 🔧 Miscellaneous
+
+* **deps:** bump claude-code 2.1.260 -> 2.1.266 ([#663](https://github.com/inference-gateway/inference-gateway/issues/663)) ([6b61b8d](https://github.com/inference-gateway/inference-gateway/commit/6b61b8dc7a32e47bf685e713d1115dc40cee10a2))
+* **deps:** bump infer CLI v0.189.2 -> v0.192.0 ([#664](https://github.com/inference-gateway/inference-gateway/issues/664)) ([c81ee08](https://github.com/inference-gateway/inference-gateway/commit/c81ee0889cc9e0c66e599b1e1f8b707fde73c4bb))
+* **deps:** bump the gomod group with 3 updates ([#661](https://github.com/inference-gateway/inference-gateway/issues/661)) ([d024c4c](https://github.com/inference-gateway/inference-gateway/commit/d024c4cfc3a8f358c49dd8d4d96d8a2387481d76))
+* sync community pricing, context-window, and modalities tables from models.dev ([#662](https://github.com/inference-gateway/inference-gateway/issues/662)) ([46f7fe0](https://github.com/inference-gateway/inference-gateway/commit/46f7fe0a3e86e7088a15693c00f71b7bd26f6b80))
+
 ## [0.52.0](https://github.com/inference-gateway/inference-gateway/compare/v0.51.3...v0.52.0) (2026-09-11)
 
 ### ✨ Features
