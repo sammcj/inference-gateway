@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.55.0](https://github.com/inference-gateway/inference-gateway/compare/v0.54.1...v0.55.0) (2026-09-22)
+
+### ✨ Features
+
+* sync generated types with schemas v0.31.0 ([#688](https://github.com/inference-gateway/inference-gateway/issues/688)) ([02db1cc](https://github.com/inference-gateway/inference-gateway/commit/02db1cce06d73737fa202ca3253850c189da9404))
+* **videos:** map reference_images to elevenlabs images ([#689](https://github.com/inference-gateway/inference-gateway/issues/689)) ([ed7918c](https://github.com/inference-gateway/inference-gateway/commit/ed7918c5bda5255ffa5faae0f1388d28ee927ae5))
+
+### ♻️ Improvements
+
+* **music,sfx:** remove wav file format from the options (schemas v0.30.3) ([a2a897a](https://github.com/inference-gateway/inference-gateway/commit/a2a897a69eb839c9828f84a06ba421b2873bcb98))
+
 ## [0.54.1](https://github.com/inference-gateway/inference-gateway/compare/v0.54.0...v0.54.1) (2026-09-22)
 
 ### 🐛 Bug Fixes
