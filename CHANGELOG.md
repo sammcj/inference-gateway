@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.54.0](https://github.com/inference-gateway/inference-gateway/compare/v0.53.0...v0.54.0) (2026-09-22)
+
+### ✨ Features
+
+* add elevenlabs provider with speech, sfx and videos endpoints ([#677](https://github.com/inference-gateway/inference-gateway/issues/677)) ([f9a8809](https://github.com/inference-gateway/inference-gateway/commit/f9a8809c973a7784d79cfc21f78633052cb015c5))
+* add POST /v1/audio/music and sync types with schemas v0.30.2 ([#681](https://github.com/inference-gateway/inference-gateway/issues/681)) ([2ce4d85](https://github.com/inference-gateway/inference-gateway/commit/2ce4d85d446367f520fd9818298af434f53abbbc))
+
+### 🐛 Bug Fixes
+
+* protect hand-customized elevenlabs transformer from task generate ([#682](https://github.com/inference-gateway/inference-gateway/issues/682)) ([f6d18a5](https://github.com/inference-gateway/inference-gateway/commit/f6d18a5d974fd814aa16f73d575560334d9bbf6b)), references [#681](https://github.com/inference-gateway/inference-gateway/issues/681)
+
+### 📚 Documentation
+
+* document vendored specs, community table syncs and .openapi-ignore in agents.md ([#668](https://github.com/inference-gateway/inference-gateway/issues/668)) ([9da1663](https://github.com/inference-gateway/inference-gateway/commit/9da166320a85eb3149b5c2df782dd8365476c144))
+
+### 🔧 Miscellaneous
+
+* **deps:** bump docker/setup-buildx-action in the github-actions group ([#669](https://github.com/inference-gateway/inference-gateway/issues/669)) ([ec5f5b3](https://github.com/inference-gateway/inference-gateway/commit/ec5f5b34ea89e29387c09e533b732ebd619c5e63))
+* **lint:** enforce Go import grouping and ordering with gci ([#667](https://github.com/inference-gateway/inference-gateway/issues/667)) ([f2b528e](https://github.com/inference-gateway/inference-gateway/commit/f2b528ea70f7a4901602abd5b08074f035d40f38))
+* sync community pricing, context-window, and modalities tables from models.dev ([#670](https://github.com/inference-gateway/inference-gateway/issues/670)) ([838662f](https://github.com/inference-gateway/inference-gateway/commit/838662f7889a286bff194001f486423e1be419e6))
+
 ## [0.53.0](https://github.com/inference-gateway/inference-gateway/compare/v0.52.0...v0.53.0) (2026-09-16)
 
 ### ✨ Features
