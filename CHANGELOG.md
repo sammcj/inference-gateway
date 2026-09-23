@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.55.3](https://github.com/inference-gateway/inference-gateway/compare/v0.55.2...v0.55.3) (2026-09-23)
+
+### 🐛 Bug Fixes
+
+* **mcp:** keep agent tool-call chunks off the client stream ([#696](https://github.com/inference-gateway/inference-gateway/issues/696)) ([6cc79c2](https://github.com/inference-gateway/inference-gateway/commit/6cc79c2852a2398e0b5b417847bfb84e4a31c426)), references [#695](https://github.com/inference-gateway/inference-gateway/issues/695)
+
 ## [0.55.2](https://github.com/inference-gateway/inference-gateway/compare/v0.55.1...v0.55.2) (2026-09-23)
 
 ### ♻️ Improvements
