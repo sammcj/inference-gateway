@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.55.2](https://github.com/inference-gateway/inference-gateway/compare/v0.55.1...v0.55.2) (2026-09-23)
+
+### ♻️ Improvements
+
+* remove the /v1/images/variations endpoint ([#694](https://github.com/inference-gateway/inference-gateway/issues/694)) ([1b95ddf](https://github.com/inference-gateway/inference-gateway/commit/1b95ddf5b37a5223671399bb6a9d8a8106a73f3c))
+
+### 🔧 Miscellaneous
+
+* **deps:** bump claude-code 2.1.266 -> 2.1.278 ([#693](https://github.com/inference-gateway/inference-gateway/issues/693)) ([5178c13](https://github.com/inference-gateway/inference-gateway/commit/5178c138b362c5b50866f791a6b20f9d8e07d014))
+
 ## [0.55.1](https://github.com/inference-gateway/inference-gateway/compare/v0.55.0...v0.55.1) (2026-09-23)
 
 ### 🐛 Bug Fixes
