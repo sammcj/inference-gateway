@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.55.1](https://github.com/inference-gateway/inference-gateway/compare/v0.55.0...v0.55.1) (2026-09-23)
+
+### 🐛 Bug Fixes
+
+* **images:** label octet-stream multipart file parts from their content ([#690](https://github.com/inference-gateway/inference-gateway/issues/690)) ([5e711ba](https://github.com/inference-gateway/inference-gateway/commit/5e711ba50147df0e00931d9ffcfe053db7083dc1))
+
 ## [0.55.0](https://github.com/inference-gateway/inference-gateway/compare/v0.54.1...v0.55.0) (2026-09-22)
 
 ### ✨ Features
