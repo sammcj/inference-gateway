@@ -103,6 +103,7 @@ func (m *MCPMiddlewareImpl) Middleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+		c.Set(string(mcpBypassKey), &originalRequestBody)
 
 		if !m.mcpClient.IsInitialized() {
 			c.Next()
@@ -134,10 +135,11 @@ func (m *MCPMiddlewareImpl) Middleware() gin.HandlerFunc {
 			c.Next()
 			return
 		}
+		if originalRequestBody.Tools != nil {
+			availableTools = append(*originalRequestBody.Tools, availableTools...)
+		}
 		m.logger.Debug("added mcp tools to request", "tool_count", len(availableTools), "tool_mode", m.config.MCP.ToolMode)
 		originalRequestBody.Tools = &availableTools
-
-		c.Set(string(mcpBypassKey), &originalRequestBody)
 
 		result, err := m.getProviderAndModel(c, originalRequestBody.Model)
 		if err != nil {
