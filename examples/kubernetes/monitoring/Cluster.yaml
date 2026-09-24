@@ -5,7 +5,7 @@ product: k3d
 k3d:
   v1alpha5Simple:
     agents: 3
-    image: docker.io/rancher/k3s:v1.36.1-k3s1
+    image: docker.io/rancher/k3s:v1.37.0-k3s1
     ports:
       - port: 80:80
         nodeFilters:
@@ -14,5 +14,8 @@ k3d:
       k3s:
         extraArgs:
           - arg: --disable=traefik
+            nodeFilters:
+              - server:0
+          - arg: --disable=gateway-api-crd
             nodeFilters:
               - server:0

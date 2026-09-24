@@ -6,7 +6,7 @@ vars:
   CLUSTER_NAME: mcp-cluster
   # Envoy Gateway's chart installs the Gateway API CRDs it supports (v1.6).
   ENVOY_GATEWAY_VERSION: v1.9.1
-  OPERATOR_VERSION: v0.25.0
+  OPERATOR_VERSION: v0.25.1
   COMPOSE_MCP_DIR: ../../docker-compose/mcp
 
 tasks:
@@ -110,6 +110,8 @@ tasks:
     desc: 'Deploy the Inference Gateway with MCP configuration via the operator'
     cmds:
       - kubectl apply -f gateway.yaml
+      - kubectl -n {{.NAMESPACE}} wait --for=create deployment/{{.RELEASE_NAME}} --timeout=60s
+      - kubectl -n {{.NAMESPACE}} rollout status deployment/{{.RELEASE_NAME}} --timeout=180s
       - echo "🚪 Inference Gateway with MCP deployed successfully!"
       - echo "ℹ️  Add your provider API keys to the inference-gateway-secrets Secret in gateway.yaml."
 
