@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.55.4](https://github.com/inference-gateway/inference-gateway/compare/v0.55.3...v0.55.4) (2026-09-24)
+
+### 🐛 Bug Fixes
+
+* **mcp:** merge client-declared tools and return their calls to the client ([#704](https://github.com/inference-gateway/inference-gateway/issues/704)) ([3f8fbf4](https://github.com/inference-gateway/inference-gateway/commit/3f8fbf4cb36bdc420e29146c1bb4a1dffdb268e5))
+
+### 👷 CI
+
+* **claude:** centralize claude.yml via reusable workflow ([#699](https://github.com/inference-gateway/inference-gateway/issues/699)) ([2857f0b](https://github.com/inference-gateway/inference-gateway/commit/2857f0ba4e11ea88f62c707d39d28136d8f0ad17))
+
+### 🔧 Miscellaneous
+
+* **deps:** bump infer CLI v0.192.0 -> v0.205.3 ([#697](https://github.com/inference-gateway/inference-gateway/issues/697)) ([19fd968](https://github.com/inference-gateway/inference-gateway/commit/19fd968339195c2b4d4703956f80dde012e5c442))
+
 ## [0.55.3](https://github.com/inference-gateway/inference-gateway/compare/v0.55.2...v0.55.3) (2026-09-23)
 
 ### 🐛 Bug Fixes
