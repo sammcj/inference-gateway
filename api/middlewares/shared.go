@@ -11,8 +11,9 @@ import (
 const (
 	ChatCompletionsPath = "/v1/chat/completions"
 	ResponsesPath       = "/v1/responses"
-	HealthPath          = "/health"
 	MetricsIngestPath   = "/v1/metrics"
+	HealthPath          = "/health"
+	MCPPath             = "/mcp"
 )
 
 // SetSSEHeaders sets the response headers required for server-sent event streaming

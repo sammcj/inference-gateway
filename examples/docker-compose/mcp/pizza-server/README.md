@@ -1,156 +1,58 @@
 # Pizza Demo TypeScript MCP Server
 
-This is a simplified demonstration MCP server built using the official
-[@modelcontextprotocol/sdk](https://github.com/modelcontextprotocol/typescript-sdk)
-TypeScript SDK. It showcases a single tool that returns mock data about the top
-5 pizzas in the world.
+A demonstration MCP server built on the official
+[TypeScript SDK v2](https://github.com/modelcontextprotocol/typescript-sdk)
+(`@modelcontextprotocol/server`). It has a single tool that returns mock data
+about the top 5 pizzas in the world.
 
-## Features
+`createMcpHandler` serves MCP `2026-07-28` - the stateless revision the
+Inference Gateway speaks to its upstream servers - and 2025-era clients from the
+same `/mcp` endpoint, with no session to keep. The factory builds a fresh
+`McpServer` for every request.
 
-- 🍕 Simple demonstration with pizza data
-- 🚀 Built with official TypeScript MCP SDK
-- 🔄 Dual transport support: Streamable HTTP + Legacy SSE
-- 📡 Real-time session management
-- 🏥 Health monitoring endpoints
-- 🐳 Docker containerized
+## Tools
 
-## Capabilities
-
-### Tools
-
-- **get-top-pizzas** - Returns mock data of the top 5 pizzas in the world with
-  detailed information including origin, description, year created, and key
-  ingredients
+- **get_top_pizzas** - the top 5 pizzas in the world with their origin,
+  description, year created and key ingredients
 
 ## Endpoints
 
-| Endpoint    | Method          | Transport       | Description                                 |
-| ----------- | --------------- | --------------- | ------------------------------------------- |
-| `/mcp`      | GET/POST/DELETE | Streamable HTTP | Modern MCP endpoint with session management |
-| `/sse`      | GET             | SSE             | Legacy SSE connection endpoint              |
-| `/messages` | POST            | SSE             | Legacy SSE message handling                 |
-| `/health`   | GET             | HTTP            | Health check and connection stats           |
-| `/`         | GET             | HTTP            | Server info and capabilities                |
+| Endpoint  | Method | Description             |
+| --------- | ------ | ----------------------- |
+| `/mcp`    | POST   | MCP (Streamable HTTP)   |
+| `/health` | GET    | Liveness, answers `200` |
 
 ## Usage
 
-### Development
-
 ```bash
-# Install dependencies
 npm install
-
-# Run in development mode
-npm run dev
-
-# Build for production
-npm run build
-
-# Run production build
-npm start
+npm run dev     # run from source with tsx
+npm run build   # compile to dist/
+npm start       # run the build
 ```
 
-### Docker
+The server listens on port `8084` (override with `PORT`). `createMcpExpressApp`
+rejects requests whose `Host` isn't `mcp-pizza-server` (Compose),
+`pizza-service.inference-gateway.svc.cluster.local` (the Service the Kubernetes
+example's `MCP` resource gets) or `localhost`, which
+protects it from DNS rebinding; add a host to `allowedHosts` in `src/index.ts`
+to reach it under another name.
 
-```bash
-# Build the image
-docker build -t pizza-demo-mcp-server .
-
-# Run the container
-docker run -p 8084:8084 pizza-demo-mcp-server
-```
-
-### Testing with curl
-
-#### Get server info
-
-```bash
-curl http://localhost:8084/
-```
-
-#### Health check
-
-```bash
-curl http://localhost:8084/health
-```
-
-#### Initialize MCP session (Streamable HTTP)
+Try it directly:
 
 ```bash
 curl -X POST http://localhost:8084/mcp \
   -H "Content-Type: application/json" \
-  -d '{
-    "jsonrpc": "2.0",
-    "id": 1,
-    "method": "initialize",
-    "params": {
-      "protocolVersion": "2025-03-26",
-      "capabilities": {},
-      "clientInfo": {
-        "name": "test-client",
-        "version": "1.0.0"
-      }
-    }
-  }'
+  -H "Accept: application/json, text/event-stream" \
+  -H "MCP-Protocol-Version: 2026-07-28" \
+  -H "Mcp-Method: tools/list" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28","io.modelcontextprotocol/clientInfo":{"name":"curl","version":"1.0"},"io.modelcontextprotocol/clientCapabilities":{}}}}'
 ```
 
-#### List tools
+## With the Inference Gateway
 
 ```bash
-# After initialization, use the session ID from the response
-curl -X POST http://localhost:8084/mcp \
-  -H "Content-Type: application/json" \
-  -H "mcp-session-id: YOUR_SESSION_ID" \
-  -d '{
-    "jsonrpc": "2.0",
-    "id": 2,
-    "method": "tools/list"
-  }'
+MCP_SERVERS=pizza=http://mcp-pizza-server:8084/mcp
 ```
 
-#### Call get-top-pizzas tool
-
-```bash
-curl -X POST http://localhost:8084/mcp \
-  -H "Content-Type: application/json" \
-  -H "mcp-session-id: YOUR_SESSION_ID" \
-  -d '{
-    "jsonrpc": "2.0",
-    "id": 3,
-    "method": "tools/call",
-    "params": {
-      "name": "get-top-pizzas"
-    }
-  }'
-```
-
-## Architecture
-
-This server demonstrates the official MCP TypeScript SDK architecture:
-
-1. **McpServer**: Core server instance that handles MCP protocol
-2. **StreamableHTTPServerTransport**: Modern transport for HTTP-based communication with SSE streaming
-3. **SSEServerTransport**: Legacy transport for backward compatibility
-4. **Session Management**: Maintains state across multiple requests
-
-## Integration with Inference Gateway
-
-This server is designed to work seamlessly with the Inference Gateway's MCP middleware:
-
-```env
-MCP_SERVERS=http://pizza-demo-mcp-server:8084/mcp
-```
-
-The server supports both traditional JSON-RPC responses and SSE streaming,
-making it fully compatible with the enhanced MCP client and middleware
-implementations.
-
-## Mock Data
-
-The server returns information about these top 5 pizzas:
-
-1. **Margherita** (Naples, Italy) - The classic with tomato sauce, fresh mozzarella, and basil
-2. **Neapolitan** (Naples, Italy) - The original pizza with thin, soft crust and minimal toppings
-3. **Pepperoni** (United States) - American classic with pepperoni sausage and cheese
-4. **Four Cheese (Quattro Formaggi)** (Italy) - Rich pizza featuring four different cheeses
-5. **Hawaiian** (Canada) - Controversial but popular pizza with ham and pineapple
+The gateway lists the tool as `mcp_pizza_get_top_pizzas`.

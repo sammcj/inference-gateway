@@ -6,9 +6,10 @@ multiple MCP servers.
 
 ## Features
 
-- **✨ Server-Sent Events (SSE)**: Real-time streaming with dual JSON-RPC and SSE protocol support
+- **🌐 Gateway as an MCP server**: one `POST /mcp` endpoint fronting every backend server, for agent clients
 - **🔍 MCP Inspector**: Web-based debugging tool for exploring and testing MCP servers
-- **🛠️ Multiple Tools**: Time, search, filesystem, and pizza-related tools
+- **🛠️ Multiple Tools**: Time, search, filesystem, pizza and calculator tools
+- **📦 Official SDKs**: the pizza (TypeScript) and calculator (Go) servers show how to serve MCP `2026-07-28` with the official SDKs
 - **🔧 Easy Setup**: Docker Compose configuration with CORS support
 
 ## Table of Contents
@@ -42,7 +43,8 @@ it must be set there rather than only exported in your shell.
 
 ### Test and Troubleshoot
 
-Use the MCP Inspector at `http://localhost:6274` to explore servers, test tools, and troubleshoot any issues.
+Use the MCP Inspector to explore the gateway's tools, run them, and troubleshoot any issues. Open the URL it
+prints on startup (`docker compose logs mcp-inspector`) - it carries the session token.
 
 ## Components
 
@@ -50,12 +52,14 @@ Use the MCP Inspector at `http://localhost:6274` to explore servers, test tools,
 - **MCP Time Server**: Provides time data tools
 - **MCP Search Server**: Provides web search functionality
 - **MCP Filesystem Server**: Provides file operations (read, write, delete, list directories)
-- **MCP Pizza Server**: TypeScript MCP server providing pizza-related tools using `@modelcontextprotocol/sdk`
+- **MCP Pizza Server**: Pizza demo tool on the official TypeScript SDK v2 ([pizza-server](pizza-server/))
+- **MCP Calculator Server**: Calculator tool with structured output on the official Go SDK ([calculator-server](calculator-server/))
 - **MCP Inspector**: Web-based debugging tool for exploring MCP servers
 
 ## MCP Inspector
 
-Debug and explore your MCP servers with the web interface at `http://localhost:6274`.
+Debug and explore your MCP servers with the web interface on `http://localhost:6274`, using the tokenized URL
+from `docker compose logs mcp-inspector`. Its ports are published on `127.0.0.1` only.
 
 **Capabilities:**
 
@@ -64,12 +68,14 @@ Debug and explore your MCP servers with the web interface at `http://localhost:6
 - Execute tool calls and see responses
 - Monitor protocol messages and debug issues
 
-**Connected Servers:**
+**Connected Server:**
 
-- Time Server: `http://mcp-time-server:8081/mcp`
-- Search Server: `http://mcp-search-server:8082/mcp`
-- Filesystem Server: `http://mcp-filesystem-server:8083/mcp`
-- Pizza Server: `http://mcp-pizza-server:8084/mcp`
+The Inspector is launched against the gateway's own MCP endpoint,
+`http://inference-gateway:8080/mcp`, so it sees the tools of all five backend
+servers at once. The endpoint speaks MCP `2026-07-28` only, so the Inspector runs
+with `--protocol-era modern` (its default is `legacy`). Connect the server card and
+the Tools view lists every `mcp_<alias>_<tool>`. The server list is read-only,
+because it comes from the launch flags in `docker-compose.yml`.
 
 ## Usage
 
@@ -281,29 +287,73 @@ Example response:
 }
 ```
 
-### Example 9: Pizza Server Tools
+### Example 9: Point an MCP Client at the Gateway
 
-This example demonstrates using tools from the official TypeScript MCP server
-built with `@modelcontextprotocol/sdk`. The pizza server provides pizza-related
-tools:
+With `MCP_ENABLED=true` and `MCP_EXPOSE=true` the gateway is itself an MCP
+server at `POST /mcp`. An agent client declares **one** entry and discovers
+every backend server, so adding or removing a server never touches the client
+config. Tools are namespaced `mcp_<alias>_<tool>` from the `alias=url` entries
+in `MCP_SERVERS`.
+
+The endpoint speaks MCP `2026-07-28` only - no `initialize` handshake, no
+session. Every request carries its protocol version, client info and client
+capabilities in `params._meta`, and mirrors the version, the method and (for
+`tools/call`) the tool name into the `MCP-Protocol-Version`, `Mcp-Method` and
+`Mcp-Name` headers. A request missing them is rejected with `400`.
+
+Discover what the gateway supports (optional - any request can go first):
 
 ```bash
-curl -X POST http://localhost:8080/v1/chat/completions \
+curl -X POST http://localhost:8080/mcp \
   -H "Content-Type: application/json" \
-  -d '{
-  "model": "deepseek/deepseek-v4-flash",
-  "messages": [
-    {
-      "role": "system",
-      "content": "You are a helpful assistant."
-    },
-    {
-      "role": "user",
-      "content": "Top 5 pizzas in the world. Go!"
-    }
-  ]
-}'
+  -H "MCP-Protocol-Version: 2026-07-28" \
+  -H "Mcp-Method: server/discover" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"server/discover","params":{"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28","io.modelcontextprotocol/clientInfo":{"name":"curl","version":"1.0"},"io.modelcontextprotocol/clientCapabilities":{}}}}'
 ```
+
+List the whole fleet's tools:
+
+```bash
+curl -X POST http://localhost:8080/mcp \
+  -H "Content-Type: application/json" \
+  -H "MCP-Protocol-Version: 2026-07-28" \
+  -H "Mcp-Method: tools/list" \
+  -d '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28","io.modelcontextprotocol/clientInfo":{"name":"curl","version":"1.0"},"io.modelcontextprotocol/clientCapabilities":{}}}}'
+```
+
+Call one of them - the alias decides which backend server runs it:
+
+```bash
+curl -X POST http://localhost:8080/mcp \
+  -H "Content-Type: application/json" \
+  -H "MCP-Protocol-Version: 2026-07-28" \
+  -H "Mcp-Method: tools/call" \
+  -H "Mcp-Name: mcp_time_time" \
+  -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"mcp_time_time","arguments":{},"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28","io.modelcontextprotocol/clientInfo":{"name":"curl","version":"1.0"},"io.modelcontextprotocol/clientCapabilities":{}}}}'
+```
+
+If a backend server is down, `tools/list` still returns the healthy servers'
+tools and a `tools/call` routed to it comes back as a JSON-RPC error.
+
+Client configuration, e.g. for opencode (the client must support MCP
+`2026-07-28`):
+
+```json
+{
+  "mcp": {
+    "inference-gateway": {
+      "type": "remote",
+      "url": "http://localhost:8080/mcp",
+      "enabled": true
+    }
+  }
+}
+```
+
+The client keeps its own local tools (bash, read, edit) executing client-side;
+only the gateway's tools travel over `/mcp`. When `AUTH_ENABLED=true`, send the
+bearer token the same way as for every other endpoint - only `/health` skips
+authentication.
 
 ## How It Works
 
@@ -338,12 +388,14 @@ All filesystem operations are sandboxed to `/tmp/mcp-files` for security.
 
 ### Pizza Server Tools
 
-- **get-top-pizzas**: Returns mock data of the top 5 pizzas in the world with
-  detailed information
+- **get_top_pizzas**: The top 5 pizzas in the world with their origin,
+  description, year created and key ingredients
 
-The pizza server showcases best practices using the `@modelcontextprotocol/sdk`
-and includes comprehensive session management, type validation with Zod schemas,
-and dual transport support.
+### Calculator Server Tools
+
+- **calculate**: Add, subtract, multiply or divide two numbers. The result comes
+  back as `structuredContent` (`{"result": 42}`), and a division by zero as a
+  result with `isError: true`
 
 ## Adding Your Own MCP Servers
 
@@ -355,7 +407,7 @@ and dual transport support.
    giving it an alias with `alias=url`:
 
    ```bash
-   MCP_SERVERS=time=http://mcp-time-server:8081/mcp,search=http://mcp-search-server:8082/mcp,http://your-new-server:8085/mcp
+   MCP_SERVERS=time=http://mcp-time-server:8081/mcp,search=http://mcp-search-server:8082/mcp,http://your-new-server:8086/mcp
    ```
 
    Each server gets an alias that namespaces its tools as
@@ -370,21 +422,34 @@ and dual transport support.
 
 ### Requirements for Your MCP Server
 
-- Implements the [MCP specification](https://modelcontextprotocol.io/specification)
+- Speaks MCP `2026-07-28`, the stateless revision: the gateway sends no
+  `initialize` and keeps no session, so every `tools/list` and `tools/call` must
+  be answerable on its own. A server that requires a handshake or a session is
+  marked unavailable. The official SDKs serve it alongside the 2025-era
+  protocol:
+  - **TypeScript** v2 (`@modelcontextprotocol/server`): mount
+    `createMcpHandler`, as the [pizza server](pizza-server/) does. The v1
+    `@modelcontextprotocol/sdk` package does not speak `2026-07-28`.
+  - **Go** (`github.com/modelcontextprotocol/go-sdk` v1.7+): a Streamable HTTP
+    handler with `Stateless: true`, as the [calculator server](calculator-server/)
+    does.
+  - **Python** v2 (`mcp` 2.x): serves both revisions with no configuration.
 - Responds to HTTP requests on the `/mcp` endpoint
 - Supports CORS for web clients (if using the MCP Inspector)
 
 ### Pre-configured Example Servers
 
-This example includes four pre-configured servers:
+This example includes five pre-configured servers:
 
 - **Time Server**: `http://mcp-time-server:8081/mcp` - Get current time
 - **Search Server**: `http://mcp-search-server:8082/mcp` - Web search
   functionality
 - **Filesystem Server**: `http://mcp-filesystem-server:8083/mcp` - File
   operations
-- **Pizza Server**: `http://mcp-pizza-server:8084/mcp` - TypeScript MCP server
-  providing pizza recommendation tools
+- **Pizza Server**: `http://mcp-pizza-server:8084/mcp` - Pizza demo on the
+  official TypeScript SDK v2
+- **Calculator Server**: `http://mcp-calculator-server:8085/mcp` - Calculator
+  on the official Go SDK
 
 ### Configuration Options
 

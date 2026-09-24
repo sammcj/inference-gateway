@@ -306,6 +306,7 @@ func main() {
 		go localTTS.Warmup(context.Background())
 	}
 
+	mcp.GatewayInfo.Version = version
 	api := api.NewRouter(cfg, appLogger, providerRegistry, httpClient, mcpClient, telemetryImpl, selector, localTTS)
 	r := gin.New()
 	if cfg.Telemetry.Enabled && cfg.Telemetry.TracingEnabled {
@@ -331,6 +332,11 @@ func main() {
 	}
 
 	r.GET(middlewares.HealthPath, api.HealthcheckHandler)
+	r.POST(middlewares.MCPPath, api.MCPJSONRPCHandler)
+	r.Match([]string{http.MethodGet, http.MethodDelete}, middlewares.MCPPath, func(c *gin.Context) {
+		c.Header("Allow", http.MethodPost)
+		c.Status(http.StatusMethodNotAllowed)
+	})
 	r.POST(middlewares.MetricsIngestPath, api.MetricsIngestionHandler)
 	r.POST(middlewares.ChatCompletionsPath, api.ChatCompletionsHandler)
 	r.POST(middlewares.ResponsesPath, api.ResponsesHandler)

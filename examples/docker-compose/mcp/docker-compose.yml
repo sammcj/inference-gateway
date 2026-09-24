@@ -10,35 +10,40 @@ services:
       ENVIRONMENT: ${ENVIRONMENT:-development}
       MCP_ENABLED: ${MCP_ENABLED:-true}
       MCP_EXPOSE: ${MCP_EXPOSE:-true}
-      MCP_SERVERS: ${MCP_SERVERS:-http://mcp-time-server:8081/mcp,http://mcp-search-server:8082/mcp,http://mcp-filesystem-server:8083/mcp,http://mcp-pizza-server:8084/mcp}
+      MCP_SERVERS: ${MCP_SERVERS:-time=http://mcp-time-server:8081/mcp,search=http://mcp-search-server:8082/mcp,filesystem=http://mcp-filesystem-server:8083/mcp,pizza=http://mcp-pizza-server:8084/mcp,calculator=http://mcp-calculator-server:8085/mcp}
       GROQ_API_KEY: ${GROQ_API_KEY:-}
     depends_on:
       - mcp-time-server
       - mcp-search-server
       - mcp-filesystem-server
       - mcp-pizza-server
+      - mcp-calculator-server
     networks:
       - mcp-network
 
   mcp-inspector:
     image: node:lts
     working_dir: /app
+    # One entry for the whole fleet: the gateway's own MCP server aggregates
+    # every server in MCP_SERVERS behind MCP_EXPOSE. It speaks MCP 2026-07-28
+    # only, so the Inspector must use the modern protocol era (it defaults to
+    # legacy).
     command: >
-      sh -c "npx -y @modelcontextprotocol/inspector"
+      sh -c "npx -y @modelcontextprotocol/inspector --web --transport http --server-url http://inference-gateway:8080/mcp --protocol-era modern"
+    # The Inspector must listen on all container interfaces for the port
+    # mapping to reach it, which it refuses without the override below; the
+    # host side stays on loopback so the UI is not exposed to the network.
     ports:
-      - '6274:6274'
-      - '6277:6277'
+      - '127.0.0.1:6274:6274'
+      - '127.0.0.1:6275:6275'
     environment:
       LOG_LEVEL: debug
       HOST: 0.0.0.0
-      MCP_SERVER_URL: http://mcp-time-server:8081/mcp,http://mcp-search-server:8082/mcp,http://mcp-filesystem-server:8083/mcp,http://mcp-pizza-server:8084/mcp
+      DANGEROUSLY_BIND_ALL_INTERFACES: 'true'
     networks:
       - mcp-network
     depends_on:
-      - mcp-time-server
-      - mcp-search-server
-      - mcp-filesystem-server
-      - mcp-pizza-server
+      - inference-gateway
 
   mcp-time-server:
     build:
@@ -63,9 +68,18 @@ services:
     networks:
       - mcp-network
 
+  # Built on the official TypeScript SDK v2 (createMcpHandler).
   mcp-pizza-server:
     build:
       context: ./pizza-server
+      dockerfile: Dockerfile
+    networks:
+      - mcp-network
+
+  # Built on the official Go SDK (stateless Streamable HTTP handler).
+  mcp-calculator-server:
+    build:
+      context: ./calculator-server
       dockerfile: Dockerfile
     networks:
       - mcp-network
