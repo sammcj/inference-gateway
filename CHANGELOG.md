@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.56.1](https://github.com/inference-gateway/inference-gateway/compare/v0.56.0...v0.56.1) (2026-09-25)
+
+### ♻️ Improvements
+
+* sync schemas v0.34.2 and drop /v1/mcp/tools ([#730](https://github.com/inference-gateway/inference-gateway/issues/730)) ([1886451](https://github.com/inference-gateway/inference-gateway/commit/1886451af988f6483f394279d64c34bb3153e617))
+
 ## [0.56.0](https://github.com/inference-gateway/inference-gateway/compare/v0.55.4...v0.56.0) (2026-09-25)
 
 ### ✨ Features
