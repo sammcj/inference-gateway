@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.56.0](https://github.com/inference-gateway/inference-gateway/compare/v0.55.4...v0.56.0) (2026-09-25)
+
+### ✨ Features
+
+* **mcp:** apply tool guardrails and telemetry to POST /mcp tool calls ([#715](https://github.com/inference-gateway/inference-gateway/issues/715)) ([2d1e2c9](https://github.com/inference-gateway/inference-gateway/commit/2d1e2c9fee3a801e620db653f4dc9b43e675da26))
+* **mcp:** expose the gateway as an mcp server on POST /mcp ([#709](https://github.com/inference-gateway/inference-gateway/issues/709)) ([5cdd536](https://github.com/inference-gateway/inference-gateway/commit/5cdd5365d84e09d5b86657f361f8b83de2bb9306)), references [inference-gateway/schemas#234](https://github.com/inference-gateway/schemas/issues/234) [inference-gateway/operator#235](https://github.com/inference-gateway/operator/issues/235)
+* **mcp:** serve rfc 9728 metadata for /mcp ([#722](https://github.com/inference-gateway/inference-gateway/issues/722)) ([b28f391](https://github.com/inference-gateway/inference-gateway/commit/b28f391a0821f2af96fc5f5c0a093e6303bd3725))
+* sync generated types with schemas v0.32.0 ([#706](https://github.com/inference-gateway/inference-gateway/issues/706)) ([d6a4561](https://github.com/inference-gateway/inference-gateway/commit/d6a45618914d5f99774861880e4dc95e95bfe239))
+* sync generated types with schemas v0.33.1 ([#713](https://github.com/inference-gateway/inference-gateway/issues/713)) ([8ae4370](https://github.com/inference-gateway/inference-gateway/commit/8ae43708ddabec64dcbda7302a109891db2436ea))
+* sync generated types with schemas v0.34.0 ([#723](https://github.com/inference-gateway/inference-gateway/issues/723)) ([56fd19a](https://github.com/inference-gateway/inference-gateway/commit/56fd19ac520df5624b4f6bbaf49fd0ffed5a6fac))
+
+### ♻️ Improvements
+
+* **mcp:** namespace tools as mcp_<alias>_<tool> ([#708](https://github.com/inference-gateway/inference-gateway/issues/708)) ([df27319](https://github.com/inference-gateway/inference-gateway/commit/df27319e3421a181ce91d2a87c03f77eab55ddd0))
+* move otel and logger under internal/platform ([#718](https://github.com/inference-gateway/inference-gateway/issues/718)) ([6f6f657](https://github.com/inference-gateway/inference-gateway/commit/6f6f65745b43571d89b460c0a66b3a3f1477a665))
+
+### 👷 CI
+
+* **claude:** centralize claude.yml via reusable workflow ([#721](https://github.com/inference-gateway/inference-gateway/issues/721)) ([51a32b1](https://github.com/inference-gateway/inference-gateway/commit/51a32b12017adf5db77e4e324e266b18e78dc728))
+
+### 📚 Documentation
+
+* correct codegen drift check and document model pools in agents.md ([#707](https://github.com/inference-gateway/inference-gateway/issues/707)) ([fec621c](https://github.com/inference-gateway/inference-gateway/commit/fec621c625afb72dd9f3b34a5f14f2f5ab7fc4c4))
+* **readme:** add guardrails and the mcp server to key features ([#725](https://github.com/inference-gateway/inference-gateway/issues/725)) ([eb2d7a9](https://github.com/inference-gateway/inference-gateway/commit/eb2d7a9e81e06614e182d18e7bc9fef8917122c5))
+* **readme:** update architecture diagram with guardrails, telemetry and /mcp ([#724](https://github.com/inference-gateway/inference-gateway/issues/724)) ([fbe0e0a](https://github.com/inference-gateway/inference-gateway/commit/fbe0e0afda7bcf24416ac597bc16a077d16fe4e4)), closes [#720](https://github.com/inference-gateway/inference-gateway/issues/720)
+
+### 🔧 Miscellaneous
+
+* **examples:** bump k8s examples to operator v0.25.0 ([#716](https://github.com/inference-gateway/inference-gateway/issues/716)) ([fd16527](https://github.com/inference-gateway/inference-gateway/commit/fd16527bbbbd604d81021c5a2f5c60b8c92311f4)), closes [#719](https://github.com/inference-gateway/inference-gateway/issues/719)
+* **taskfile:** sync the mcp schema in oas-sync ([#711](https://github.com/inference-gateway/inference-gateway/issues/711)) ([0ec10f9](https://github.com/inference-gateway/inference-gateway/commit/0ec10f95c0c6ea7704edbacaccdfa7474df36875))
+
 ## [0.55.4](https://github.com/inference-gateway/inference-gateway/compare/v0.55.3...v0.55.4) (2026-09-24)
 
 ### 🐛 Bug Fixes
