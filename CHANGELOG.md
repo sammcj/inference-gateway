@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.57.0](https://github.com/inference-gateway/inference-gateway/compare/v0.56.1...v0.57.0) (2026-09-28)
+
+### ✨ Features
+
+* **examples:** opt-in real provider for mcp-client-tools ([#731](https://github.com/inference-gateway/inference-gateway/issues/731)) ([4b0ed0c](https://github.com/inference-gateway/inference-gateway/commit/4b0ed0c71da41641facaf24937ec483bb0cb10b3))
+
+### 🐛 Bug Fixes
+
+* emit SERVER_HOST=0.0.0.0 in generated .env.example ([#739](https://github.com/inference-gateway/inference-gateway/issues/739)) ([9f5468c](https://github.com/inference-gateway/inference-gateway/commit/9f5468cc5e7665a9d0001fca6c94811101f70e7a))
+* **tts:** upgrade a stale llama-tts binary on warmup ([#746](https://github.com/inference-gateway/inference-gateway/issues/746)) ([a682b61](https://github.com/inference-gateway/inference-gateway/commit/a682b61a4da4aca5969452df6505999fcbca7936))
+
+### 📚 Documentation
+
+* **agents:** add code readability guidelines ([#743](https://github.com/inference-gateway/inference-gateway/issues/743)) ([2ebb20d](https://github.com/inference-gateway/inference-gateway/commit/2ebb20dbde8aa3c49697d1ca19cecc5b0528876a))
+* **agents:** add code readability guidelines ([#744](https://github.com/inference-gateway/inference-gateway/issues/744)) ([97fe89f](https://github.com/inference-gateway/inference-gateway/commit/97fe89fbe7c5abf5b9d77b092c1f9db4ed1c6538))
+* document guardrails metric, team label, push prereqs ([#742](https://github.com/inference-gateway/inference-gateway/issues/742)) ([56d0dc5](https://github.com/inference-gateway/inference-gateway/commit/56d0dc580c0e2c5fa94491aa9f8cbc3e51941458))
+* fix mcp endpoint gating and tool mode in readme ([#741](https://github.com/inference-gateway/inference-gateway/issues/741)) ([2fc3aac](https://github.com/inference-gateway/inference-gateway/commit/2fc3aac69492688d1d7a6ba41afa4c9c9be22d8d))
+* fix stale readme curl, ports, provider list ([#740](https://github.com/inference-gateway/inference-gateway/issues/740)) ([87d9db7](https://github.com/inference-gateway/inference-gateway/commit/87d9db77abd98b5812a734acfed4051624c3e02d))
+* fix table column alignment in README ([#732](https://github.com/inference-gateway/inference-gateway/issues/732)) ([01045a8](https://github.com/inference-gateway/inference-gateway/commit/01045a861e1bba3228c72d235348c4c2d11df9a4))
+* update binary size in README ([9d3d4d6](https://github.com/inference-gateway/inference-gateway/commit/9d3d4d6e7433de5fbfd080b646e24bf9e682aa98))
+
+### 🔧 Miscellaneous
+
+* **deps:** bump claude-code 2.1.278 -> 2.1.280 ([#733](https://github.com/inference-gateway/inference-gateway/issues/733)) ([54c25b1](https://github.com/inference-gateway/inference-gateway/commit/54c25b17d2236bd52450c3c9a8bb2fd1b7afc2ad))
+* **deps:** bump infer CLI v0.205.3 -> v0.208.0 ([#734](https://github.com/inference-gateway/inference-gateway/issues/734)) ([b0fd4d9](https://github.com/inference-gateway/inference-gateway/commit/b0fd4d989dc3636b8ec4cc426e5fb48e7d1342af))
+* **pricing,context-window,modalities:** update commit message format for syncing community tables ([c2ad8ea](https://github.com/inference-gateway/inference-gateway/commit/c2ad8ead9a3063bd8723daaed92710ff0d3a7499))
+* **pricing:** sync community pricing, context-window, and modalities tables from models.dev ([#747](https://github.com/inference-gateway/inference-gateway/issues/747)) ([9d39920](https://github.com/inference-gateway/inference-gateway/commit/9d3992013bde797f0d1d3631c56ef103c4d5295f))
+
 ## [0.56.1](https://github.com/inference-gateway/inference-gateway/compare/v0.56.0...v0.56.1) (2026-09-25)
 
 ### ♻️ Improvements
