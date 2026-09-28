@@ -56,8 +56,8 @@ jobs:
           add-paths: providers/core/community_pricing.json,providers/core/community_context_windows.json,providers/core/community_modalities.json
           committer: '${{ steps.app-token.outputs.app-slug }}[bot] <${{ steps.get-user-id.outputs.user-id }}+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com>'
           author: '${{ steps.app-token.outputs.app-slug }}[bot] <${{ steps.get-user-id.outputs.user-id }}+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com>'
-          commit-message: 'chore: sync community pricing, context-window, and modalities tables from models.dev'
-          title: 'chore: sync community pricing, context-window, and modalities tables from models.dev'
+          commit-message: 'chore(pricing,context-window,modalities): sync community pricing, context-window, and modalities tables from models.dev'
+          title: 'chore(pricing,context-window,modalities): sync community pricing, context-window, and modalities tables from models.dev'
           body: >-
             Automated weekly sync of `community_pricing.json`,
             `community_context_windows.json`, and `community_modalities.json`
